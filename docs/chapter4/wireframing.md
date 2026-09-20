@@ -4,7 +4,7 @@
 * **Document:** UI/UX Low-Fidelity Wireframes & Layout Specifications
 * **Module:** Chapter 4 – Product Design & Prototyping (Section 4.2)
 * **Status:** Finalized (Awaiting Review)
-* **Traceability Baseline:** PRD v1.1 (`docs/chapter3/product-requirements.md`), User Flow Design (`docs/chapter-4/user-flow.md`)
+* **Traceability Baseline:** PRD v1.1 (`docs/chapter3/product-requirements.md`), User Flow Design (`docs/chapter4/user-flow.md`)
 
 ---
 
