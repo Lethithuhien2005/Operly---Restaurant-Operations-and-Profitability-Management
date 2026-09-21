@@ -1,0 +1,307 @@
+/* Operly Prototype Global Styles */
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --color-primary: #0f766e;
+  --color-primary-hover: #115e59;
+  --color-primary-light: #ccfbf1;
+  --color-primary-dark: #134e4a;
+  
+  --color-bg: #f8fafc;
+  --color-card: #ffffff;
+  --color-border: #e2e8f0;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  
+  /* Status Colors */
+  --status-avail-bg: #dcfce7;
+  --status-avail-text: #166534;
+  --status-avail-border: #86efac;
+  
+  --status-occ-bg: #fee2e2;
+  --status-occ-text: #991b1b;
+  --status-occ-border: #fca5a5;
+  
+  --status-res-bg: #dbeafe;
+  --status-res-text: #1e40af;
+  --status-res-border: #93c5fd;
+  
+  --status-clean-bg: #fef3c7;
+  --status-clean-text: #92400e;
+  --status-clean-border: #fcd34d;
+
+  --status-cooking-bg: #ffedd5;
+  --status-cooking-text: #9a3412;
+  --status-ready-bg: #dcfce7;
+  --status-ready-text: #166534;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #0b1120;
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: all 0.15s ease;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: 14px;
+}
+
+/* Prototype Frame & Switcher */
+.proto-app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #0f172a;
+}
+
+.proto-eval-harness {
+  background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+  border-bottom: 2px solid #334155;
+  padding: 8px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  color: #f8fafc;
+}
+
+.proto-brand-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+
+.proto-badge {
+  background-color: #0284c7;
+  color: #ffffff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.proto-role-tabs {
+  display: flex;
+  background-color: #090d16;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 4px;
+  border: 1px solid #334155;
+}
+
+.proto-role-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.proto-role-btn:hover {
+  color: #f1f5f9;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.proto-role-btn.active {
+  background-color: #0f766e;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.proto-state-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.proto-reset-btn {
+  background-color: #334155;
+  color: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.proto-reset-btn:hover {
+  background-color: #475569;
+}
+
+/* Device Viewport Simulators */
+.proto-viewport-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* Mobile Simulator for Customer and Waiter */
+.device-mobile {
+  width: 100%;
+  max-width: 420px;
+  min-height: 840px;
+  background-color: #ffffff;
+  border-radius: 28px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 8px #1e293b;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Tablet Simulator for KDS */
+.device-tablet {
+  width: 100%;
+  max-width: 1100px;
+  min-height: 700px;
+  background-color: #0f172a;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 8px #1e293b;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  color: #f8fafc;
+}
+
+/* Desktop Simulator for POS */
+.device-desktop {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 760px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 4px #334155;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* UI Components */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-available {
+  background-color: var(--status-avail-bg);
+  color: var(--status-avail-text);
+  border: 1px solid var(--status-avail-border);
+}
+
+.badge-occupied {
+  background-color: var(--status-occ-bg);
+  color: var(--status-occ-text);
+  border: 1px solid var(--status-occ-border);
+}
+
+.badge-reserved {
+  background-color: var(--status-res-bg);
+  color: var(--status-res-text);
+  border: 1px solid var(--status-res-border);
+}
+
+.badge-cleaning {
+  background-color: var(--status-clean-bg);
+  color: var(--status-clean-text);
+  border: 1px solid var(--status-clean-border);
+}
+
+.badge-pending {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.badge-cooking {
+  background-color: var(--status-cooking-bg);
+  color: var(--status-cooking-text);
+  border: 1px solid #fdba74;
+}
+
+.badge-ready {
+  background-color: var(--status-ready-bg);
+  color: var(--status-ready-text);
+  border: 1px solid var(--status-ready-border);
+}
+
+.badge-served {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #7dd3fc;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+}
+
+.modal-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: modalPop 0.15s ease-out;
+}
+
+.modal-dark {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #334155;
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
