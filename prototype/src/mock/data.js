@@ -116,95 +116,19 @@ export const MOCK_AI_PAIRINGS = {
   ]
 };
 
-// Floor Layout Tables matching SCR-WAIT-01
+// Floor Layout Tables matching SCR-WAIT-01 (Clean initial state - no active transactions)
 export const MOCK_INITIAL_TABLES = [
-  { id: 'T01', name: 'Table 01', seats: 4, status: 'Available', orderId: null },
-  { id: 'T02', name: 'Table 02', seats: 2, status: 'Occupied', orderId: 'ORD-1046', billAmount: 320000, unservedItems: 0 },
-  { id: 'T03', name: 'Table 03', seats: 4, status: 'Occupied', orderId: 'ORD-1047', billAmount: 820000, unservedItems: 1, note: 'Cooking (12m)' },
-  { id: 'T04', name: 'Table 04', seats: 10, status: 'Reserved', note: 'Res: 19:00 (10 Guests)' },
-  { id: 'T05', name: 'Table 05', seats: 6, status: 'Occupied', activeDineIn: true, orderId: 'ORD-1048', note: 'Active Guest Session' },
-  { id: 'T06', name: 'Table 06', seats: 4, status: 'Cleaning', note: 'Needs sanitize & reset' },
-  { id: 'T08', name: 'Table 08', seats: 4, status: 'Occupied', checkoutQueue: true, orderId: 'ORD-1045', billAmount: 350000, unservedItems: 0 }
+  { id: 'T01', name: 'Table 01', seats: 4, status: 'Available', activeTransactionId: null, orderId: null, billAmount: null, billRequested: false, checkoutQueue: false, note: null },
+  { id: 'T02', name: 'Table 02', seats: 2, status: 'Available', activeTransactionId: null, orderId: null, billAmount: null, billRequested: false, checkoutQueue: false, note: null },
+  { id: 'T03', name: 'Table 03', seats: 4, status: 'Available', activeTransactionId: null, orderId: null, billAmount: null, billRequested: false, checkoutQueue: false, note: null },
+  { id: 'T04', name: 'Table 04', seats: 10, status: 'Available', activeTransactionId: null, orderId: null, billAmount: null, billRequested: false, checkoutQueue: false, note: null },
+  { id: 'T05', name: 'Table 05', seats: 6, status: 'Available', activeTransactionId: null, orderId: null, billAmount: null, billRequested: false, checkoutQueue: false, note: null },
+  { id: 'T06', name: 'Table 06', seats: 4, status: 'Available', activeTransactionId: null, orderId: null, billAmount: null, billRequested: false, checkoutQueue: false, note: null },
+  { id: 'T08', name: 'Table 08', seats: 4, status: 'Available', activeTransactionId: null, orderId: null, billAmount: null, billRequested: false, checkoutQueue: false, note: null }
 ];
 
-// Initial KDS Tickets matching SCR-KDS-01
-export const MOCK_INITIAL_KDS_TICKETS = [
-  {
-    ticketId: '104',
-    tableId: 'T05',
-    orderId: 'ORD-1048',
-    placedAt: '19:30',
-    elapsedMinutes: 12,
-    station: 'Station 3 (Hot Line)',
-    items: [
-      {
-        id: 'ITEM-1',
-        dishId: 'DISH-101',
-        name: 'Seafood Spicy Hotpot',
-        quantity: 1,
-        modifier: 'Less Spicy',
-        status: 'Cooking', // 'Pending' | 'Cooking' | 'Ready' | 'Served'
-        station: 'Station 3 (Hot Line)'
-      },
-      {
-        id: 'ITEM-2',
-        dishId: 'DISH-104',
-        name: 'US Beef Slices',
-        quantity: 1,
-        modifier: 'Default',
-        status: 'Ready',
-        station: 'Station 3 (Hot Line)'
-      },
-      {
-        id: 'ITEM-3',
-        dishId: 'DISH-105',
-        name: 'Iced Herbal Tea',
-        quantity: 2,
-        modifier: 'Less Sweet',
-        status: 'Served',
-        station: 'Station 4 (Bar)'
-      }
-    ]
-  },
-  {
-    ticketId: '105',
-    tableId: 'T03',
-    orderId: 'ORD-1047',
-    placedAt: '19:32',
-    elapsedMinutes: 10,
-    station: 'Station 2 (Grill)',
-    items: [
-      {
-        id: 'ITEM-4',
-        dishId: 'DISH-102',
-        name: 'Grilled Ribeye Steak',
-        quantity: 2,
-        modifier: 'Medium Rare',
-        status: 'Cooking',
-        station: 'Station 2 (Grill)'
-      }
-    ]
-  },
-  {
-    ticketId: '106',
-    tableId: 'T02',
-    orderId: 'ORD-1046',
-    placedAt: '19:35',
-    elapsedMinutes: 7,
-    station: 'Station 1 (Pantry)',
-    items: [
-      {
-        id: 'ITEM-5',
-        dishId: 'DISH-106',
-        name: 'Spring Rolls Platter',
-        quantity: 1,
-        modifier: '',
-        status: 'Ready',
-        station: 'Station 1 (Pantry)'
-      }
-    ]
-  }
-];
+// Initial KDS Tickets matching SCR-KDS-01 (Clean initial queue)
+export const MOCK_INITIAL_KDS_TICKETS = [];
 
 // Loyalty Members for POS (FR-011)
 export const MOCK_MEMBERS = {

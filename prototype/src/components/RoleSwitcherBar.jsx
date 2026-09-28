@@ -8,8 +8,12 @@ export const RoleSwitcherBar = () => {
     customerScreen,
     readyDishesList,
     tables,
+    serviceCalls,
     resetAllPrototypeData
   } = useMockStore();
+
+  const waiterNotificationCount = readyDishesList.length + (serviceCalls ? serviceCalls.length : 0);
+  const hasBillRequested = tables.some((t) => t.billRequested);
 
   return (
     <header className="proto-eval-harness">
@@ -47,7 +51,7 @@ export const RoleSwitcherBar = () => {
         >
           <span>🤵</span>
           <span>Waiter Floor</span>
-          {readyDishesList.length > 0 && (
+          {waiterNotificationCount > 0 && (
             <span
               style={{
                 backgroundColor: '#ef4444',
@@ -57,8 +61,9 @@ export const RoleSwitcherBar = () => {
                 fontSize: '10px',
                 fontWeight: 700
               }}
+              title={`${readyDishesList.length} ready dishes, ${serviceCalls?.length || 0} service calls`}
             >
-              {readyDishesList.length}
+              {waiterNotificationCount}
             </span>
           )}
           <span style={{ fontSize: '10px', opacity: 0.75 }}>(SCR-WAIT-01)</span>
@@ -70,6 +75,21 @@ export const RoleSwitcherBar = () => {
         >
           <span>💳</span>
           <span>Cashier POS</span>
+          {hasBillRequested && (
+            <span
+              style={{
+                backgroundColor: '#f59e0b',
+                color: '#fff',
+                borderRadius: '9999px',
+                padding: '1px 6px',
+                fontSize: '10px',
+                fontWeight: 700
+              }}
+              title="Customer bill requested"
+            >
+              REQ
+            </span>
+          )}
           <span style={{ fontSize: '10px', opacity: 0.75 }}>(SCR-POS-01)</span>
         </button>
 

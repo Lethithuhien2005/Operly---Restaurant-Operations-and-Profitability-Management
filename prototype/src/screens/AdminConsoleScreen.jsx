@@ -269,6 +269,7 @@ export const AdminConsoleScreen = () => {
                   style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px' }}
                 >
                   <option value="All">All Categories</option>
+                  <option value="BILL_SETTLED">BILL_SETTLED</option>
                   <option value="BILL_VOID">BILL_VOID</option>
                   <option value="MENU_86_TOGGLE">MENU_86_TOGGLE</option>
                   <option value="USER_SUSPENDED">USER_SUSPENDED</option>
@@ -330,12 +331,16 @@ export const AdminConsoleScreen = () => {
                                   ? '#fee2e2'
                                   : log.actionCategory === 'USER_SUSPENDED'
                                   ? '#ffedd5'
+                                  : log.actionCategory === 'BILL_SETTLED'
+                                  ? '#dcfce7'
                                   : '#e0f2fe',
                               color:
                                 log.actionCategory === 'BILL_VOID'
                                   ? '#991b1b'
                                   : log.actionCategory === 'USER_SUSPENDED'
                                   ? '#9a3412'
+                                  : log.actionCategory === 'BILL_SETTLED'
+                                  ? '#166534'
                                   : '#0369a1',
                               padding: '2px 6px',
                               borderRadius: '4px',
