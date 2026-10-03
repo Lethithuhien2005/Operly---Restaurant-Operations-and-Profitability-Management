@@ -6,6 +6,9 @@ export const CashierPOSScreen = () => {
   const {
     tables,
     setTables,
+    kdsTickets,
+    menuItems,
+    recordSettlement,
     showToast
   } = useMockStore();
 
@@ -19,19 +22,59 @@ export const CashierPOSScreen = () => {
   const [isPollingGateway, setIsPollingGateway] = useState(false);
   const [gatewayVerified, setGatewayVerified] = useState(false);
 
-  const selectedTable = tables.find((t) => t.id === selectedTableId) || tables[0];
+  // Dynamically derive tables requiring settlement (Occupied, Bill Requested, or Checkout Queue)
+  const settlementTables = tables.filter(
+    (t) => t.status === 'Occupied' || t.checkoutQueue || t.billRequested
+  );
 
-  // Bill items mock based on table
-  const invoiceItems = selectedTableId === 'T08' ? [
-    { name: 'Grilled Salmon Steak', quantity: 1, price: 180000, status: 'Served' },
-    { name: 'Caesar Salad', quantity: 1, price: 90000, status: 'Served' },
-    { name: 'Fresh Lime Soda', quantity: 2, price: 40000, status: 'Served' }
-  ] : [
-    { name: 'Grilled Ribeye Steak', quantity: 2, price: 250000, status: 'Cooking' }, // Unserved cooking item!
-    { name: 'Seafood Spicy Hotpot', quantity: 1, price: 280000, status: 'Cooking' },
-    { name: 'Iced Herbal Tea', quantity: 2, price: 20000, status: 'Served' }
-  ];
+  const activeTableId = settlementTables.some((t) => t.id === selectedTableId)
+    ? selectedTableId
+    : settlementTables[0]?.id || selectedTableId;
 
+  const selectedTable = tables.find((t) => t.id === activeTableId) || tables[0];
+
+  // Dynamic invoice derivation from live kdsTickets and menuItems (Task D)
+  const getTableInvoiceItems = (tableId) => {
+    const ticketsForTable = kdsTickets.filter((t) => t.tableId === tableId);
+    if (ticketsForTable.length > 0) {
+      const dynamicItems = ticketsForTable
+        .flatMap((t) => t.items)
+        .map((item) => {
+          const menuItem = menuItems.find((m) => m.id === item.dishId);
+          const price = menuItem ? menuItem.price : 100000;
+          return {
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            price,
+            status: item.status,
+            modifier: item.modifier
+          };
+        });
+      if (dynamicItems.length > 0) return dynamicItems;
+    }
+
+    // Baseline fallback for demo tables without dynamic tickets
+    if (tableId === 'T08') {
+      return [
+        { name: 'Fresh Atlantic Salmon Fillet', quantity: 1, price: 220000, status: 'Served' },
+        { name: 'Spring Rolls Platter', quantity: 1, price: 130000, status: 'Served' }
+      ];
+    }
+    if (tableId === 'T03') {
+      return [
+        { name: 'Grilled Ribeye Steak', quantity: 2, price: 250000, status: 'Cooking' },
+        { name: 'Seafood Spicy Hotpot', quantity: 1, price: 280000, status: 'Cooking' },
+        { name: 'Iced Herbal Tea', quantity: 2, price: 20000, status: 'Served' }
+      ];
+    }
+
+    return [
+      { name: 'Dine-In Menu Order', quantity: 1, price: selectedTable.billAmount || 150000, status: 'Served' }
+    ];
+  };
+
+  const invoiceItems = getTableInvoiceItems(activeTableId);
   const subtotal = invoiceItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   // Discount calculations enforcing PRD Rule 7 (max 40% cumulative discount)
@@ -85,7 +128,7 @@ export const CashierPOSScreen = () => {
     setTimeout(() => {
       setIsPollingGateway(false);
       setGatewayVerified(true);
-      showToast('Manual API Gateway poll: Bank transfer reference ORD1048 verified successfully!');
+      showToast(`Manual API Gateway poll: Bank transfer reference ${selectedTable.orderId || 'ORD1048'} verified successfully!`);
     }, 1200);
   };
 
@@ -94,11 +137,21 @@ export const CashierPOSScreen = () => {
     setIsVietQRModalOpen(false);
     setGatewayVerified(false);
 
+    // Record settlement in shared store for Manager metrics & Admin audit trail (Tasks F & G)
+    recordSettlement(amountPaid, selectedTable.name, method);
+
     // Update table status to 'Cleaning' (yellow) per PRD lifecycle
     setTables((prev) =>
       prev.map((t) =>
-        t.id === selectedTableId
-          ? { ...t, status: 'Cleaning', billAmount: null, note: 'Settled (Needs busing)' }
+        t.id === activeTableId
+          ? {
+              ...t,
+              status: 'Cleaning',
+              billAmount: null,
+              billRequested: false,
+              checkoutQueue: false,
+              note: 'Settled (Needs busing)'
+            }
           : t
       )
     );
@@ -145,54 +198,82 @@ export const CashierPOSScreen = () => {
           }}
         >
           <div style={{ padding: '12px 16px', borderBottom: '1px solid #e2e8f0', fontSize: '13px', fontWeight: 800, color: '#0f172a' }}>
-            TABLES AWAITING SETTLEMENT (2)
+            TABLES AWAITING SETTLEMENT ({settlementTables.length})
           </div>
 
           <div style={{ flex: 1, overflowY: 'auto', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div
-              onClick={() => setSelectedTableId('T08')}
-              style={{
-                padding: '12px',
-                borderRadius: '8px',
-                backgroundColor: selectedTableId === 'T08' ? '#ffffff' : '#f1f5f9',
-                border: selectedTableId === 'T08' ? '2px solid #0f766e' : '1px solid #cbd5e1',
-                cursor: 'pointer',
-                boxShadow: selectedTableId === 'T08' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 800, fontSize: '14px', color: '#0f172a' }}>Table 08</span>
-                <span style={{ backgroundColor: '#dcfce7', color: '#166534', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
-                  ALL SERVED
-                </span>
-              </div>
-              <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>Seated 1h 15m • Order #ORD-1045</div>
-              <div style={{ fontSize: '13px', fontWeight: 800, color: '#0f766e', marginTop: '6px' }}>
-                Subtotal: 350,000 VND
-              </div>
-            </div>
+            {settlementTables.map((tbl) => {
+              const isSelected = tbl.id === activeTableId;
+              const tableItems = getTableInvoiceItems(tbl.id);
+              const tblSubtotal = tableItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+              const tblHasCooking = tableItems.some((i) => i.status === 'Cooking' || i.status === 'Pending');
 
-            <div
-              onClick={() => setSelectedTableId('T03')}
-              style={{
-                padding: '12px',
-                borderRadius: '8px',
-                backgroundColor: selectedTableId === 'T03' ? '#ffffff' : '#f1f5f9',
-                border: selectedTableId === 'T03' ? '2px solid #ef4444' : '1px solid #cbd5e1',
-                cursor: 'pointer'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 800, fontSize: '14px', color: '#0f172a' }}>Table 03</span>
-                <span style={{ backgroundColor: '#ffedd5', color: '#9a3412', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
-                  COOKING (BLOCKED)
-                </span>
-              </div>
-              <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>Seated 0h 45m • Order #ORD-1047</div>
-              <div style={{ fontSize: '13px', fontWeight: 800, color: '#ef4444', marginTop: '6px' }}>
-                Subtotal: 820,000 VND
-              </div>
-            </div>
+              return (
+                <div
+                  key={tbl.id}
+                  onClick={() => setSelectedTableId(tbl.id)}
+                  style={{
+                    padding: '12px',
+                    borderRadius: '8px',
+                    backgroundColor: isSelected ? '#ffffff' : '#f1f5f9',
+                    border: isSelected
+                      ? tblHasCooking
+                        ? '2px solid #ef4444'
+                        : '2px solid #0f766e'
+                      : tbl.billRequested
+                      ? '2px solid #f59e0b'
+                      : '1px solid #cbd5e1',
+                    cursor: 'pointer',
+                    boxShadow: isSelected ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 800, fontSize: '14px', color: '#0f172a' }}>{tbl.name}</span>
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                      {tbl.billRequested && (
+                        <span
+                          style={{
+                            backgroundColor: '#fef3c7',
+                            color: '#b45309',
+                            fontSize: '9px',
+                            padding: '2px 5px',
+                            borderRadius: '4px',
+                            fontWeight: 800
+                          }}
+                        >
+                          BILL REQUESTED
+                        </span>
+                      )}
+                      <span
+                        style={{
+                          backgroundColor: tblHasCooking ? '#ffedd5' : '#dcfce7',
+                          color: tblHasCooking ? '#9a3412' : '#166534',
+                          fontSize: '10px',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontWeight: 700
+                        }}
+                      >
+                        {tblHasCooking ? 'COOKING (BLOCKED)' : 'ALL SERVED'}
+                      </span>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
+                    {tbl.note || (tbl.orderId ? `Order #${tbl.orderId}` : 'Active Session')}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '13px',
+                      fontWeight: 800,
+                      color: tblHasCooking ? '#ef4444' : '#0f766e',
+                      marginTop: '6px'
+                    }}
+                  >
+                    Subtotal: {tblSubtotal.toLocaleString()} VND
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

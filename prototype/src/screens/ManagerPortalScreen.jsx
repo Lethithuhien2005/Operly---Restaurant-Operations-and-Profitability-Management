@@ -8,11 +8,15 @@ export const ManagerPortalScreen = () => {
     setManagerTab,
     recipeBOM,
     updateBOMQuantity,
+    dailyGrossSales,
+    dailyTablesServed,
     showToast
   } = useMockStore();
 
   const metrics = MOCK_MANAGER_METRICS;
   const forecast = MOCK_AI_FORECAST;
+
+  const liveAvgTicket = dailyTablesServed > 0 ? Math.round(dailyGrossSales / dailyTablesServed) : metrics.avgTicket;
 
   // Calculate BOM totals
   const totalBOMCost = recipeBOM.ingredients.reduce((acc, ing) => acc + ing.lineCost, 0);
@@ -104,7 +108,7 @@ export const ManagerPortalScreen = () => {
                 <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px' }}>
                   <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>GROSS SALES</div>
                   <div style={{ fontSize: '20px', fontWeight: 800, color: '#0f766e', marginTop: '4px' }}>
-                    {metrics.grossSales.toLocaleString()} VND
+                    {dailyGrossSales.toLocaleString()} VND
                   </div>
                   <div style={{ fontSize: '10px', color: '#16a34a', marginTop: '2px' }}>+12% vs last Saturday</div>
                 </div>
@@ -112,7 +116,7 @@ export const ManagerPortalScreen = () => {
                 <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px' }}>
                   <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>TABLES SERVED</div>
                   <div style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', marginTop: '4px' }}>
-                    {metrics.tablesServed} Tables
+                    {dailyTablesServed} Tables
                   </div>
                   <div style={{ fontSize: '10px', color: '#64748b', marginTop: '2px' }}>Avg Turnover: 52 mins</div>
                 </div>
@@ -120,7 +124,7 @@ export const ManagerPortalScreen = () => {
                 <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px' }}>
                   <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>AVG TICKET (SPEND)</div>
                   <div style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', marginTop: '4px' }}>
-                    {metrics.avgTicket.toLocaleString()} VND
+                    {liveAvgTicket.toLocaleString()} VND
                   </div>
                   <div style={{ fontSize: '10px', color: '#16a34a', marginTop: '2px' }}>Cover size: 3.4 diners</div>
                 </div>

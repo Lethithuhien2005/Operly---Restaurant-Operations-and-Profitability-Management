@@ -7,6 +7,8 @@ export const WaiterFloorScreen = () => {
     readyDishesList,
     markItemServed,
     resetTableToAvailable,
+    serviceCalls,
+    dismissServiceCall,
     showToast
   } = useMockStore();
 
@@ -81,6 +83,66 @@ export const WaiterFloorScreen = () => {
 
       {/* Interactive Floor Map Canvas */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '14px' }}>
+        {/* Active Customer Service Requests Banner (Task B) */}
+        {serviceCalls.length > 0 && (
+          <div
+            style={{
+              backgroundColor: '#fef2f2',
+              border: '1px solid #fecdd3',
+              borderRadius: '10px',
+              padding: '10px 12px',
+              marginBottom: '14px',
+              boxShadow: '0 2px 4px rgba(239, 68, 68, 0.08)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 800, color: '#991b1b', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>🙋</span>
+                <span>CUSTOMER CALLS ({serviceCalls.length})</span>
+              </span>
+              <span style={{ fontSize: '10px', color: '#b91c1c', fontWeight: 600 }}>Assistance Requested</span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {serviceCalls.map((call) => (
+                <div
+                  key={call.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #fca5a5',
+                    borderRadius: '6px',
+                    padding: '8px 10px'
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a' }}>
+                      {call.tableId} • {call.text}
+                    </div>
+                    <div style={{ fontSize: '10px', color: '#64748b' }}>Called at {call.time}</div>
+                  </div>
+                  <button
+                    onClick={() => dismissServiceCall(call.id)}
+                    style={{
+                      backgroundColor: '#16a34a',
+                      color: '#ffffff',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      minHeight: '28px'
+                    }}
+                  >
+                    ✓ Acknowledge
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div
           style={{
             display: 'grid',
@@ -91,6 +153,7 @@ export const WaiterFloorScreen = () => {
           {tables.map((tbl) => {
             const badge = getStatusBadge(tbl.status);
             const isSelected = tbl.id === selectedTableId;
+            const hasPendingCall = serviceCalls.some((c) => c.tableId === tbl.id);
 
             return (
               <div
@@ -98,7 +161,7 @@ export const WaiterFloorScreen = () => {
                 onClick={() => setSelectedTableId(tbl.id)}
                 style={{
                   backgroundColor: isSelected ? '#f0fdf4' : '#ffffff',
-                  border: isSelected ? '2px solid #0f766e' : `1px solid ${badge.border}`,
+                  border: isSelected ? '2px solid #0f766e' : hasPendingCall ? '2px solid #ef4444' : `1px solid ${badge.border}`,
                   borderRadius: '12px',
                   padding: '12px',
                   cursor: 'pointer',
@@ -108,18 +171,48 @@ export const WaiterFloorScreen = () => {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '15px', fontWeight: 800, color: '#0f172a' }}>{tbl.id}</span>
-                  <span
-                    style={{
-                      backgroundColor: badge.bg,
-                      color: badge.text,
-                      fontSize: '9px',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      fontWeight: 700
-                    }}
-                  >
-                    {tbl.status.toUpperCase()}
-                  </span>
+                  <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                    {tbl.billRequested && (
+                      <span
+                        style={{
+                          backgroundColor: '#fef3c7',
+                          color: '#b45309',
+                          fontSize: '8px',
+                          padding: '2px 4px',
+                          borderRadius: '4px',
+                          fontWeight: 800
+                        }}
+                      >
+                        BILL REQ
+                      </span>
+                    )}
+                    {hasPendingCall && (
+                      <span
+                        style={{
+                          backgroundColor: '#fee2e2',
+                          color: '#991b1b',
+                          fontSize: '8px',
+                          padding: '2px 4px',
+                          borderRadius: '4px',
+                          fontWeight: 800
+                        }}
+                      >
+                        🙋 CALL
+                      </span>
+                    )}
+                    <span
+                      style={{
+                        backgroundColor: badge.bg,
+                        color: badge.text,
+                        fontSize: '9px',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontWeight: 700
+                      }}
+                    >
+                      {tbl.status.toUpperCase()}
+                    </span>
+                  </div>
                 </div>
 
                 <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useMockStore } from '../store/mockStore';
 
 export const CustomerProgressScreen = () => {
-  const { kdsTickets, setCustomerScreen, showToast } = useMockStore();
+  const { kdsTickets, setCustomerScreen, addServiceCall, requestBill } = useMockStore();
 
   const [waiterCallCooldown, setWaiterCallCooldown] = useState(0);
   const [billCallCooldown, setBillCallCooldown] = useState(0);
@@ -29,22 +29,23 @@ export const CustomerProgressScreen = () => {
 
   const handleCallWaiter = () => {
     if (waiterCallCooldown > 0) return;
-    showToast('Ding! Floor Waiter notified to visit Table 05');
+    addServiceCall('T05', 'Diner assistance requested at Table 05');
     setWaiterCallCooldown(30);
   };
 
   const handleRequestBill = () => {
     if (billCallCooldown > 0) return;
-    showToast('Cashier desk received Pre-print Bill request for Table 05');
+    requestBill('T05');
     setBillCallCooldown(30);
   };
 
-  // Find Table 05 ticket
-  const tableTicket = kdsTickets.find((t) => t.tableId === 'T05') || kdsTickets[0];
-  const items = tableTicket ? tableTicket.items : [];
+  // Find all Table 05 tickets (initial order + any additional orders placed)
+  const tableTickets = kdsTickets.filter((t) => t.tableId === 'T05');
+  const items = tableTickets.length > 0 ? tableTickets.flatMap((t) => t.items) : (kdsTickets[0]?.items || []);
+  const latestTicket = tableTickets[tableTickets.length - 1] || kdsTickets[0];
 
-  // Determine overall order stage
-  const hasCooking = items.some((i) => i.status === 'Cooking');
+  // Determine overall order stage across all ordered items
+  const hasCooking = items.some((i) => i.status === 'Cooking' || i.status === 'Pending');
   const hasReady = items.some((i) => i.status === 'Ready');
   const allServed = items.length > 0 && items.every((i) => i.status === 'Served');
 
@@ -58,8 +59,8 @@ export const CustomerProgressScreen = () => {
       <div style={{ backgroundColor: '#0f766e', color: '#fff', padding: '14px 16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontWeight: 800, fontSize: '16px' }}>Table 05 | Order #{tableTicket?.orderId || 'ORD-1048'}</div>
-            <div style={{ fontSize: '11px', opacity: 0.85 }}>Placed at {tableTicket?.placedAt || '19:30'} • Real-time tracking</div>
+            <div style={{ fontWeight: 800, fontSize: '16px' }}>Table 05 | Order #{latestTicket?.orderId || 'ORD-1048'}</div>
+            <div style={{ fontSize: '11px', opacity: 0.85 }}>Placed at {latestTicket?.placedAt || '19:30'} • Real-time tracking</div>
           </div>
           <button
             onClick={() => setCustomerScreen('menu')}
