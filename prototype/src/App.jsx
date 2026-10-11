@@ -3,6 +3,8 @@ import { useMockStore } from './store/mockStore';
 import { RoleSwitcherBar } from './components/RoleSwitcherBar';
 import { CustomerQRMenuScreen } from './screens/CustomerQRMenuScreen';
 import { CustomerProgressScreen } from './screens/CustomerProgressScreen';
+import { CustomerReservationScreen } from './screens/CustomerReservationScreen';
+import { CustomerProfileScreen } from './screens/CustomerProfileScreen';
 import { KitchenKDSScreen } from './screens/KitchenKDSScreen';
 import { WaiterFloorScreen } from './screens/WaiterFloorScreen';
 import { CashierPOSScreen } from './screens/CashierPOSScreen';
@@ -20,7 +22,15 @@ export const MainApp = () => {
       {/* Main Viewport Container */}
       <main className="proto-viewport-wrapper">
         {activeRole === 'customer' && (
-          customerScreen === 'menu' ? <CustomerQRMenuScreen /> : <CustomerProgressScreen />
+          customerScreen === 'menu' ? (
+            <CustomerQRMenuScreen />
+          ) : customerScreen === 'progress' ? (
+            <CustomerProgressScreen />
+          ) : customerScreen === 'reserve' ? (
+            <CustomerReservationScreen />
+          ) : (
+            <CustomerProfileScreen />
+          )
         )}
 
         {activeRole === 'kitchen' && <KitchenKDSScreen />}

@@ -32,7 +32,7 @@ export const RoleSwitcherBar = () => {
           <span>📱</span>
           <span>Customer QR</span>
           <span style={{ fontSize: '10px', opacity: 0.75 }}>
-            ({customerScreen === 'menu' ? 'SCR-CUST-03' : 'SCR-CUST-04'})
+            ({customerScreen === 'menu' ? 'SCR-CUST-03' : customerScreen === 'progress' ? 'SCR-CUST-04' : customerScreen === 'reserve' ? 'SCR-CUST-01' : 'Loyalty'})
           </span>
         </button>
 

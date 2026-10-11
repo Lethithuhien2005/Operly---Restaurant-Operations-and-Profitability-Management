@@ -127,8 +127,125 @@ export const MOCK_INITIAL_TABLES = [
   { id: 'T08', name: 'Table 08', seats: 4, status: 'Available', activeTransactionId: null, orderId: null, billAmount: null, billRequested: false, checkoutQueue: false, note: null }
 ];
 
-// Initial KDS Tickets matching SCR-KDS-01 (Clean initial queue)
-export const MOCK_INITIAL_KDS_TICKETS = [];
+// Initial KDS Tickets matching SCR-KDS-01 (Chronological FIFO Preparation Queue)
+export const MOCK_INITIAL_KDS_TICKETS = [
+  {
+    ticketId: '104',
+    tableId: 'T05',
+    orderId: 'ORD-1048',
+    placedAt: '19:30',
+    elapsedMinutes: 12,
+    priority: 'Dine-In',
+    station: 'Station 3 (Hot Line)',
+    items: [
+      {
+        id: 'ITEM-104-1',
+        dishId: 'DISH-101',
+        name: 'Seafood Spicy Hotpot',
+        quantity: 1,
+        modifier: 'Less Spicy',
+        status: 'Cooking',
+        station: 'Station 3 (Hot Line)'
+      },
+      {
+        id: 'ITEM-104-2',
+        dishId: 'DISH-104',
+        name: 'US Beef Slices',
+        quantity: 2,
+        modifier: 'Default',
+        status: 'Cooking',
+        station: 'Station 3 (Hot Line)'
+      }
+    ]
+  },
+  {
+    ticketId: '105',
+    tableId: 'T03',
+    orderId: 'ORD-1047',
+    placedAt: '19:32',
+    elapsedMinutes: 10,
+    priority: 'Dine-In',
+    station: 'Station 2 (Grill)',
+    items: [
+      {
+        id: 'ITEM-105-1',
+        dishId: 'DISH-102',
+        name: 'Grilled Ribeye Steak',
+        quantity: 2,
+        modifier: 'Medium Rare',
+        status: 'Cooking',
+        station: 'Station 2 (Grill)'
+      },
+      {
+        id: 'ITEM-105-2',
+        dishId: 'DISH-106',
+        name: 'Spring Rolls Platter',
+        quantity: 1,
+        modifier: 'Crispy Extra',
+        status: 'Pending',
+        station: 'Station 1 (Pantry)'
+      }
+    ]
+  },
+  {
+    ticketId: '106',
+    tableId: 'T02',
+    orderId: 'ORD-1046',
+    placedAt: '19:35',
+    elapsedMinutes: 7,
+    priority: 'VIP',
+    station: 'Station 1 (Pantry)',
+    items: [
+      {
+        id: 'ITEM-106-1',
+        dishId: 'DISH-106',
+        name: 'Spring Rolls Platter',
+        quantity: 1,
+        modifier: 'No Cilantro',
+        status: 'Pending',
+        station: 'Station 1 (Pantry)'
+      },
+      {
+        id: 'ITEM-106-2',
+        dishId: 'DISH-105',
+        name: 'Iced Herbal Tea',
+        quantity: 2,
+        modifier: 'Less Sweet',
+        status: 'Ready',
+        station: 'Station 4 (Bar)'
+      }
+    ]
+  },
+  {
+    ticketId: '107',
+    tableId: 'T08',
+    orderId: 'ORD-1045',
+    placedAt: '19:20',
+    elapsedMinutes: 16,
+    priority: 'Rush',
+    station: 'Station 2 (Grill)',
+    items: [
+      {
+        id: 'ITEM-107-1',
+        dishId: 'DISH-103',
+        name: 'Grilled Wagyu Skewers (x4)',
+        quantity: 1,
+        modifier: 'Extra Teriyaki Glaze',
+        status: 'Cooking',
+        station: 'Station 2 (Grill)'
+      },
+      {
+        id: 'ITEM-107-2',
+        dishId: 'DISH-107',
+        name: 'Fresh Atlantic Salmon Fillet',
+        quantity: 1,
+        modifier: 'Lemon Butter on side',
+        status: 'Cooking',
+        station: 'Station 2 (Grill)'
+      }
+    ]
+  }
+];
 
 // Loyalty Members for POS (FR-011)
 export const MOCK_MEMBERS = {
@@ -147,6 +264,32 @@ export const MOCK_MEMBERS = {
     pointsBalance: 150
   }
 };
+
+// Initial Table Reservations matching SCR-CUST-01 & SCR-CUST-02
+export const MOCK_INITIAL_RESERVATIONS = [
+  {
+    id: 'RSV-01',
+    code: 'BK-8942',
+    customerName: 'Lan Anh Nguyen',
+    phone: '0912345678',
+    email: 'lananh.nguyen@example.com',
+    partySize: 4,
+    date: '2026-09-26',
+    time: '19:00',
+    area: 'Indoor Dining Room',
+    tableId: 'T03',
+    specialRequests: 'Window seat preferred, birthday dinner',
+    preOrderItems: [
+      { dishId: 'DISH-101', name: 'Seafood Spicy Hotpot', quantity: 1, price: 280000, modifier: 'Less Spicy' },
+      { dishId: 'DISH-105', name: 'Iced Herbal Tea', quantity: 4, price: 25000, modifier: 'Less Sweet' }
+    ],
+    preOrderTotal: 380000,
+    depositRequired: 0,
+    depositPaid: 0,
+    status: 'Confirmed',
+    createdAt: '2026-09-24 14:20'
+  }
+];
 
 // Coupons for POS (FR-008, 40% cap policy)
 export const MOCK_COUPONS = {
