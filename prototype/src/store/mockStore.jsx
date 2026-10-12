@@ -8,7 +8,8 @@ import {
   MOCK_RECIPE_BOM,
   MOCK_STAFF_ACCOUNTS,
   MOCK_AUDIT_LOGS,
-  MOCK_MANAGER_METRICS
+  MOCK_MANAGER_METRICS,
+  MOCK_INITIAL_RESERVATIONS
 } from '../mock/data';
 
 const MockStoreContext = createContext(null);
@@ -16,8 +17,12 @@ const MockStoreContext = createContext(null);
 export const MockStoreProvider = ({ children }) => {
   // Navigation & Role Harness (Evaluator mechanism across all 6 roles)
   const [activeRole, setActiveRole] = useState('customer'); // 'customer' | 'kitchen' | 'waiter' | 'cashier' | 'manager' | 'admin'
-  const [customerScreen, setCustomerScreen] = useState('menu'); // 'menu' (SCR-CUST-03) | 'progress' (SCR-CUST-04)
+  const [customerScreen, setCustomerScreen] = useState('menu'); // 'menu' (SCR-CUST-03) | 'progress' (SCR-CUST-04) | 'reserve' (SCR-CUST-01) | 'profile'
   
+  // Customer Reservations & Loyalty Member Profile
+  const [reservations, setReservations] = useState(MOCK_INITIAL_RESERVATIONS);
+  const [activeMember, setActiveMember] = useState(null); // null = Guest Mode, or member object
+
   // Manager Sub-Tabs (SCR-MGR-01 vs SCR-MGR-02)
   const [managerTab, setManagerTab] = useState('forecast'); // 'forecast' | 'bom'
   const [recipeBOM, setRecipeBOM] = useState(MOCK_RECIPE_BOM);
@@ -113,27 +118,122 @@ export const MockStoreProvider = ({ children }) => {
     setAuditLogs((logs) => [newLog, ...logs]);
   };
 
-  // Cart Actions
-  const addToCart = (dish, modifierName = 'Default', addedBy = 'Guest-A (You)') => {
+  // Enhanced Shared Table Cart Actions (SCR-CUST-03)
+  const addToCart = (dish, modifierName = 'Default', addedBy = 'Guest-A (You)', quantity = 1, specialNotes = '') => {
     if (dish.is86) {
       showToast(`Cannot add "${dish.name}": Item is 86'd out of stock`);
       return;
     }
-    const newItem = {
-      id: `CART-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      dishId: dish.id,
-      name: dish.name,
-      price: dish.price,
-      quantity: 1,
-      modifier: modifierName,
-      addedBy
-    };
-    setCartItems((prev) => [...prev, newItem]);
-    showToast(`WebSocket: Added "${dish.name}" to Table 05 shared cart`);
+    setCartItems((prev) => {
+      const existingIdx = prev.findIndex(
+        (i) =>
+          i.dishId === dish.id &&
+          i.modifier === modifierName &&
+          (i.specialNotes || '') === (specialNotes || '') &&
+          i.addedBy === addedBy
+      );
+      if (existingIdx >= 0) {
+        const updated = [...prev];
+        updated[existingIdx] = {
+          ...updated[existingIdx],
+          quantity: updated[existingIdx].quantity + quantity
+        };
+        return updated;
+      }
+      const newItem = {
+        id: `CART-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+        dishId: dish.id,
+        name: dish.name,
+        price: dish.price,
+        quantity,
+        modifier: modifierName,
+        specialNotes,
+        addedBy
+      };
+      return [...prev, newItem];
+    });
+    showToast(`WebSocket: Added ${quantity > 1 ? `${quantity}x ` : ''}"${dish.name}" to Table 05 shared cart`);
+  };
+
+  const updateCartItemQuantity = (cartItemId, delta) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) => {
+          if (item.id !== cartItemId) return item;
+          const newQty = item.quantity + delta;
+          return newQty > 0 ? { ...item, quantity: newQty } : null;
+        })
+        .filter(Boolean)
+    );
   };
 
   const removeFromCart = (cartItemId) => {
     setCartItems((prev) => prev.filter((item) => item.id !== cartItemId));
+    showToast('Item removed from shared table cart');
+  };
+
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  // Simulate Multi-Diner Live Cart Sync (Guest-B adding item over WebSocket)
+  const simulateGuestBOrder = () => {
+    const candidateDishes = menuItems.filter((d) => !d.is86 && d.id !== 'DISH-101');
+    const dish = candidateDishes[Math.floor(Math.random() * candidateDishes.length)] || menuItems[0];
+    addToCart(dish, 'Default', 'Guest-B', 1, '');
+    showToast(`WebSocket: Guest-B added "${dish.name}" to the shared table cart.`);
+  };
+
+  // Loyalty & Member Mode Actions
+  const loginMember = (phone) => {
+    const member = MOCK_MEMBERS[phone];
+    if (member) {
+      setActiveMember(member);
+      showToast(`Welcome back, ${member.name}! ${member.tier} Member discount applied.`);
+      return true;
+    } else {
+      showToast(`Phone number "${phone}" not registered. Continuing in Guest Mode.`);
+      return false;
+    }
+  };
+
+  const logoutMember = () => {
+    setActiveMember(null);
+    showToast('Switched to Guest Mode (Anonymous Table Session).');
+  };
+
+  // Table Reservation Actions (SCR-CUST-01 & SCR-CUST-02)
+  const createReservation = (newRes) => {
+    const code = `BK-${Math.floor(1000 + Math.random() * 9000)}`;
+    const created = {
+      ...newRes,
+      id: `RSV-${Date.now()}`,
+      code,
+      createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      status: 'Confirmed'
+    };
+    setReservations((prev) => [created, ...prev]);
+
+    // Append to system audit trail
+    const audit = {
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      actorId: 'CUST-WEB-PORTAL',
+      actionCategory: 'RESERVATION_CREATED',
+      clientIp: '192.168.1.105',
+      details: `Reservation ${code} confirmed for ${newRes.customerName} (${newRes.partySize} guests, Table ${newRes.tableId || 'TBD'})`
+    };
+    setAuditLogs((logs) => [audit, ...logs]);
+
+    showToast(`Reservation ${code} confirmed! SMS confirmation sent to ${newRes.phone}.`);
+    return created;
+  };
+
+  const cancelReservation = (resId) => {
+    setReservations((prev) =>
+      prev.map((r) => (r.id === resId ? { ...r, status: 'Cancelled' } : r))
+    );
+    showToast('Reservation has been cancelled.');
   };
 
   const submitCustomerOrder = () => {
@@ -234,6 +334,145 @@ export const MockStoreProvider = ({ children }) => {
       })
     );
     showToast('Partial Bump 1/2 complete. 1 Ready item sent to Waiter pass');
+  };
+
+  // Bulk bump all items on a ticket to target status (Cooking or Ready)
+  const bumpAllTicketItems = (ticketId, targetStatus = 'Ready') => {
+    setKdsTickets((prev) =>
+      prev.map((ticket) => {
+        if (ticket.ticketId !== ticketId) return ticket;
+        return {
+          ...ticket,
+          items: ticket.items.map((item) => {
+            if (item.status === 'Served' || item.status === 'Spoiled') return item;
+            return { ...item, status: targetStatus };
+          })
+        };
+      })
+    );
+
+    if (targetStatus === 'Ready') {
+      showToast(`All items on Ticket #${ticketId} bumped to READY! Waiter alerted.`);
+    } else {
+      showToast(`All items on Ticket #${ticketId} bumped to ${targetStatus}.`);
+    }
+  };
+
+  // Kitchen Spoilage Logger & Re-fire handler (SCR-KDS-03 & Journey 3 Step 7)
+  const logSpoilage = (ticketId, itemId, reason, costImpact = 65000, notes = '', shouldRefire = true) => {
+    let affectedItemName = '';
+    setKdsTickets((prev) =>
+      prev.map((ticket) => {
+        if (ticket.ticketId !== ticketId) return ticket;
+        const target = ticket.items.find((i) => i.id === itemId);
+        if (!target) return ticket;
+        affectedItemName = target.name;
+
+        if (shouldRefire) {
+          return {
+            ...ticket,
+            items: ticket.items.map((item) => {
+              if (item.id !== itemId) return item;
+              return {
+                ...item,
+                status: 'Cooking',
+                modifier: item.modifier && item.modifier !== 'Default'
+                  ? `[RE-FIRE: ${reason}] ${item.modifier}`
+                  : `[RE-FIRE: ${reason}]`
+              };
+            })
+          };
+        } else {
+          return {
+            ...ticket,
+            items: ticket.items.map((item) => {
+              if (item.id !== itemId) return item;
+              return { ...item, status: 'Spoiled' };
+            })
+          };
+        }
+      })
+    );
+
+    // Append to system immutable Audit Log
+    const newAudit = {
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      actorId: 'KCH-CHEF-01',
+      actionCategory: 'KITCHEN_SPOILAGE',
+      clientIp: '192.168.1.42',
+      details: `Ticket #${ticketId} - ${affectedItemName || 'Dish'} | Reason: ${reason} | Waste loss: ${costImpact.toLocaleString()} VND | Refire: ${shouldRefire ? 'Yes' : 'No'} | Notes: ${notes || 'None'}`
+    };
+    setAuditLogs((logs) => [newAudit, ...logs]);
+
+    showToast(
+      `Spoilage logged: ${affectedItemName} (${reason}). Waste: ${costImpact.toLocaleString()} VND. ${
+        shouldRefire ? 'Re-fire order placed on station.' : 'Item written off.'
+      }`
+    );
+  };
+
+  // Simulate new incoming ticket from dining room / QR ordering
+  const addSimulatedTicket = () => {
+    const tableChoices = ['T01', 'T04', 'T06', 'T02', 'T08'];
+    const randomTable = tableChoices[Math.floor(Math.random() * tableChoices.length)];
+    const newId = (100 + kdsTickets.length + 1).toString();
+    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const sampleOrders = [
+      {
+        dishId: 'DISH-101',
+        name: 'Seafood Spicy Hotpot',
+        quantity: 1,
+        modifier: 'Extra Spicy',
+        station: 'Station 3 (Hot Line)'
+      },
+      {
+        dishId: 'DISH-103',
+        name: 'Grilled Wagyu Skewers (x4)',
+        quantity: 2,
+        modifier: 'Teriyaki Glaze',
+        station: 'Station 2 (Grill)'
+      },
+      {
+        dishId: 'DISH-105',
+        name: 'Iced Herbal Tea',
+        quantity: 2,
+        modifier: 'Default',
+        station: 'Station 4 (Bar)'
+      },
+      {
+        dishId: 'DISH-106',
+        name: 'Spring Rolls Platter',
+        quantity: 1,
+        modifier: 'Crispy Extra',
+        station: 'Station 1 (Pantry)'
+      }
+    ];
+
+    const randomItems = sampleOrders.slice(0, Math.floor(Math.random() * 2) + 1).map((s, idx) => ({
+      id: `ITEM-${Date.now()}-${idx}`,
+      dishId: s.dishId,
+      name: s.name,
+      quantity: s.quantity,
+      modifier: s.modifier,
+      status: 'Pending',
+      station: s.station
+    }));
+
+    const newTicket = {
+      ticketId: newId,
+      tableId: randomTable,
+      orderId: `ORD-${1050 + kdsTickets.length}`,
+      placedAt: currentTime,
+      elapsedMinutes: 0,
+      priority: Math.random() > 0.6 ? 'VIP' : 'Dine-In',
+      station: randomItems[0]?.station || 'Station 3 (Hot Line)',
+      items: randomItems
+    };
+
+    setKdsTickets((prev) => [...prev, newTicket]);
+    showToast(`🔔 Ticket #${newId} for Table ${randomTable} arrived at KDS!`);
   };
 
   // 86 Out of stock toggle (SCR-KDS-02)
@@ -365,6 +604,8 @@ export const MockStoreProvider = ({ children }) => {
     setCustomerScreen('menu');
     setManagerTab('forecast');
     setAdminTab('rbac');
+    setReservations(MOCK_INITIAL_RESERVATIONS);
+    setActiveMember(null);
     showToast('Prototype state reset to baseline mock data.');
   };
 
@@ -375,6 +616,8 @@ export const MockStoreProvider = ({ children }) => {
         setActiveRole,
         customerScreen,
         setCustomerScreen,
+        reservations,
+        activeMember,
         managerTab,
         setManagerTab,
         recipeBOM,
@@ -386,13 +629,23 @@ export const MockStoreProvider = ({ children }) => {
         toggleStaffStatus,
         cartItems,
         addToCart,
+        updateCartItemQuantity,
         removeFromCart,
+        clearCart,
+        simulateGuestBOrder,
+        loginMember,
+        logoutMember,
+        createReservation,
+        cancelReservation,
         submitCustomerOrder,
         tables,
         setTables,
         kdsTickets,
         advanceTicketItemStatus,
         partialBumpItem,
+        bumpAllTicketItems,
+        logSpoilage,
+        addSimulatedTicket,
         menuItems,
         toggle86Item,
         readyDishesList,
