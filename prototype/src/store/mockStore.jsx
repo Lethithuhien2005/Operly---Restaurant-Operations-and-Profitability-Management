@@ -9,6 +9,8 @@ import {
   MOCK_STAFF_ACCOUNTS,
   MOCK_AUDIT_LOGS,
   MOCK_MANAGER_METRICS,
+  MOCK_MANAGER_APPROVALS,
+  MOCK_TEAM_DUTY_ROSTER,
   MOCK_INITIAL_RESERVATIONS
 } from '../mock/data';
 
@@ -23,8 +25,12 @@ export const MockStoreProvider = ({ children }) => {
   const [reservations, setReservations] = useState(MOCK_INITIAL_RESERVATIONS);
   const [activeMember, setActiveMember] = useState(null); // null = Guest Mode, or member object
 
-  // Manager Sub-Tabs (SCR-MGR-01 vs SCR-MGR-02)
-  const [managerTab, setManagerTab] = useState('forecast'); // 'forecast' | 'bom'
+  // Manager Operational Views & State (Overview/Approvals, Team Roster, BI Reports & Recipe BOM)
+  const [managerTab, setManagerTab] = useState('overview'); // 'overview' | 'team' | 'reports' | 'forecast' | 'bom'
+  const [managerApprovals, setManagerApprovals] = useState(MOCK_MANAGER_APPROVALS);
+  const [teamRoster, setTeamRoster] = useState(MOCK_TEAM_DUTY_ROSTER);
+  const [selectedApproval, setSelectedApproval] = useState(null);
+  const [isApprovalDrawerOpen, setIsApprovalDrawerOpen] = useState(false);
   const [recipeBOM, setRecipeBOM] = useState(MOCK_RECIPE_BOM);
 
   // Administrator Sub-Tabs (SCR-ADM-01 vs SCR-ADM-02)
@@ -555,6 +561,170 @@ export const MockStoreProvider = ({ children }) => {
     });
   };
 
+  // Manager Approval Actions (Optimistic UI + Toast Feedback)
+  const approveRequest = (id, notes = '') => {
+    const target = managerApprovals.find((a) => a.id === id);
+    if (!target) return;
+    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const decisionNotes = notes.trim() || 'Approved by Duty Manager';
+
+    setManagerApprovals((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              status: 'Approved',
+              processedAt: nowTime,
+              processedBy: 'Nam Hoang (Manager)',
+              notes: decisionNotes
+            }
+          : item
+      )
+    );
+
+    setSelectedApproval((prev) =>
+      prev && prev.id === id
+        ? {
+            ...prev,
+            status: 'Approved',
+            processedAt: nowTime,
+            processedBy: 'Nam Hoang (Manager)',
+            notes: decisionNotes
+          }
+        : prev
+    );
+
+    // Append to immutable audit trail (SCR-ADM-02)
+    const newLog = {
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      actorId: 'MGR-NAM-01',
+      actionCategory: 'MANAGER_APPROVAL',
+      clientIp: '192.168.1.15',
+      details: `Approved ${target.type} (${target.title}) | Urgency: ${target.urgency} | Notes: ${decisionNotes}`
+    };
+    setAuditLogs((logs) => [newLog, ...logs]);
+
+    showToast(`✓ Request ${target.type} (${target.id}) approved successfully!`);
+  };
+
+  const rejectRequest = (id, notes = '') => {
+    const target = managerApprovals.find((a) => a.id === id);
+    if (!target) return;
+    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const decisionNotes = notes.trim() || 'Rejected by Duty Manager (Policy Violation)';
+
+    setManagerApprovals((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              status: 'Rejected',
+              processedAt: nowTime,
+              processedBy: 'Nam Hoang (Manager)',
+              notes: decisionNotes
+            }
+          : item
+      )
+    );
+
+    setSelectedApproval((prev) =>
+      prev && prev.id === id
+        ? {
+            ...prev,
+            status: 'Rejected',
+            processedAt: nowTime,
+            processedBy: 'Nam Hoang (Manager)',
+            notes: decisionNotes
+          }
+        : prev
+    );
+
+    const newLog = {
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      actorId: 'MGR-NAM-01',
+      actionCategory: 'MANAGER_REJECTION',
+      clientIp: '192.168.1.15',
+      details: `Rejected ${target.type} (${target.title}) | Notes: ${decisionNotes}`
+    };
+    setAuditLogs((logs) => [newLog, ...logs]);
+
+    showToast(`✕ Request ${target.type} (${target.id}) rejected.`);
+  };
+
+  const openApprovalDrawer = (approval) => {
+    setSelectedApproval(approval);
+    setIsApprovalDrawerOpen(true);
+  };
+
+  const closeApprovalDrawer = () => {
+    setIsApprovalDrawerOpen(false);
+    setSelectedApproval(null);
+  };
+
+  // Manager Duty Roster Actions
+  const updateStaffShiftStatus = (staffId, newStatus) => {
+    setTeamRoster((prev) =>
+      prev.map((stf) => (stf.id === staffId ? { ...stf, status: newStatus } : stf))
+    );
+    showToast(`Staff ${staffId} status updated to: ${newStatus}`);
+  };
+
+  // Simulate incoming urgent approval request
+  const addSimulatedUrgentApproval = () => {
+    const newId = `APP-${Math.floor(105 + Math.random() * 90)}`;
+    const samples = [
+      {
+        type: 'Void Dish',
+        category: 'Billing',
+        urgency: 'High',
+        title: 'Void Dish: Vegan Mushroom Hotpot (Table T07)',
+        requester: 'Van B',
+        requesterRole: 'Waiter',
+        table: 'Table 07',
+        amount: 220000,
+        reason: 'Guest changed selection to Seafood Hotpot before cooking began',
+        details: 'Order #ORD-1049. Kitchen confirmed preparation not started; zero food waste incurred.'
+      },
+      {
+        type: 'Discount Override',
+        category: 'Policy',
+        urgency: 'Critical',
+        title: 'VIP Birthday Voucher 45% Override (Table T02)',
+        requester: 'Mai Le',
+        requesterRole: 'Cashier',
+        table: 'Table 02',
+        amount: 540000,
+        reason: 'VIP Diamond member birthday month voucher attached',
+        details: 'Exceeds standard 40% discount cap (PRD Rule 7). Requires Manager passcode override to release POS settlement.'
+      },
+      {
+        type: 'Urgent Procurement',
+        category: 'Inventory',
+        urgency: 'Critical',
+        title: 'Urgent Requisition: 10 Bottles Red Wine Cabernet',
+        requester: 'Thao Vy Pham',
+        requesterRole: 'Bartender',
+        supplier: 'Wine Import VN',
+        amount: 3200000,
+        reason: 'Bar stock depleted due to 2 unexpected walk-in banquet tables',
+        details: 'Supplier dispatch ready within 30 minutes upon purchase authorization.'
+      }
+    ];
+
+    const pick = samples[Math.floor(Math.random() * samples.length)];
+    const newReq = {
+      ...pick,
+      id: newId,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      status: 'Pending'
+    };
+
+    setManagerApprovals((prev) => [newReq, ...prev]);
+    showToast(`⚡ Manager Alert: Incoming urgent ${pick.type} request (${newId})!`);
+  };
+
   // Administrator Actions (SCR-ADM-01 & SCR-ADM-02)
   const toggleStaffStatus = (staffId) => {
     setStaffAccounts((prev) =>
@@ -602,7 +772,11 @@ export const MockStoreProvider = ({ children }) => {
     setDailyGrossSales(MOCK_MANAGER_METRICS.grossSales);
     setDailyTablesServed(MOCK_MANAGER_METRICS.tablesServed);
     setCustomerScreen('menu');
-    setManagerTab('forecast');
+    setManagerTab('overview');
+    setManagerApprovals(MOCK_MANAGER_APPROVALS);
+    setTeamRoster(MOCK_TEAM_DUTY_ROSTER);
+    setSelectedApproval(null);
+    setIsApprovalDrawerOpen(false);
     setAdminTab('rbac');
     setReservations(MOCK_INITIAL_RESERVATIONS);
     setActiveMember(null);
@@ -620,6 +794,16 @@ export const MockStoreProvider = ({ children }) => {
         activeMember,
         managerTab,
         setManagerTab,
+        managerApprovals,
+        teamRoster,
+        selectedApproval,
+        isApprovalDrawerOpen,
+        approveRequest,
+        rejectRequest,
+        openApprovalDrawer,
+        closeApprovalDrawer,
+        updateStaffShiftStatus,
+        addSimulatedUrgentApproval,
         recipeBOM,
         updateBOMQuantity,
         adminTab,
