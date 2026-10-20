@@ -118,13 +118,15 @@ export const MOCK_AI_PAIRINGS = {
 
 // Floor Layout Tables matching SCR-WAIT-01
 export const MOCK_INITIAL_TABLES = [
-  { id: 'T01', name: 'Table 01', seats: 4, status: 'Available', orderId: null },
-  { id: 'T02', name: 'Table 02', seats: 2, status: 'Occupied', orderId: 'ORD-1046', billAmount: 320000, unservedItems: 0 },
-  { id: 'T03', name: 'Table 03', seats: 4, status: 'Occupied', orderId: 'ORD-1047', billAmount: 820000, unservedItems: 1, note: 'Cooking (12m)' },
-  { id: 'T04', name: 'Table 04', seats: 10, status: 'Reserved', note: 'Res: 19:00 (10 Guests)' },
-  { id: 'T05', name: 'Table 05', seats: 6, status: 'Occupied', activeDineIn: true, orderId: 'ORD-1048', note: 'Active Guest Session' },
-  { id: 'T06', name: 'Table 06', seats: 4, status: 'Cleaning', note: 'Needs sanitize & reset' },
-  { id: 'T08', name: 'Table 08', seats: 4, status: 'Occupied', checkoutQueue: true, orderId: 'ORD-1045', billAmount: 350000, unservedItems: 0 }
+  { id: 'T01', name: 'Table 01', area: 'Main Hall', seats: 4, status: 'Available', orderId: null },
+  { id: 'T02', name: 'Table 02', area: 'Main Hall', seats: 2, status: 'Occupied', orderId: 'ORD-1046', billAmount: 150000, unservedItems: 0 },
+  { id: 'T03', name: 'Table 03', area: 'Main Hall', seats: 4, status: 'Occupied', orderId: 'ORD-1047', billAmount: 820000, unservedItems: 1, note: 'Cooking (12m)' },
+  { id: 'T04', name: 'Table 04', area: 'VIP', seats: 10, status: 'Reserved', note: 'Res: 19:00 (10 Guests)' },
+  { id: 'T05', name: 'Table 05', area: 'Main Hall', seats: 6, status: 'Occupied', activeDineIn: true, orderId: 'ORD-1048', note: 'Active Guest Session' },
+  { id: 'T06', name: 'Table 06', area: 'Main Hall', seats: 4, status: 'Cleaning', note: 'Needs sanitize & reset' },
+  { id: 'T08', name: 'Table 08', area: 'Main Hall', seats: 4, status: 'Occupied', checkoutQueue: true, billRequested: true, orderId: 'ORD-1045', billAmount: 370000, unservedItems: 0 },
+  { id: 'T10', name: 'VIP Suite 01', area: 'VIP', seats: 8, status: 'Occupied', checkoutQueue: true, billRequested: true, orderId: 'ORD-1052', billAmount: 1250000, unservedItems: 0 },
+  { id: 'TAK-01', name: 'Takeaway #101', area: 'Takeaway', seats: 1, status: 'Occupied', checkoutQueue: true, billRequested: true, orderId: 'ORD-1053', billAmount: 280000, unservedItems: 0 }
 ];
 
 // Initial KDS Tickets matching SCR-KDS-01
@@ -221,6 +223,20 @@ export const MOCK_MEMBERS = {
     tier: 'Silver',
     tierDiscountPct: 5,
     pointsBalance: 150
+  },
+  '0988889999': {
+    name: 'Quoc Bao Pham',
+    phone: '0988889999',
+    tier: 'Platinum',
+    tierDiscountPct: 15,
+    pointsBalance: 890
+  },
+  '0977112233': {
+    name: 'Minh Chau Tran',
+    phone: '0977112233',
+    tier: 'Diamond VIP',
+    tierDiscountPct: 20,
+    pointsBalance: 1450
   }
 };
 
@@ -253,8 +269,59 @@ export const MOCK_INITIAL_RESERVATIONS = [
 // Coupons for POS (FR-008, 40% cap policy)
 export const MOCK_COUPONS = {
   'HAPPYHOUR': { code: 'HAPPYHOUR', discountPct: 10, description: 'Evening Happy Hour 10% Off' },
-  'VIPMEGA': { code: 'VIPMEGA', discountPct: 35, description: 'Special Promo 35% Off' }
+  'SUMMER20': { code: 'SUMMER20', discountPct: 20, description: 'Summer Fest 20% Off' },
+  'VIPMEGA': { code: 'VIPMEGA', discountPct: 35, description: 'Special Promo 35% Off' },
+  'WELCOME5': { code: 'WELCOME5', discountPct: 5, description: 'New Diner Welcome 5% Off' }
 };
+
+// Cashier Settled Invoices History (Shift Audit Ledger)
+export const MOCK_CASHIER_SETTLED_HISTORY = [
+  {
+    invoiceId: 'INV-20260920-001',
+    orderId: 'ORD-1041',
+    tableName: 'Table 01',
+    area: 'Main Hall',
+    settledAt: '17:45',
+    cashierName: 'Mai Le',
+    subtotal: 450000,
+    discountAmount: 45000,
+    discountDetail: 'Gold Member (10%)',
+    finalTotal: 405000,
+    paymentMethod: 'VietQR',
+    itemsCount: 3,
+    paymentRef: 'VNPAY-883492'
+  },
+  {
+    invoiceId: 'INV-20260920-002',
+    orderId: 'ORD-1042',
+    tableName: 'VIP Suite 02',
+    area: 'VIP',
+    settledAt: '18:10',
+    cashierName: 'Mai Le',
+    subtotal: 1850000,
+    discountAmount: 185000,
+    discountDetail: 'HAPPYHOUR (10%)',
+    finalTotal: 1665000,
+    paymentMethod: 'Card / POS',
+    itemsCount: 6,
+    paymentRef: 'VISA-AUTH-9041'
+  },
+  {
+    invoiceId: 'INV-20260920-003',
+    orderId: 'ORD-1043',
+    tableName: 'Takeaway #098',
+    area: 'Takeaway',
+    settledAt: '18:25',
+    cashierName: 'Mai Le',
+    subtotal: 320000,
+    discountAmount: 0,
+    discountDetail: 'Standard',
+    finalTotal: 320000,
+    paymentMethod: 'Cash',
+    itemsCount: 2,
+    paymentRef: 'CASH-REC-003'
+  }
+];
 
 // Manager Metrics & AI Demand Forecast (SCR-MGR-01 & Journey 6 Step 5)
 export const MOCK_MANAGER_METRICS = {

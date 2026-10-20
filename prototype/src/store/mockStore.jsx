@@ -11,7 +11,8 @@ import {
   MOCK_MANAGER_METRICS,
   MOCK_MANAGER_APPROVALS,
   MOCK_TEAM_DUTY_ROSTER,
-  MOCK_INITIAL_RESERVATIONS
+  MOCK_INITIAL_RESERVATIONS,
+  MOCK_CASHIER_SETTLED_HISTORY
 } from '../mock/data';
 
 const MockStoreContext = createContext(null);
@@ -56,6 +57,10 @@ export const MockStoreProvider = ({ children }) => {
   // Shared Transaction Metrics (Cashier -> Manager)
   const [dailyGrossSales, setDailyGrossSales] = useState(MOCK_MANAGER_METRICS.grossSales);
   const [dailyTablesServed, setDailyTablesServed] = useState(MOCK_MANAGER_METRICS.tablesServed);
+
+  // Cashier POS Specific States
+  const [cashierSettledHistory, setCashierSettledHistory] = useState(MOCK_CASHIER_SETTLED_HISTORY);
+  const [cashierShiftSales, setCashierShiftSales] = useState(18450000);
 
   // Toast / System Event Simulation
   const [toastMessage, setToastMessage] = useState(null);
@@ -122,6 +127,85 @@ export const MockStoreProvider = ({ children }) => {
       details: `Settled bill for ${tableId} (${amount.toLocaleString()} VND via ${method})`
     };
     setAuditLogs((logs) => [newLog, ...logs]);
+  };
+
+  // Request escalation from Cashier to Manager Queue (Void Dish, Discount Override)
+  const requestCashierApproval = ({ type, category, urgency = 'High', title, table, amount, reason, details }) => {
+    const newId = `APP-${Math.floor(110 + Math.random() * 880)}`;
+    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const newApproval = {
+      id: newId,
+      type: type || 'Void Dish',
+      category: category || (type === 'Void Dish' ? 'Billing' : 'Policy'),
+      urgency: urgency || 'High',
+      title: title || `${type} for ${table || 'Table'}`,
+      requester: 'Mai Le',
+      requesterRole: 'Cashier',
+      timestamp: currentTime,
+      table: table || 'Table 08',
+      amount: amount || 0,
+      reason: reason || 'Cashier requested managerial override',
+      status: 'Pending',
+      details: details || `POS Terminal escalation dispatched at ${currentTime}. Awaiting Manager authorization.`
+    };
+    setManagerApprovals((prev) => [newApproval, ...prev]);
+    showToast(`⚡ Dispatched ${type} request (${newId}) to Manager Approvals Queue!`);
+    return newApproval;
+  };
+
+  // Settle Cashier Invoice with full accounting & audit trail
+  const settleCashierInvoice = ({
+    tableId,
+    tableName,
+    orderId,
+    subtotal,
+    discountAmount = 0,
+    discountDetail = 'None',
+    finalTotal,
+    paymentMethod = 'VietQR',
+    itemsCount = 1,
+    paymentRef
+  }) => {
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const newInvoice = {
+      invoiceId: `INV-${dateStr}-${Math.floor(100 + Math.random() * 900)}`,
+      orderId: orderId || `ORD-${Math.floor(1050 + Math.random() * 50)}`,
+      tableName: tableName || `Table ${tableId}`,
+      area: tables.find((t) => t.id === tableId)?.area || 'Main Hall',
+      settledAt: timeStr,
+      cashierName: 'Mai Le',
+      subtotal,
+      discountAmount,
+      discountDetail,
+      finalTotal,
+      paymentMethod,
+      itemsCount,
+      paymentRef: paymentRef || `${paymentMethod.toUpperCase()}-${Math.floor(100000 + Math.random() * 900000)}`
+    };
+
+    setCashierSettledHistory((prev) => [newInvoice, ...prev]);
+    setCashierShiftSales((prev) => prev + finalTotal);
+    recordSettlement(finalTotal, tableName || tableId, paymentMethod);
+
+    // Transition table to Cleaning
+    setTables((prev) =>
+      prev.map((t) =>
+        t.id === tableId
+          ? {
+              ...t,
+              status: 'Cleaning',
+              billAmount: null,
+              billRequested: false,
+              checkoutQueue: false,
+              note: 'Settled (Needs sanitize & busing)'
+            }
+          : t
+      )
+    );
+
+    showToast(`✓ Invoice #${newInvoice.invoiceId} for ${newInvoice.tableName} settled via ${paymentMethod}!`);
+    return newInvoice;
   };
 
   // Enhanced Shared Table Cart Actions (SCR-CUST-03)
@@ -780,6 +864,8 @@ export const MockStoreProvider = ({ children }) => {
     setAdminTab('rbac');
     setReservations(MOCK_INITIAL_RESERVATIONS);
     setActiveMember(null);
+    setCashierSettledHistory(MOCK_CASHIER_SETTLED_HISTORY);
+    setCashierShiftSales(18450000);
     showToast('Prototype state reset to baseline mock data.');
   };
 
@@ -844,7 +930,13 @@ export const MockStoreProvider = ({ children }) => {
         requestBill,
         dailyGrossSales,
         dailyTablesServed,
-        recordSettlement
+        recordSettlement,
+        cashierSettledHistory,
+        setCashierSettledHistory,
+        cashierShiftSales,
+        setCashierShiftSales,
+        requestCashierApproval,
+        settleCashierInvoice
       }}
     >
       {children}

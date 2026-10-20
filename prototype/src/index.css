@@ -387,3 +387,157 @@ input, select, textarea {
   }
 }
 
+/* ========================================================
+   CASHIER POS TERMINAL & 3-COLUMN DESKTOP LAYOUT (SCR-POS-01)
+   ======================================================== */
+.pos-screen-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #f1f5f9;
+  overflow: hidden;
+}
+
+.pos-3col-grid {
+  display: grid;
+  grid-template-columns: 310px 1fr 370px;
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+}
+
+@media (max-width: 1200px) {
+  .pos-3col-grid {
+    grid-template-columns: 280px 1fr 340px;
+  }
+}
+
+@media (max-width: 992px) {
+  .pos-3col-grid {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+}
+
+/* POS Queue column */
+.pos-queue-pane {
+  background-color: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pos-queue-card {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.pos-queue-card:hover {
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.pos-queue-card.selected {
+  border: 2px solid #0f766e;
+  box-shadow: 0 4px 10px rgba(15, 118, 110, 0.15);
+  background-color: #f0fdfa;
+}
+
+.pos-queue-card.blocked {
+  border-left: 4px solid #ef4444;
+}
+
+/* POS Middle Invoice Panel */
+.pos-invoice-pane {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-right: 1px solid #e2e8f0;
+}
+
+.pos-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 13px;
+}
+
+.pos-table-row:hover {
+  background-color: #f8fafc;
+}
+
+/* POS Right Settlement Panel */
+.pos-settlement-pane {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Touch Friendly POS Buttons */
+.pos-touch-btn {
+  min-height: 44px;
+  border-radius: 8px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+
+.pos-touch-btn:active {
+  transform: scale(0.98);
+}
+
+/* Thermal POS Receipt simulation */
+.pos-thermal-receipt {
+  width: 320px;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-family: 'JetBrains Mono', Courier, monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 24px 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  margin: 0 auto;
+}
+
+.pos-thermal-receipt::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: radial-gradient(circle, transparent, transparent 50%, #ffffff 50%, #ffffff 100%);
+  background-size: 14px 14px;
+}
+
+.pos-receipt-divider {
+  border-top: 1px dashed #94a3b8;
+  margin: 10px 0;
+}
+
+.pos-receipt-double-divider {
+  border-top: 2px dashed #475569;
+  margin: 12px 0;
+}
+
