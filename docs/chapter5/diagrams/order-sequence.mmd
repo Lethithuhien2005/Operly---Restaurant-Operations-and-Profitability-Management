@@ -1,0 +1,75 @@
+sequenceDiagram
+    autonumber
+    %% OPERLY ORDER LIFECYCLE SEQUENCE DIAGRAM
+    %% End-to-end flow from QR Scan to Kitchen Bump and Waiter Delivery
+
+    actor Cust as Customer (Diner)
+    participant FE_Cust as Customer PWA (Mobile Browser)
+    participant WS as Socket.IO Hub (WebSocket)
+    participant API as Backend API & OrderModule
+    participant AI as AI Recommender (Apriori Engine)
+    participant KDS as Kitchen Display (KDS Tablet)
+    participant INV as Inventory & BOM Module
+    participant Waiter as Waiter Handheld (PWA)
+    participant DB as PostgreSQL Database
+
+    %% Step 1: Scan QR & Enter Table Session
+    Note over Cust, FE_Cust: Step 1: Table Session Initialization
+    Cust->>FE_Cust: Scans physical QR code on Table T05
+    FE_Cust->>API: GET /api/v1/tables/T05/session (Guest Mode)
+    API->>DB: Query table occupancy & active session
+    DB-->>API: Return table status (Available / Active Session)
+    API-->>FE_Cust: Return Table Token & Active Catalog
+    FE_Cust->>WS: Join WebSocket room ("table:T05")
+    WS-->>FE_Cust: Connection & room binding acknowledged
+
+    %% Step 2: Item Selection & AI Pairings
+    Note over Cust, AI: Step 2: Item Selection & AI Recommendations
+    Cust->>FE_Cust: Selects "Seafood Spicy Hotpot"
+    FE_Cust->>AI: Send current cart items for cross-sell scoring
+    AI-->>FE_Cust: Return high-confidence pairing ("US Beef Slices" - Confidence: 88%)
+    Cust->>FE_Cust: Accepts AI pairing & adds to shared cart
+    FE_Cust->>WS: Emit event cart:item_added (Syncs table co-diners)
+    WS-->>FE_Cust: Broadcast updated cart state in real-time
+
+    %% Step 3: Order Submission
+    Note over Cust, DB: Step 3: Order Submission & Ticket Dispatch
+    Cust->>FE_Cust: Taps "Submit Order" (Lock Cart)
+    FE_Cust->>API: POST /api/v1/orders (TableId: T05, Items: [...])
+    activate API
+    API->>DB: Insert Order record (Status: CREATED)
+    API->>DB: Update Table T05 -> Status: OCCUPIED
+    API->>DB: Create KdsTicket #104 routed to Station 3 (Hot Line)
+    DB-->>API: Transaction committed successfully
+    API->>WS: Emit events "order:created" & "kds:new_ticket"
+    API-->>FE_Cust: 201 Created (Order ORD-1048, Ticket #104)
+    deactivate API
+
+    %% Step 4: Kitchen Cooking & BOM Depletion
+    Note over KDS, INV: Step 4: Kitchen Preparation & Recipe BOM Depletion
+    WS->>KDS: Dispatch ticket #104 to FIFO queue (70dB chime alert)
+    KDS->>Cust: Progress update on diner screen: Ticket Received
+    KDS->>API: Cook taps "START COOKING" -> PATCH /api/v1/kds/tickets/104/items/ITEM-1/status (Cooking)
+    activate API
+    API->>INV: Trigger Recipe BOM Depletion Hook
+    INV->>DB: Atomic UPDATE: Decrement raw ingredients (Prawns, Squid, Broth)
+    DB-->>INV: Stock decremented successfully
+    API->>WS: Broadcast item_status: "Cooking"
+    deactivate API
+    WS-->>FE_Cust: Stepper updates: "Cooking in progress..."
+
+    %% Step 5: Kitchen Bump & Ready Alert
+    Note over KDS, Waiter: Step 5: Kitchen Fulfillment & Waiter Dispatch
+    KDS->>API: Cook taps "BUMP TO READY" -> PATCH /api/v1/kds/tickets/104/items/ITEM-1/status (Ready)
+    API->>WS: Emit "kds:item_ready" (Table T05, Item: Seafood Hotpot)
+    WS->>Waiter: Device vibration & drawer notification badge
+    WS-->>FE_Cust: Stepper updates: "Dish is ready for pickup"
+
+    %% Step 6: Server Delivery
+    Note over Waiter, Cust: Step 6: Floor Delivery & Order Completion
+    Waiter->>Cust: Delivers dish to Table T05
+    Waiter->>Waiter: Taps "✓ MARK SERVED" on handheld terminal
+    Waiter->>API: PATCH /api/v1/orders/ORD-1048/items/ITEM-1/status (Served)
+    API->>DB: Update item status -> SERVED
+    API->>WS: Broadcast item_status: "Served"
+    WS-->>FE_Cust: Stepper updates: "Served & Enjoy your meal"

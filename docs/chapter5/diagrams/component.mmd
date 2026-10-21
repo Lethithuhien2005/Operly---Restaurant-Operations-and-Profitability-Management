@@ -1,0 +1,68 @@
+flowchart TB
+    %% OPERLY COMPONENT DIAGRAM
+    %% Component architecture detailing Frontend, Backend Nest.js Modules, and Data Stores
+
+    subgraph FRONTEND_SYSTEM["Frontend Presentation System (React 18 / TypeScript)"]
+        direction TB
+        
+        subgraph FE_CLIENTS["User Role Presentation Modules"]
+            FE_CUST["Customer Module<br/>(QR Menu, Shared Cart,<br/>Progress Stepper, Reservation)"]
+            FE_WAIT["Waiter Module<br/>(Floor Topo, Ready Alerts,<br/>Table Clean Reset)"]
+            FE_KDS["Kitchen KDS Module<br/>(FIFO Board, Station Filter,<br/>Bump Controller, 86 Modal)"]
+            FE_POS["Cashier POS Module<br/>(Checkout Queue, Discount Cap,<br/>Split-Bill, VietQR Modal)"]
+            FE_MGR["Manager & Admin Module<br/>(BI Dashboard, AI Forecast,<br/>Recipe BOM, RBAC & Audit)"]
+        end
+
+        subgraph FE_CORE["Frontend Infrastructure & State"]
+            FE_STATE["Synchronized State Engine<br/>(mockStore / Redux Toolkit / React Query)"]
+            FE_HTTP["HTTP API Client Services<br/>(Axios / Fetch Interceptors)"]
+            FE_WS["WebSocket Client Hub<br/>(Socket.IO Client Hub)"]
+        end
+
+        FE_CLIENTS --> FE_STATE
+        FE_STATE --> FE_HTTP
+        FE_STATE --> FE_WS
+    end
+
+    subgraph BACKEND_SYSTEM["Backend System (Nest.js Modular Monolith)"]
+        direction TB
+
+        subgraph BE_INFRA["Gateway & Security Infrastructure"]
+            BE_AUTH_GUARD["Authentication & RBAC Interceptors<br/>(JwtAuthGuard & RbacGuard)"]
+            BE_TOKEN_CHECK["Session Revocation Verifier<br/>(TokenVersionInterceptor)"]
+            BE_WS_GATEWAY["Duplex Message Dispatcher<br/>(SocketIoGateway)"]
+        end
+
+        subgraph BE_MODULES["Core Business Domain Modules"]
+            MOD_AUTH["AuthModule<br/><i>(AuthController, AuthService,<br/>PasswordHasher)</i>"]
+            MOD_TABLE["TableReservationModule<br/><i>(TableController, ResController,<br/>ConflictDetectionEngine)</i>"]
+            MOD_ORDER["OrderCartModule<br/><i>(OrderController, SharedCartHub,<br/>OrderProcessingService)</i>"]
+            MOD_KDS["KdsDispatchModule<br/><i>(KdsController, StationRouter,<br/>BumpStateService)</i>"]
+            MOD_BILL["BillingPaymentModule<br/><i>(BillingController, VietQrEngine,<br/>SplitPaymentService)</i>"]
+            MOD_INV["InventoryBomModule<br/><i>(InventoryController, BomDepletionEngine,<br/>SpoilageLedgerService)</i>"]
+            MOD_STAFF["StaffAttendanceModule<br/><i>(StaffController, HaversineGeofence,<br/>AttendanceService)</i>"]
+            MOD_AI["AiEngineModule<br/><i>(AprioriRecommenderService,<br/>ArimaForecastWorker)</i>"]
+        end
+
+        BE_INFRA --> BE_MODULES
+        MOD_ORDER <-->|Trigger pairings| MOD_AI
+        MOD_ORDER -->|Push tickets| MOD_KDS
+        MOD_KDS -->|Trigger stock depletion| MOD_INV
+        MOD_ORDER -->|Feed bill ledger| MOD_BILL
+        MOD_BILL <-->|Supply revenue data| MOD_AI
+    end
+
+    subgraph PERSISTENCE_TIER["Persistence & External Integration Tier"]
+        direction LR
+        DB_POSTGRES[("PostgreSQL 16 Database<br/><i>Relational Tables, ACID Trans</i>")]
+        CACHE_REDIS[("Redis In-Memory Cache<br/><i>Active Cart Rooms, Token Cache</i>")]
+        EXT_VIETQR["VietQR Payment Provider<br/><i>Dynamic QR API & Webhook</i>")]
+    end
+
+    %% Cross-Tier Communication
+    FE_HTTP -->|HTTPS REST| BE_AUTH_GUARD
+    FE_WS <-->|WSS Socket.IO| BE_WS_GATEWAY
+
+    BE_MODULES <-->|TypeORM / Prisma Data Access| DB_POSTGRES
+    BE_MODULES <-->|ioredis Data Access| CACHE_REDIS
+    MOD_BILL <-->|HTTPS Webhook| EXT_VIETQR
