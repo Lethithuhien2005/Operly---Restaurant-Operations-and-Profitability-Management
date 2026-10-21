@@ -1,0 +1,101 @@
+flowchart LR
+    %% OPERLY SYSTEM USE CASE DIAGRAM
+    %% Mapping all 6 Actors to Core System Use Cases
+
+    subgraph ACTORS["System Actors"]
+        direction TB
+        ACT_CUST["Customer"]
+        ACT_WAIT["Waiter"]
+        ACT_KCH["Kitchen Staff"]
+        ACT_CSH["Cashier"]
+        ACT_MGR["Restaurant Manager"]
+        ACT_ADM["System Administrator"]
+    end
+
+    subgraph SYSTEM_BOUNDARY["Operly Restaurant Management Platform"]
+        direction TB
+
+        subgraph UC_GRP_ORDER["Ordering & Reservation Subsystem"]
+            UC_RES(["UC-01: Online Reservation & Advance Deposit"]):::coreUC
+            UC_MENU(["UC-02: QR Code Scanning & Menu Browsing"]):::coreUC
+            UC_CART(["UC-03: Shared Table Cart Synchronization"]):::coreUC
+            UC_AI_REC(["UC-04: AI Apriori Food Recommendation"]):::aiUC
+            UC_SUBMIT(["UC-05: Order Placement & Progress Tracking"]):::coreUC
+            UC_CALL(["UC-06: Call Waiter / Pre-print Bill Request"]):::coreUC
+        end
+
+        subgraph UC_GRP_FLOOR["Floor Topology & Service Subsystem"]
+            UC_FLOOR(["UC-07: Real-Time Floor Plan Monitoring"]):::coreUC
+            UC_SERVE(["UC-08: Ready Alert Handling & Dish Delivery"]):::coreUC
+            UC_RESET(["UC-09: Table Sanitization & Status Reset"]):::coreUC
+        end
+
+        subgraph UC_GRP_KITCHEN["Kitchen Display (KDS) Subsystem"]
+            UC_KDS(["UC-10: FIFO Prep Queue & Station Routing"]):::coreUC
+            UC_BUMP(["UC-11: Item Status Bump & Partial 1/2 Split"]):::coreUC
+            UC_SPOIL(["UC-12: Kitchen Spoilage Logging & Re-fire"]):::coreUC
+            UC_86(["UC-13: Instant 86 Out-of-Stock Toggle"]):::coreUC
+        end
+
+        subgraph UC_GRP_POS["POS Checkout & Billing Subsystem"]
+            UC_CHECKOUT(["UC-14: Settlement Queue & Bill Management"]):::coreUC
+            UC_GATE(["UC-15: Unserved Dish Blocking Gate Check"]):::coreUC
+            UC_LOYALTY(["UC-16: Loyalty Lookup & Discount Clamping"]):::coreUC
+            UC_VIETQR(["UC-17: Dynamic VietQR & Split-Bill Settle"]):::coreUC
+        end
+
+        subgraph UC_GRP_MGR["Management & Intelligence Subsystem"]
+            UC_BOM(["UC-18: Recipe BOM & Margin Configuration"]):::coreUC
+            UC_BI_AI(["UC-19: 7-Day AI Sales & Demand Forecasting"]):::aiUC
+            UC_APPROVE(["UC-20: Urgent Operations & Void Approvals"]):::coreUC
+            UC_ATTEND(["UC-21: Rostering & Geofenced Attendance"]):::coreUC
+        end
+
+        subgraph UC_GRP_ADM["Security & Governance Subsystem"]
+            UC_RBAC(["UC-22: RBAC Staff Provisioning & Roles"]):::coreUC
+            UC_REVOKE(["UC-23: Instant Session Revoke via Token Version"]):::coreUC
+            UC_AUDIT(["UC-24: Immutable System Audit Trail Explorer"]):::coreUC
+        end
+    end
+
+    %% Customer Relationships
+    ACT_CUST --> UC_RES
+    ACT_CUST --> UC_MENU
+    ACT_CUST --> UC_CART
+    ACT_CUST --> UC_SUBMIT
+    ACT_CUST --> UC_CALL
+    UC_CART -.->|"<<include>>"| UC_AI_REC
+
+    %% Waiter Relationships
+    ACT_WAIT --> UC_FLOOR
+    ACT_WAIT --> UC_SERVE
+    ACT_WAIT --> UC_RESET
+    ACT_WAIT --> UC_CART
+
+    %% Kitchen Staff Relationships
+    ACT_KCH --> UC_KDS
+    ACT_KCH --> UC_BUMP
+    ACT_KCH --> UC_SPOIL
+    ACT_KCH --> UC_86
+
+    %% Cashier Relationships
+    ACT_CSH --> UC_CHECKOUT
+    ACT_CSH --> UC_LOYALTY
+    ACT_CSH --> UC_VIETQR
+    UC_CHECKOUT -.->|"<<include>>"| UC_GATE
+
+    %% Manager Relationships
+    ACT_MGR --> UC_BOM
+    ACT_MGR --> UC_BI_AI
+    ACT_MGR --> UC_APPROVE
+    ACT_MGR --> UC_ATTEND
+    ACT_MGR --> UC_FLOOR
+
+    %% Administrator Relationships
+    ACT_ADM --> UC_RBAC
+    ACT_ADM --> UC_REVOKE
+    ACT_ADM --> UC_AUDIT
+
+    %% Styling
+    classDef coreUC fill:#e1f5fe,stroke:#0288d1,stroke-width:1.5px;
+    classDef aiUC fill:#ede7f6,stroke:#7e57c2,stroke-width:2px;
