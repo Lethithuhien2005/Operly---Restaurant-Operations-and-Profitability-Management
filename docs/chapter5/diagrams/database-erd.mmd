@@ -1,0 +1,257 @@
+erDiagram
+    %% OPERLY DATABASE ENTITY RELATIONSHIP DIAGRAM (ERD)
+    %% Production PostgreSQL Relational Schema for Operly
+
+    users ||--o{ audit_logs : "triggers"
+    users ||--o{ manager_approvals : "requests"
+    users ||--o{ manager_approvals : "approves"
+    users ||--o{ staff_shifts : "attends"
+    users ||--o{ kitchen_spoilage_logs : "logs"
+
+    customer_members ||--o{ reservations : "books"
+    customer_members ||--o{ orders : "places"
+    customer_members ||--o{ bills : "receives"
+
+    restaurant_tables ||--o{ reservations : "allocated_to"
+    restaurant_tables ||--o{ orders : "hosts"
+    restaurant_tables ||--o{ bills : "settles"
+
+    menu_categories ||--o{ menu_items : "contains"
+    menu_items ||--o{ dish_modifiers : "has"
+    menu_items ||--|| recipe_boms : "defined_by"
+    menu_items ||--o{ order_items : "selected_in"
+    menu_items ||--o{ kitchen_spoilage_logs : "spoiled_in"
+
+    recipe_boms ||--|{ recipe_bom_items : "composed_of"
+    ingredients ||--o{ recipe_bom_items : "used_in"
+
+    orders ||--|{ order_items : "contains"
+    orders ||--o{ kds_tickets : "dispatched_as"
+    orders ||--|| bills : "billed_in"
+
+    kds_tickets ||--|{ kds_ticket_items : "includes"
+    order_items ||--o{ kds_ticket_items : "mapped_to"
+    kds_tickets ||--o{ kitchen_spoilage_logs : "records"
+
+    bills ||--|{ payment_transactions : "paid_by"
+
+    users {
+        uuid id PK
+        varchar_50 username
+        varchar_100 email
+        varchar_255 password_hash
+        varchar_100 full_name
+        varchar_20 phone
+        varchar_30 role
+        varchar_20 status
+        integer token_version
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    customer_members {
+        uuid id PK
+        varchar_20 phone UK
+        varchar_100 full_name
+        varchar_100 email
+        varchar_20 member_tier
+        integer points_balance
+        decimal total_spent
+        timestamp created_at
+    }
+
+    restaurant_tables {
+        uuid id PK
+        varchar_10 table_number UK
+        integer seating_capacity
+        varchar_50 zone
+        varchar_20 status
+        uuid current_order_id
+        timestamp created_at
+    }
+
+    reservations {
+        uuid id PK
+        varchar_20 booking_code UK
+        varchar_100 customer_name
+        varchar_20 customer_phone
+        integer party_size
+        timestamp reservation_time
+        uuid table_id FK
+        decimal deposit_required
+        decimal deposit_paid
+        varchar_20 deposit_status
+        varchar_20 status
+        timestamp created_at
+    }
+
+    menu_categories {
+        uuid id PK
+        varchar_50 name
+        integer display_order
+        boolean is_active
+    }
+
+    menu_items {
+        uuid id PK
+        uuid category_id FK
+        varchar_150 name
+        text description
+        decimal base_price
+        varchar_50 prep_station
+        boolean is_86
+        varchar_255 disabled_reason
+        varchar_255 image_url
+        timestamp created_at
+    }
+
+    dish_modifiers {
+        uuid id PK
+        uuid menu_item_id FK
+        varchar_100 modifier_name
+        decimal price_delta
+        boolean is_active
+    }
+
+    recipe_boms {
+        uuid id PK
+        uuid menu_item_id FK
+        decimal theoretical_cost
+        decimal gross_margin_pct
+        timestamp updated_at
+    }
+
+    ingredients {
+        uuid id PK
+        varchar_50 sku UK
+        varchar_150 name
+        varchar_20 unit_of_measure
+        decimal unit_cost
+        decimal current_stock
+        decimal safety_threshold
+        timestamp updated_at
+    }
+
+    recipe_bom_items {
+        uuid id PK
+        uuid recipe_bom_id FK
+        uuid ingredient_id FK
+        decimal quantity_grams
+        decimal yield_pct
+    }
+
+    orders {
+        uuid id PK
+        varchar_30 order_code UK
+        uuid table_id FK
+        uuid member_id FK
+        varchar_20 order_type
+        varchar_20 status
+        decimal subtotal_amount
+        decimal total_amount
+        timestamp created_at
+    }
+
+    order_items {
+        uuid id PK
+        uuid order_id FK
+        uuid menu_item_id FK
+        uuid modifier_id FK
+        integer quantity
+        decimal unit_price_snapshot
+        varchar_20 prep_status
+        varchar_50 prep_station
+        varchar_255 special_notes
+        timestamp created_at
+    }
+
+    kds_tickets {
+        uuid id PK
+        varchar_20 ticket_number UK
+        uuid order_id FK
+        uuid table_id FK
+        varchar_50 station
+        varchar_20 priority
+        integer elapsed_minutes
+        varchar_20 status
+        timestamp created_at
+    }
+
+    kds_ticket_items {
+        uuid id PK
+        uuid ticket_id FK
+        uuid order_item_id FK
+        varchar_20 item_status
+        timestamp updated_at
+    }
+
+    bills {
+        uuid id PK
+        varchar_30 invoice_number UK
+        uuid order_id FK
+        uuid table_id FK
+        uuid member_id FK
+        decimal subtotal
+        decimal discount_pct
+        decimal discount_amount
+        decimal net_total
+        varchar_20 payment_status
+        timestamp created_at
+    }
+
+    payment_transactions {
+        uuid id PK
+        uuid bill_id FK
+        varchar_30 payment_method
+        varchar_100 transaction_ref
+        decimal amount
+        jsonb gateway_response
+        varchar_20 status
+        timestamp settled_at
+    }
+
+    kitchen_spoilage_logs {
+        uuid id PK
+        uuid ticket_id FK
+        uuid menu_item_id FK
+        varchar_100 reason
+        decimal cost_impact_vnd
+        boolean is_refired
+        uuid logged_by_id FK
+        timestamp created_at
+    }
+
+    staff_shifts {
+        uuid id PK
+        uuid staff_id FK
+        date shift_date
+        varchar_50 shift_name
+        timestamp check_in_time
+        varchar_30 check_in_method
+        varchar_20 attendance_status
+        integer tables_served
+    }
+
+    manager_approvals {
+        uuid id PK
+        varchar_50 request_type
+        varchar_30 category
+        varchar_20 urgency
+        varchar_255 title
+        uuid requester_id FK
+        uuid table_id FK
+        decimal amount
+        text reason
+        varchar_20 status
+        uuid processed_by_id FK
+        timestamp processed_at
+    }
+
+    audit_logs {
+        uuid id PK
+        timestamp timestamp
+        uuid actor_id FK
+        varchar_50 action_category
+        varchar_45 client_ip
+        text details
+    }

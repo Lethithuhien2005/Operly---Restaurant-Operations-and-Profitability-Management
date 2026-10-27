@@ -1,0 +1,81 @@
+flowchart TD
+    %% OPERLY SYSTEM ARCHITECTURE DIAGRAM
+    %% Representation of the Multi-Tier Modular Monolith Architecture
+
+    subgraph CLIENT_TIER["Presentation Tier (Client Applications)"]
+        direction LR
+        CUST_APP["Customer Web App<br/>(QR / Web PWA)<br/><i>React 18 / Mobile Browser</i>"]
+        WAIT_APP["Waiter Handheld App<br/>(Floor Server PWA)<br/><i>React 18 / Touch Ergonomics</i>"]
+        KDS_APP["Kitchen Display System<br/>(KDS Station Tablet)<br/><i>React 18 / 2-Meter Contrast</i>"]
+        POS_APP["Cashier POS Terminal<br/>(Checkout Desktop / Tablet)<br/><i>React 18 / Split-Bill & VietQR</i>"]
+        MGR_APP["Management Portal<br/>(Manager & Admin Console)<br/><i>React 18 / BI Analytics</i>"]
+    end
+
+    subgraph GATEWAY_TIER["Gateway & Security Tier"]
+        direction TB
+        REVERSE_PROXY["Reverse Proxy & Load Balancer<br/>(Nginx / Cloudflare)<br/><i>TLS 1.3, Rate Limiting, WAF</i>"]
+        AUTH_GUARD["Authentication & Authorization Interceptor<br/>(JWT & Token Versioning Guard)<br/><i>RBAC Interceptor</i>"]
+    end
+
+    subgraph APP_TIER["Application Tier (Nest.js Modular Monolith)"]
+        direction TB
+        
+        subgraph ENTRY_POINTS["Entry Gateways"]
+            REST_CTRL["REST API Controllers<br/><i>DTOs & Validation Pipes</i>"]
+            WS_GATEWAY["WebSocket Real-Time Gateway<br/>(Socket.IO Hub)<br/><i>Table & Station Rooms</i>"]
+        end
+
+        subgraph CORE_MODULES["Core Business Modules"]
+            AUTH_MOD["Authentication & RBAC Module<br/>(AuthModule)<br/><i>JWT & Session Revocation</i>"]
+            TABLE_RES_MOD["Table & Reservation Module<br/>(TableReservationModule)<br/><i>90-Min Conflict Engine</i>"]
+            ORDER_MOD["Order & Shared Cart Module<br/>(OrderSharedCartModule)<br/><i>Multi-Diner Cart Sync</i>"]
+            KDS_MOD["Kitchen Dispatch Module<br/>(KdsDispatchModule)<br/><i>FIFO & Station Routing</i>"]
+            BILL_MOD["Billing & Payment Module<br/>(BillingPaymentModule)<br/><i>Split-Bill & VietQR Generator</i>"]
+            INV_MOD["Inventory & BOM Module<br/>(InventoryBomModule)<br/><i>Depletion at Cooking & Spoilage</i>"]
+            STAFF_MOD["Staff & Attendance Module<br/>(StaffAttendanceModule)<br/><i>Haversine GPS & Wi-Fi Check</i>"]
+        end
+
+        subgraph AI_SERVICES["Embedded AI Services"]
+            AI_REC["AI Food Recommender<br/>(Apriori Association Engine)<br/><i>Co-occurrence Scoring</i>"]
+            AI_FORECAST["Demand & Sales Forecaster<br/>(ARIMA / Prophet Worker)<br/><i>7-Day Forecast & 95% CI</i>"]
+        end
+    end
+
+    subgraph DATA_TIER["Data & Storage Tier"]
+        direction LR
+        POSTGRES_DB[("Relational Database<br/>PostgreSQL 16<br/><i>ACID Transactions, Normalized Schema</i>")]
+        REDIS_CACHE[("In-Memory Data Store<br/>Redis 7 Cache<br/><i>Socket Rooms, Ephemeral Cart, Token Revoke</i>")]
+        BLOB_STORAGE[("Object Storage<br/>Cloudinary / AWS S3<br/><i>Dish Media, Receipt Archives</i>")]
+    end
+
+    subgraph EXTERNAL_TIER["External Integrations Tier"]
+        direction TB
+        VIETQR_GATEWAY["Banking Payment Gateway<br/>(VietQR / NAPAS EMVCo)<br/><i>Dynamic QR & Webhook Callbacks</i>"]
+        NOTIF_SERVICE["SMS / ZNS Notification Service<br/>(Twilio / Zalo Cloud)<br/><i>Booking Confirmations & Alerts</i>"]
+    end
+
+    %% Communication Connections
+    CUST_APP <-->|HTTPS / WSS| REVERSE_PROXY
+    WAIT_APP <-->|HTTPS / WSS| REVERSE_PROXY
+    KDS_APP <-->|HTTPS / WSS| REVERSE_PROXY
+    POS_APP <-->|HTTPS / WSS| REVERSE_PROXY
+    MGR_APP <-->|HTTPS / WSS| REVERSE_PROXY
+
+    REVERSE_PROXY --> AUTH_GUARD
+    AUTH_GUARD --> REST_CTRL
+    AUTH_GUARD --> WS_GATEWAY
+
+    REST_CTRL --> CORE_MODULES
+    WS_GATEWAY --> CORE_MODULES
+
+    ORDER_MOD <--> AI_REC
+    BILL_MOD <--> AI_FORECAST
+    INV_MOD <--> AI_FORECAST
+
+    CORE_MODULES <-->|TypeORM / Prisma ORM| POSTGRES_DB
+    CORE_MODULES <-->|ioredis Client| REDIS_CACHE
+    TABLE_RES_MOD -.->|Upload Images| BLOB_STORAGE
+    INV_MOD -.->|Upload Images| BLOB_STORAGE
+
+    BILL_MOD <-->|REST Webhooks| VIETQR_GATEWAY
+    TABLE_RES_MOD -->|REST API Dispatch| NOTIF_SERVICE

@@ -1,0 +1,222 @@
+classDiagram
+    %% OPERLY DOMAIN CLASS DIAGRAM
+    %% Domain Model representing core entities, attributes, relationships, and multiplicity
+
+    class User {
+        +String id
+        +String username
+        +String passwordHash
+        +String fullName
+        +UserRole role
+        +String phone
+        +AccountStatus status
+        +Integer tokenVersion
+        +DateTime createdAt
+        +login(credentials)
+        +incrementTokenVersion()
+    }
+
+    class CustomerMember {
+        +String id
+        +String phone
+        +String name
+        +String email
+        +MemberTier tier
+        +Integer pointsBalance
+        +Decimal totalSpent
+        +accruePoints(amount)
+        +redeemPoints(points)
+    }
+
+    class Table {
+        +String id
+        +String name
+        +Integer seats
+        +TableZone zone
+        +TableStatus status
+        +Decimal currentBillAmount
+        +Boolean billRequested
+        +occupy(orderId)
+        +markCleaning()
+        +resetToAvailable()
+    }
+
+    class Reservation {
+        +String id
+        +String code
+        +String customerName
+        +String phone
+        +Integer partySize
+        +DateTime bookingTime
+        +String tableId
+        +Decimal depositAmount
+        +DepositStatus depositStatus
+        +ReservationStatus status
+        +calculateDeposit()
+        +confirmBooking()
+        +cancelBooking()
+    }
+
+    class MenuItem {
+        +String id
+        +String name
+        +String category
+        +Decimal price
+        +PrepStation station
+        +String description
+        +Boolean is86
+        +toggle86(reason)
+        +updatePrice(newPrice)
+    }
+
+    class Modifier {
+        +String id
+        +String menuItemId
+        +String name
+        +Decimal priceDelta
+    }
+
+    class RecipeBOM {
+        +String id
+        +String menuItemId
+        +Decimal theoreticalFoodCost
+        +Decimal grossMarginPct
+        +calculateMargin()
+    }
+
+    class Ingredient {
+        +String id
+        +String name
+        +String unit
+        +Decimal unitCost
+        +Decimal currentStock
+        +Decimal safetyStockThreshold
+        +deductStock(quantity)
+        +replenishStock(quantity)
+    }
+
+    class BOMItem {
+        +String id
+        +String recipeBomId
+        +String ingredientId
+        +Decimal quantity
+        +Decimal yieldPct
+    }
+
+    class Order {
+        +String id
+        +String orderNumber
+        +String tableId
+        +String customerId
+        +OrderStatus status
+        +Decimal totalAmount
+        +DateTime createdAt
+        +addItem(dish, qty)
+        +submitOrder()
+        +cancelOrder()
+    }
+
+    class OrderItem {
+        +String id
+        +String orderId
+        +String menuItemId
+        +String modifierId
+        +Integer quantity
+        +Decimal unitPrice
+        +ItemPrepStatus status
+        +PrepStation station
+        +updateStatus(nextStatus)
+    }
+
+    class KdsTicket {
+        +String id
+        +String ticketNumber
+        +String tableId
+        +String orderId
+        +DateTime placedAt
+        +PrepStation station
+        +String priority
+        +advanceStatus()
+        +partialBump(itemId)
+    }
+
+    class Bill {
+        +String id
+        +String invoiceNumber
+        +String orderId
+        +String tableId
+        +Decimal subtotal
+        +Decimal discountPct
+        +Decimal discountAmount
+        +Decimal netTotal
+        +PaymentStatus status
+        +applyCoupon(code)
+        +applyMemberDiscount(tier)
+        +settleInvoice(method)
+    }
+
+    class PaymentTransaction {
+        +String id
+        +String billId
+        +PaymentMethod method
+        +Decimal amount
+        +String transactionRef
+        +PaymentStatus status
+        +generateVietQR()
+        +verifyGatewayCallback()
+    }
+
+    class SpoilageLog {
+        +String id
+        +String ticketId
+        +String dishId
+        +String reason
+        +Decimal costImpact
+        +String loggedBy
+        +DateTime createdAt
+    }
+
+    class AuditLog {
+        +String id
+        +DateTime timestamp
+        +String actorId
+        +String actionCategory
+        +String clientIp
+        +String details
+    }
+
+    class ManagerApproval {
+        +String id
+        +String type
+        +ApprovalCategory category
+        +UrgencyLevel urgency
+        +String title
+        +String requesterId
+        +Decimal amount
+        +String reason
+        +ApprovalStatus status
+        +approve(decisionNotes)
+        +reject(decisionNotes)
+    }
+
+    %% Entity Relationships
+    Table "1" -- "0..*" Order : hosts
+    Table "1" -- "0..*" Reservation : allocated_to
+    CustomerMember "0..1" -- "0..*" Order : places
+    CustomerMember "0..1" -- "0..*" Reservation : books
+    
+    Order "1" *-- "1..*" OrderItem : contains
+    MenuItem "1" -- "0..*" OrderItem : specifies
+    MenuItem "1" *-- "0..*" Modifier : includes
+    MenuItem "1" -- "1" RecipeBOM : defined_by
+    RecipeBOM "1" *-- "1..*" BOMItem : composed_of
+    Ingredient "1" -- "0..*" BOMItem : used_in
+
+    Order "1" -- "1..*" KdsTicket : routed_to
+    KdsTicket "1" *-- "1..*" OrderItem : tracks
+    KdsTicket "1" -- "0..*" SpoilageLog : incurs
+
+    Order "1" -- "1" Bill : billed_in
+    Bill "1" *-- "1..*" PaymentTransaction : settled_via
+    User "1" -- "0..*" AuditLog : triggers
+    User "1" -- "0..*" ManagerApproval : requests
