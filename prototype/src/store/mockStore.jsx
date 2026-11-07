@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import { getInitialRoute, updateBrowserUrl } from '../utils/router';
 import {
   MOCK_MENU_ITEMS,
   MOCK_INITIAL_TABLES,
@@ -18,6 +19,26 @@ import {
 const MockStoreContext = createContext(null);
 
 export const MockStoreProvider = ({ children }) => {
+  // Routing & Navigation State (Auth routes: /login, /signup, or / prototype)
+  const [currentRoute, setCurrentRoute] = useState(getInitialRoute);
+
+  const navigate = (route) => {
+    setCurrentRoute(route);
+    updateBrowserUrl(route);
+  };
+
+  useEffect(() => {
+    const handleUrlChange = () => {
+      setCurrentRoute(getInitialRoute());
+    };
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('hashchange', handleUrlChange);
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('hashchange', handleUrlChange);
+    };
+  }, []);
+
   // Navigation & Role Harness (Evaluator mechanism across all 6 roles)
   const [activeRole, setActiveRole] = useState('customer'); // 'customer' | 'kitchen' | 'waiter' | 'cashier' | 'manager' | 'admin'
   const [customerScreen, setCustomerScreen] = useState('menu'); // 'menu' (SCR-CUST-03) | 'progress' (SCR-CUST-04) | 'reserve' (SCR-CUST-01) | 'profile'
@@ -936,7 +957,10 @@ export const MockStoreProvider = ({ children }) => {
         cashierShiftSales,
         setCashierShiftSales,
         requestCashierApproval,
-        settleCashierInvoice
+        settleCashierInvoice,
+        currentRoute,
+        setCurrentRoute,
+        navigate
       }}
     >
       {children}

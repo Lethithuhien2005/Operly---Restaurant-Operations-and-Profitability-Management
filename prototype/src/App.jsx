@@ -10,9 +10,11 @@ import { WaiterFloorScreen } from './screens/WaiterFloorScreen';
 import { CashierPOSScreen } from './screens/CashierPOSScreen';
 import { ManagerPortalScreen } from './screens/ManagerPortalScreen';
 import { AdminConsoleScreen } from './screens/AdminConsoleScreen';
+import { LoginScreen } from './screens/LoginScreen';
+import { SignUpScreen } from './screens/SignUpScreen';
 
 export const MainApp = () => {
-  const { activeRole, customerScreen, toastMessage } = useMockStore();
+  const { currentRoute, activeRole, customerScreen, toastMessage } = useMockStore();
 
   return (
     <div className="proto-app-container">
@@ -21,27 +23,33 @@ export const MainApp = () => {
 
       {/* Main Viewport Container */}
       <main className="proto-viewport-wrapper">
-        {activeRole === 'customer' && (
-          customerScreen === 'menu' ? (
-            <CustomerQRMenuScreen />
-          ) : customerScreen === 'progress' ? (
-            <CustomerProgressScreen />
-          ) : customerScreen === 'reserve' ? (
-            <CustomerReservationScreen />
-          ) : (
-            <CustomerProfileScreen />
-          )
+        {currentRoute === 'login' && <LoginScreen />}
+        {currentRoute === 'signup' && <SignUpScreen />}
+        {currentRoute === 'prototype' && (
+          <>
+            {activeRole === 'customer' && (
+              customerScreen === 'menu' ? (
+                <CustomerQRMenuScreen />
+              ) : customerScreen === 'progress' ? (
+                <CustomerProgressScreen />
+              ) : customerScreen === 'reserve' ? (
+                <CustomerReservationScreen />
+              ) : (
+                <CustomerProfileScreen />
+              )
+            )}
+
+            {activeRole === 'kitchen' && <KitchenKDSScreen />}
+
+            {activeRole === 'waiter' && <WaiterFloorScreen />}
+
+            {activeRole === 'cashier' && <CashierPOSScreen />}
+
+            {activeRole === 'manager' && <ManagerPortalScreen />}
+
+            {activeRole === 'admin' && <AdminConsoleScreen />}
+          </>
         )}
-
-        {activeRole === 'kitchen' && <KitchenKDSScreen />}
-
-        {activeRole === 'waiter' && <WaiterFloorScreen />}
-
-        {activeRole === 'cashier' && <CashierPOSScreen />}
-
-        {activeRole === 'manager' && <ManagerPortalScreen />}
-
-        {activeRole === 'admin' && <AdminConsoleScreen />}
       </main>
 
       {/* Floating System Event / Toast Banner */}
