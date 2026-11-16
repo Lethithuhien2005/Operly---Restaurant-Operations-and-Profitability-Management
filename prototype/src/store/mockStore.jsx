@@ -55,8 +55,8 @@ export const MockStoreProvider = ({ children }) => {
   const [isApprovalDrawerOpen, setIsApprovalDrawerOpen] = useState(false);
   const [recipeBOM, setRecipeBOM] = useState(MOCK_RECIPE_BOM);
 
-  // Administrator Sub-Tabs (SCR-ADM-01 vs SCR-ADM-02)
-  const [adminTab, setAdminTab] = useState('rbac'); // 'rbac' | 'audit'
+  // Administrator Sub-Tabs (Financial Intelligence & SCR-ADM-01 / SCR-ADM-02)
+  const [adminTab, setAdminTab] = useState('fi-dashboard'); // 'fi-dashboard' | 'fi-revenue-analytics' | 'fi-revenue-forecasting' | 'fi-menu-demand' | 'fi-menu-profitability' | 'fi-ingredient-demand' | 'fi-inventory-opt' | 'fi-anomalies' | 'fi-recommendations' | 'rbac' | 'audit'
   const [staffAccounts, setStaffAccounts] = useState(MOCK_STAFF_ACCOUNTS);
   const [auditLogs, setAuditLogs] = useState(MOCK_AUDIT_LOGS);
 
@@ -882,7 +882,7 @@ export const MockStoreProvider = ({ children }) => {
     setTeamRoster(MOCK_TEAM_DUTY_ROSTER);
     setSelectedApproval(null);
     setIsApprovalDrawerOpen(false);
-    setAdminTab('rbac');
+    setAdminTab('fi-dashboard');
     setReservations(MOCK_INITIAL_RESERVATIONS);
     setActiveMember(null);
     setCashierSettledHistory(MOCK_CASHIER_SETTLED_HISTORY);
