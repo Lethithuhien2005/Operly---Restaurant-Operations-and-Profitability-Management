@@ -7,6 +7,11 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return 'Operly Backend is running!';
+  }
+
+  @Get('health/database')
+  checkDatabase(): Promise<{ database: string }> {
+    return this.appService.checkDatabase();
   }
 }
