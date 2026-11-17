@@ -9,7 +9,194 @@
 * 🟢 You can import this file directly.
 */
 
+export const RoleName = {
+  ADMIN: 'ADMIN',
+  MANAGER: 'MANAGER',
+  CASHIER: 'CASHIER',
+  CHEF: 'CHEF',
+  WAITER: 'WAITER',
+  CUSTOMER: 'CUSTOMER'
+} as const
+
+export type RoleName = (typeof RoleName)[keyof typeof RoleName]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const ReservationStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ReservationStatus = (typeof ReservationStatus)[keyof typeof ReservationStatus]
+
+
+export const SessionStatus = {
+  OPEN: 'OPEN',
+  PAYING: 'PAYING',
+  CLOSED: 'CLOSED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type SessionStatus = (typeof SessionStatus)[keyof typeof SessionStatus]
+
+
+export const TableStatus = {
+  AVAILABLE: 'AVAILABLE',
+  RESERVED: 'RESERVED',
+  OCCUPIED: 'OCCUPIED',
+  CLEANING: 'CLEANING'
+} as const
+
+export type TableStatus = (typeof TableStatus)[keyof typeof TableStatus]
+
+
+export const DepositStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  REFUNDED: 'REFUNDED'
+} as const
+
+export type DepositStatus = (typeof DepositStatus)[keyof typeof DepositStatus]
+
+
+export const OrderStatus = {
+  CREATED: 'CREATED',
+  CONFIRMED: 'CONFIRMED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  SERVED: 'SERVED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
+
+export const OrderItemStatus = {
+  PENDING: 'PENDING',
+  COOKING: 'COOKING',
+  READY: 'READY',
+  SERVED: 'SERVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type OrderItemStatus = (typeof OrderItemStatus)[keyof typeof OrderItemStatus]
+
+
+export const StockMovementType = {
+  IN_RECEIPT: 'IN_RECEIPT',
+  OUT_COOKING: 'OUT_COOKING',
+  WASTE_SPOILED: 'WASTE_SPOILED',
+  ADJUSTMENT: 'ADJUSTMENT'
+} as const
+
+export type StockMovementType = (typeof StockMovementType)[keyof typeof StockMovementType]
+
+
+export const BillStatus = {
+  UNPAID: 'UNPAID',
+  PARTIALLY_PAID: 'PARTIALLY_PAID',
+  PAID: 'PAID',
+  VOIDED: 'VOIDED'
+} as const
+
+export type BillStatus = (typeof BillStatus)[keyof typeof BillStatus]
+
+
+export const PaymentMethod = {
+  CASH: 'CASH',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  VNPAY: 'VNPAY',
+  MOMO: 'MOMO'
+} as const
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
+
+export const PaymentStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+} as const
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const AttendanceStatus = {
+  ON_TIME: 'ON_TIME',
+  LATE: 'LATE',
+  ABSENT: 'ABSENT'
+} as const
+
+export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]
+
+
+export const ForecastType = {
+  REVENUE: 'REVENUE',
+  PROFIT: 'PROFIT',
+  DEMAND: 'DEMAND'
+} as const
+
+export type ForecastType = (typeof ForecastType)[keyof typeof ForecastType]
+
+
+export const RecommendationType = {
+  INVENTORY: 'INVENTORY',
+  MENU: 'MENU',
+  PRICING: 'PRICING',
+  BUSINESS: 'BUSINESS',
+  STAFFING: 'STAFFING'
+} as const
+
+export type RecommendationType = (typeof RecommendationType)[keyof typeof RecommendationType]
+
+
+export const RecommendationPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+} as const
+
+export type RecommendationPriority = (typeof RecommendationPriority)[keyof typeof RecommendationPriority]
+
+
+export const RecommendationStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type RecommendationStatus = (typeof RecommendationStatus)[keyof typeof RecommendationStatus]
+
+
+export const AnomalyType = {
+  REVENUE: 'REVENUE',
+  INVENTORY: 'INVENTORY',
+  CONSUMPTION: 'CONSUMPTION',
+  PAYMENT: 'PAYMENT'
+} as const
+
+export type AnomalyType = (typeof AnomalyType)[keyof typeof AnomalyType]
+
+
+export const AnomalySeverity = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+} as const
+
+export type AnomalySeverity = (typeof AnomalySeverity)[keyof typeof AnomalySeverity]
+
+
+export const AnomalyStatus = {
+  OPEN: 'OPEN',
+  INVESTIGATING: 'INVESTIGATING',
+  RESOLVED: 'RESOLVED',
+  IGNORED: 'IGNORED'
+} as const
+
+export type AnomalyStatus = (typeof AnomalyStatus)[keyof typeof AnomalyStatus]
