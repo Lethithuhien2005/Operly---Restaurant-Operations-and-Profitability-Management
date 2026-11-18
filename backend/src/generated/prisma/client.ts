@@ -67,6 +67,16 @@ export type User = Prisma.UserModel
  */
 export type RefreshToken = Prisma.RefreshTokenModel
 /**
+ * Model Restaurant
+ * 
+ */
+export type Restaurant = Prisma.RestaurantModel
+/**
+ * Model Branch
+ * 
+ */
+export type Branch = Prisma.BranchModel
+/**
  * Model Table
  * 
  */
