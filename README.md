@@ -1,4 +1,4 @@
-# 🍽️ Restaurant Operations Management System (ROMS)
+# 🍽️ Restaurant Operations Management System (OPERLY)
 
 > A comprehensive, real-time single-branch restaurant operations management system integrated with AI recommendations, revenue forecasting, QR ordering, and automated inventory control.
 
@@ -26,7 +26,7 @@
 
 Traditional restaurant operational workflows face severe bottlenecks, including slow communication, paper-based order errors, labor inefficiencies during peak hours, out-of-sync inventory and table statuses, and a lack of data-driven forecasting tools.
 
-**ROMS (v1.0)** digitizes restaurant operations in real time. It bridges the gap between customers (online and dine-in), waiters, kitchen chefs, cashiers, and restaurant managers.
+**OPERLY (v1.0)** digitizes restaurant operations in real time. It bridges the gap between customers (online and dine-in), waiters, kitchen chefs, cashiers, and restaurant managers.
 
 ### 🎯 Key Business Objectives
 
@@ -187,7 +187,7 @@ Traditional restaurant operational workflows face severe bottlenecks, including 
 
 ## 👥 User Roles & Permissions (RBAC)
 
-ROMS implements strict Role-Based Access Control (RBAC).
+OPERLY implements strict Role-Based Access Control (RBAC).
 
 | Role         | Access Level & Key Responsibilities                                                                          |
 | ------------ | ------------------------------------------------------------------------------------------------------------ |
@@ -292,8 +292,8 @@ ROMS implements strict Role-Based Access Control (RBAC).
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-org/roms.git
-cd roms
+git clone https://github.com/your-org/operly.git
+cd backend
 ```
 
 Create a `.env` file in the backend directory:
@@ -303,7 +303,7 @@ PORT=5000
 NODE_ENV=development
 
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/roms_db
+DATABASE_URL=postgresql://user:password@localhost:5433/operly_db
 
 # JWT Configuration
 JWT_SECRET=your_jwt_secret_key_here
@@ -431,4 +431,4 @@ uvicorn main:app --reload --port 8000
 
 ## 📄 License
 
-This project is proprietary software created for ROMS Operational Software. All rights reserved.
+This project is proprietary software created for OPERLY Operational Software. All rights reserved.
