@@ -234,11 +234,46 @@ model RefreshToken {
 }
 
 // ==========================================
-// 3. MODULE 2: RESTAURANT SETUP (3 TABLES)
+// 3. MODULE 2: RESTAURANT SETUP
 // ==========================================
+
+model Restaurant {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  description String?
+  phone       String?
+  email       String?
+  address     String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  branches    Branch[]
+
+  @@map("restaurants")
+}
+
+model Branch {
+  id           String   @id @default(uuid()) @db.Uuid
+  restaurantId String   @map("restaurant_id") @db.Uuid
+  name         String
+  address      String
+  phone        String?
+  email        String?
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  restaurant   Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  tables       Table[]
+  reservations Reservation[]
+
+  @@map("branches")
+}
 
 model Table {
   id             String          @id @default(uuid()) @db.Uuid
+  branchId       String?         @map("branch_id") @db.Uuid
   tableNumber    String          @unique @map("table_number")
   floor          Int
   capacity       Int
@@ -247,6 +282,7 @@ model Table {
   createdAt      DateTime        @default(now()) @map("created_at")
   updatedAt      DateTime        @updatedAt @map("updated_at")
 
+  branch         Branch?         @relation(fields: [branchId], references: [id], onDelete: SetNull)
   reservations   Reservation[]
   diningSessions DiningSession[]
 
@@ -294,6 +330,7 @@ model MenuItem {
 model Reservation {
   id              String            @id @default(uuid()) @db.Uuid
   customerId      String            @map("customer_id") @db.Uuid
+  branchId        String?           @map("branch_id") @db.Uuid
   guestName       String            @map("guest_name")
   guestPhone      String            @map("guest_phone")
   specialRequest  String?           @map("special_request")
@@ -307,6 +344,7 @@ model Reservation {
   updatedAt       DateTime          @updatedAt @map("updated_at")
 
   customer        User              @relation(fields: [customerId], references: [id])
+  branch          Branch?           @relation(fields: [branchId], references: [id], onDelete: SetNull)
   table           Table?            @relation(fields: [tableId], references: [id])
   diningSession   DiningSession?
 

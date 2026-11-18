@@ -3,7 +3,6 @@ import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
-  IsNotEmpty,
   IsOptional,
   IsUUID,
   ValidateNested,
@@ -11,20 +10,28 @@ import {
 import { CreateOrderItemDto } from './create-order-item.dto.js';
 
 export class CreateOrderDto {
-  @ApiProperty({
-    description: 'Active dining session UUID',
+  @ApiPropertyOptional({
+    description: 'Active dining session UUID (required if tableId is omitted)',
     example: '423e4567-e89b-12d3-a456-426614174003',
   })
-  @IsUUID(4, { message: 'sessionId must be a valid UUID v4' })
-  @IsNotEmpty()
-  sessionId: string;
+  @IsOptional()
+  @IsUUID('4', { message: 'sessionId must be a valid UUID v4' })
+  sessionId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Dining table UUID (if provided, automatically connects or opens an active table dining session)',
+    example: '123e4567-e89b-12d3-a456-426614174001',
+  })
+  @IsOptional()
+  @IsUUID('4', { message: 'tableId must be a valid UUID v4' })
+  tableId?: string;
 
   @ApiPropertyOptional({
     description: 'Waiter UUID placing the order on behalf of the customer (null if self-scanned QR)',
     example: '523e4567-e89b-12d3-a456-426614174004',
   })
   @IsOptional()
-  @IsUUID(4, { message: 'waiterId must be a valid UUID v4' })
+  @IsUUID('4', { message: 'waiterId must be a valid UUID v4' })
   waiterId?: string;
 
   @ApiProperty({
