@@ -274,6 +274,7 @@ export type StockMovementOrderByWithRelationInput = {
 
 export type StockMovementWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  orderItemId_inventoryItemId_movementType?: Prisma.StockMovementOrderItemIdInventoryItemIdMovementTypeCompoundUniqueInput
   AND?: Prisma.StockMovementWhereInput | Prisma.StockMovementWhereInput[]
   OR?: Prisma.StockMovementWhereInput[]
   NOT?: Prisma.StockMovementWhereInput | Prisma.StockMovementWhereInput[]
@@ -288,7 +289,7 @@ export type StockMovementWhereUniqueInput = Prisma.AtLeast<{
   inventoryItem?: Prisma.XOR<Prisma.InventoryItemScalarRelationFilter, Prisma.InventoryItemWhereInput>
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   orderItem?: Prisma.XOR<Prisma.OrderItemNullableScalarRelationFilter, Prisma.OrderItemWhereInput> | null
-}, "id">
+}, "id" | "orderItemId_inventoryItemId_movementType">
 
 export type StockMovementOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -411,6 +412,12 @@ export type StockMovementListRelationFilter = {
 
 export type StockMovementOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type StockMovementOrderItemIdInventoryItemIdMovementTypeCompoundUniqueInput = {
+  orderItemId: string
+  inventoryItemId: string
+  movementType: $Enums.StockMovementType
 }
 
 export type StockMovementCountOrderByAggregateInput = {

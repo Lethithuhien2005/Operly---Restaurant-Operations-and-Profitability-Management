@@ -236,6 +236,8 @@ export type UserWhereInput = {
   shiftAssignments?: Prisma.ShiftAssignmentListRelationFilter
   attendances?: Prisma.AttendanceListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  leaveRequests?: Prisma.LeaveRequestListRelationFilter
+  reviewedLeaves?: Prisma.LeaveRequestListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -263,6 +265,8 @@ export type UserOrderByWithRelationInput = {
   shiftAssignments?: Prisma.ShiftAssignmentOrderByRelationAggregateInput
   attendances?: Prisma.AttendanceOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
+  leaveRequests?: Prisma.LeaveRequestOrderByRelationAggregateInput
+  reviewedLeaves?: Prisma.LeaveRequestOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -293,6 +297,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   shiftAssignments?: Prisma.ShiftAssignmentListRelationFilter
   attendances?: Prisma.AttendanceListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  leaveRequests?: Prisma.LeaveRequestListRelationFilter
+  reviewedLeaves?: Prisma.LeaveRequestListRelationFilter
 }, "id" | "phone" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -351,6 +357,8 @@ export type UserCreateInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -377,6 +385,8 @@ export type UserUncheckedCreateInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUpdateInput = {
@@ -403,6 +413,8 @@ export type UserUpdateInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -429,6 +441,8 @@ export type UserUncheckedUpdateInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -750,6 +764,36 @@ export type UserUpdateOneRequiredWithoutAttendancesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAttendancesInput, Prisma.UserUpdateWithoutAttendancesInput>, Prisma.UserUncheckedUpdateWithoutAttendancesInput>
 }
 
+export type UserCreateNestedOneWithoutLeaveRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutLeaveRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLeaveRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutReviewedLeavesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedLeavesInput, Prisma.UserUncheckedCreateWithoutReviewedLeavesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedLeavesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutLeaveRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutLeaveRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLeaveRequestsInput
+  upsert?: Prisma.UserUpsertWithoutLeaveRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLeaveRequestsInput, Prisma.UserUpdateWithoutLeaveRequestsInput>, Prisma.UserUncheckedUpdateWithoutLeaveRequestsInput>
+}
+
+export type UserUpdateOneWithoutReviewedLeavesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedLeavesInput, Prisma.UserUncheckedCreateWithoutReviewedLeavesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedLeavesInput
+  upsert?: Prisma.UserUpsertWithoutReviewedLeavesInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewedLeavesInput, Prisma.UserUpdateWithoutReviewedLeavesInput>, Prisma.UserUncheckedUpdateWithoutReviewedLeavesInput>
+}
+
 export type UserCreateNestedOneWithoutAuditLogsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditLogsInput
@@ -789,6 +833,8 @@ export type UserCreateWithoutRoleInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutRoleInput = {
@@ -814,6 +860,8 @@ export type UserUncheckedCreateWithoutRoleInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutRoleInput = {
@@ -881,6 +929,8 @@ export type UserCreateWithoutRefreshTokensInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutRefreshTokensInput = {
@@ -906,6 +956,8 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutRefreshTokensInput = {
@@ -947,6 +999,8 @@ export type UserUpdateWithoutRefreshTokensInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefreshTokensInput = {
@@ -972,6 +1026,8 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutReservationsInput = {
@@ -997,6 +1053,8 @@ export type UserCreateWithoutReservationsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutReservationsInput = {
@@ -1022,6 +1080,8 @@ export type UserUncheckedCreateWithoutReservationsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutReservationsInput = {
@@ -1063,6 +1123,8 @@ export type UserUpdateWithoutReservationsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReservationsInput = {
@@ -1088,6 +1150,8 @@ export type UserUncheckedUpdateWithoutReservationsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutOpenedSessionsInput = {
@@ -1113,6 +1177,8 @@ export type UserCreateWithoutOpenedSessionsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutOpenedSessionsInput = {
@@ -1138,6 +1204,8 @@ export type UserUncheckedCreateWithoutOpenedSessionsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutOpenedSessionsInput = {
@@ -1168,6 +1236,8 @@ export type UserCreateWithoutClosedSessionsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutClosedSessionsInput = {
@@ -1193,6 +1263,8 @@ export type UserUncheckedCreateWithoutClosedSessionsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutClosedSessionsInput = {
@@ -1234,6 +1306,8 @@ export type UserUpdateWithoutOpenedSessionsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOpenedSessionsInput = {
@@ -1259,6 +1333,8 @@ export type UserUncheckedUpdateWithoutOpenedSessionsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUpsertWithoutClosedSessionsInput = {
@@ -1295,6 +1371,8 @@ export type UserUpdateWithoutClosedSessionsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutClosedSessionsInput = {
@@ -1320,6 +1398,8 @@ export type UserUncheckedUpdateWithoutClosedSessionsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -1345,6 +1425,8 @@ export type UserCreateWithoutOrdersInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -1370,6 +1452,8 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -1411,6 +1495,8 @@ export type UserUpdateWithoutOrdersInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -1436,6 +1522,8 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutStockReceiptsInput = {
@@ -1461,6 +1549,8 @@ export type UserCreateWithoutStockReceiptsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutStockReceiptsInput = {
@@ -1486,6 +1576,8 @@ export type UserUncheckedCreateWithoutStockReceiptsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutStockReceiptsInput = {
@@ -1527,6 +1619,8 @@ export type UserUpdateWithoutStockReceiptsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStockReceiptsInput = {
@@ -1552,6 +1646,8 @@ export type UserUncheckedUpdateWithoutStockReceiptsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutStockMovementsInput = {
@@ -1577,6 +1673,8 @@ export type UserCreateWithoutStockMovementsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutStockMovementsInput = {
@@ -1602,6 +1700,8 @@ export type UserUncheckedCreateWithoutStockMovementsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutStockMovementsInput = {
@@ -1643,6 +1743,8 @@ export type UserUpdateWithoutStockMovementsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStockMovementsInput = {
@@ -1668,6 +1770,8 @@ export type UserUncheckedUpdateWithoutStockMovementsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutBillsInput = {
@@ -1693,6 +1797,8 @@ export type UserCreateWithoutBillsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutBillsInput = {
@@ -1718,6 +1824,8 @@ export type UserUncheckedCreateWithoutBillsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutBillsInput = {
@@ -1759,6 +1867,8 @@ export type UserUpdateWithoutBillsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBillsInput = {
@@ -1784,6 +1894,8 @@ export type UserUncheckedUpdateWithoutBillsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutPaymentsInput = {
@@ -1809,6 +1921,8 @@ export type UserCreateWithoutPaymentsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -1834,6 +1948,8 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -1875,6 +1991,8 @@ export type UserUpdateWithoutPaymentsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -1900,6 +2018,8 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutRefundsInput = {
@@ -1925,6 +2045,8 @@ export type UserCreateWithoutRefundsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutRefundsInput = {
@@ -1950,6 +2072,8 @@ export type UserUncheckedCreateWithoutRefundsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutRefundsInput = {
@@ -1991,6 +2115,8 @@ export type UserUpdateWithoutRefundsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefundsInput = {
@@ -2016,6 +2142,8 @@ export type UserUncheckedUpdateWithoutRefundsInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutShiftAssignmentsInput = {
@@ -2041,6 +2169,8 @@ export type UserCreateWithoutShiftAssignmentsInput = {
   refunds?: Prisma.RefundCreateNestedManyWithoutManagerInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutShiftAssignmentsInput = {
@@ -2066,6 +2196,8 @@ export type UserUncheckedCreateWithoutShiftAssignmentsInput = {
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutManagerInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutShiftAssignmentsInput = {
@@ -2107,6 +2239,8 @@ export type UserUpdateWithoutShiftAssignmentsInput = {
   refunds?: Prisma.RefundUpdateManyWithoutManagerNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutShiftAssignmentsInput = {
@@ -2132,6 +2266,8 @@ export type UserUncheckedUpdateWithoutShiftAssignmentsInput = {
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutManagerNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutAttendancesInput = {
@@ -2157,6 +2293,8 @@ export type UserCreateWithoutAttendancesInput = {
   refunds?: Prisma.RefundCreateNestedManyWithoutManagerInput
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutAttendancesInput = {
@@ -2182,6 +2320,8 @@ export type UserUncheckedCreateWithoutAttendancesInput = {
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutManagerInput
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutAttendancesInput = {
@@ -2223,6 +2363,8 @@ export type UserUpdateWithoutAttendancesInput = {
   refunds?: Prisma.RefundUpdateManyWithoutManagerNestedInput
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAttendancesInput = {
@@ -2248,6 +2390,256 @@ export type UserUncheckedUpdateWithoutAttendancesInput = {
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutManagerNestedInput
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserCreateWithoutLeaveRequestsInput = {
+  id?: string
+  phone: string
+  email?: string | null
+  passwordHash: string
+  fullName: string
+  avatarUrl?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role: Prisma.RoleCreateNestedOneWithoutUsersInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  reservations?: Prisma.ReservationCreateNestedManyWithoutCustomerInput
+  openedSessions?: Prisma.DiningSessionCreateNestedManyWithoutOpenedByInput
+  closedSessions?: Prisma.DiningSessionCreateNestedManyWithoutClosedByInput
+  orders?: Prisma.OrderCreateNestedManyWithoutWaiterInput
+  stockReceipts?: Prisma.StockReceiptCreateNestedManyWithoutManagerInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  bills?: Prisma.BillCreateNestedManyWithoutCashierInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutCashierInput
+  refunds?: Prisma.RefundCreateNestedManyWithoutManagerInput
+  shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
+  attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserUncheckedCreateWithoutLeaveRequestsInput = {
+  id?: string
+  phone: string
+  email?: string | null
+  passwordHash: string
+  fullName: string
+  avatarUrl?: string | null
+  roleId: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  reservations?: Prisma.ReservationUncheckedCreateNestedManyWithoutCustomerInput
+  openedSessions?: Prisma.DiningSessionUncheckedCreateNestedManyWithoutOpenedByInput
+  closedSessions?: Prisma.DiningSessionUncheckedCreateNestedManyWithoutClosedByInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutWaiterInput
+  stockReceipts?: Prisma.StockReceiptUncheckedCreateNestedManyWithoutManagerInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  bills?: Prisma.BillUncheckedCreateNestedManyWithoutCashierInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCashierInput
+  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutManagerInput
+  shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
+  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserCreateOrConnectWithoutLeaveRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutLeaveRequestsInput>
+}
+
+export type UserCreateWithoutReviewedLeavesInput = {
+  id?: string
+  phone: string
+  email?: string | null
+  passwordHash: string
+  fullName: string
+  avatarUrl?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role: Prisma.RoleCreateNestedOneWithoutUsersInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  reservations?: Prisma.ReservationCreateNestedManyWithoutCustomerInput
+  openedSessions?: Prisma.DiningSessionCreateNestedManyWithoutOpenedByInput
+  closedSessions?: Prisma.DiningSessionCreateNestedManyWithoutClosedByInput
+  orders?: Prisma.OrderCreateNestedManyWithoutWaiterInput
+  stockReceipts?: Prisma.StockReceiptCreateNestedManyWithoutManagerInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  bills?: Prisma.BillCreateNestedManyWithoutCashierInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutCashierInput
+  refunds?: Prisma.RefundCreateNestedManyWithoutManagerInput
+  shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
+  attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutReviewedLeavesInput = {
+  id?: string
+  phone: string
+  email?: string | null
+  passwordHash: string
+  fullName: string
+  avatarUrl?: string | null
+  roleId: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  reservations?: Prisma.ReservationUncheckedCreateNestedManyWithoutCustomerInput
+  openedSessions?: Prisma.DiningSessionUncheckedCreateNestedManyWithoutOpenedByInput
+  closedSessions?: Prisma.DiningSessionUncheckedCreateNestedManyWithoutClosedByInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutWaiterInput
+  stockReceipts?: Prisma.StockReceiptUncheckedCreateNestedManyWithoutManagerInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  bills?: Prisma.BillUncheckedCreateNestedManyWithoutCashierInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCashierInput
+  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutManagerInput
+  shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
+  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutReviewedLeavesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedLeavesInput, Prisma.UserUncheckedCreateWithoutReviewedLeavesInput>
+}
+
+export type UserUpsertWithoutLeaveRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutLeaveRequestsInput, Prisma.UserUncheckedUpdateWithoutLeaveRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutLeaveRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutLeaveRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutLeaveRequestsInput, Prisma.UserUncheckedUpdateWithoutLeaveRequestsInput>
+}
+
+export type UserUpdateWithoutLeaveRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.RoleUpdateOneRequiredWithoutUsersNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  reservations?: Prisma.ReservationUpdateManyWithoutCustomerNestedInput
+  openedSessions?: Prisma.DiningSessionUpdateManyWithoutOpenedByNestedInput
+  closedSessions?: Prisma.DiningSessionUpdateManyWithoutClosedByNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutWaiterNestedInput
+  stockReceipts?: Prisma.StockReceiptUpdateManyWithoutManagerNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  bills?: Prisma.BillUpdateManyWithoutCashierNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutCashierNestedInput
+  refunds?: Prisma.RefundUpdateManyWithoutManagerNestedInput
+  shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
+  attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutLeaveRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  roleId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  reservations?: Prisma.ReservationUncheckedUpdateManyWithoutCustomerNestedInput
+  openedSessions?: Prisma.DiningSessionUncheckedUpdateManyWithoutOpenedByNestedInput
+  closedSessions?: Prisma.DiningSessionUncheckedUpdateManyWithoutClosedByNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutWaiterNestedInput
+  stockReceipts?: Prisma.StockReceiptUncheckedUpdateManyWithoutManagerNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  bills?: Prisma.BillUncheckedUpdateManyWithoutCashierNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutCashierNestedInput
+  refunds?: Prisma.RefundUncheckedUpdateManyWithoutManagerNestedInput
+  shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserUpsertWithoutReviewedLeavesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewedLeavesInput, Prisma.UserUncheckedUpdateWithoutReviewedLeavesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedLeavesInput, Prisma.UserUncheckedCreateWithoutReviewedLeavesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReviewedLeavesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewedLeavesInput, Prisma.UserUncheckedUpdateWithoutReviewedLeavesInput>
+}
+
+export type UserUpdateWithoutReviewedLeavesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.RoleUpdateOneRequiredWithoutUsersNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  reservations?: Prisma.ReservationUpdateManyWithoutCustomerNestedInput
+  openedSessions?: Prisma.DiningSessionUpdateManyWithoutOpenedByNestedInput
+  closedSessions?: Prisma.DiningSessionUpdateManyWithoutClosedByNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutWaiterNestedInput
+  stockReceipts?: Prisma.StockReceiptUpdateManyWithoutManagerNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  bills?: Prisma.BillUpdateManyWithoutCashierNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutCashierNestedInput
+  refunds?: Prisma.RefundUpdateManyWithoutManagerNestedInput
+  shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
+  attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReviewedLeavesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  roleId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  reservations?: Prisma.ReservationUncheckedUpdateManyWithoutCustomerNestedInput
+  openedSessions?: Prisma.DiningSessionUncheckedUpdateManyWithoutOpenedByNestedInput
+  closedSessions?: Prisma.DiningSessionUncheckedUpdateManyWithoutClosedByNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutWaiterNestedInput
+  stockReceipts?: Prisma.StockReceiptUncheckedUpdateManyWithoutManagerNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  bills?: Prisma.BillUncheckedUpdateManyWithoutCashierNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutCashierNestedInput
+  refunds?: Prisma.RefundUncheckedUpdateManyWithoutManagerNestedInput
+  shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -2273,6 +2665,8 @@ export type UserCreateWithoutAuditLogsInput = {
   refunds?: Prisma.RefundCreateNestedManyWithoutManagerInput
   shiftAssignments?: Prisma.ShiftAssignmentCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -2298,6 +2692,8 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutManagerInput
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedCreateNestedManyWithoutUserInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutUserInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -2339,6 +2735,8 @@ export type UserUpdateWithoutAuditLogsInput = {
   refunds?: Prisma.RefundUpdateManyWithoutManagerNestedInput
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -2364,6 +2762,8 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutManagerNestedInput
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateManyRoleInput = {
@@ -2401,6 +2801,8 @@ export type UserUpdateWithoutRoleInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRoleInput = {
@@ -2426,6 +2828,8 @@ export type UserUncheckedUpdateWithoutRoleInput = {
   shiftAssignments?: Prisma.ShiftAssignmentUncheckedUpdateManyWithoutUserNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaves?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutRoleInput = {
@@ -2459,6 +2863,8 @@ export type UserCountOutputType = {
   shiftAssignments: number
   attendances: number
   auditLogs: number
+  leaveRequests: number
+  reviewedLeaves: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2475,6 +2881,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   shiftAssignments?: boolean | UserCountOutputTypeCountShiftAssignmentsArgs
   attendances?: boolean | UserCountOutputTypeCountAttendancesArgs
   auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
+  leaveRequests?: boolean | UserCountOutputTypeCountLeaveRequestsArgs
+  reviewedLeaves?: boolean | UserCountOutputTypeCountReviewedLeavesArgs
 }
 
 /**
@@ -2578,6 +2986,20 @@ export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.AuditLogWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountLeaveRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeaveRequestWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReviewedLeavesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeaveRequestWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2604,6 +3026,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   shiftAssignments?: boolean | Prisma.User$shiftAssignmentsArgs<ExtArgs>
   attendances?: boolean | Prisma.User$attendancesArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  leaveRequests?: boolean | Prisma.User$leaveRequestsArgs<ExtArgs>
+  reviewedLeaves?: boolean | Prisma.User$reviewedLeavesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2664,6 +3088,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   shiftAssignments?: boolean | Prisma.User$shiftAssignmentsArgs<ExtArgs>
   attendances?: boolean | Prisma.User$attendancesArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  leaveRequests?: boolean | Prisma.User$leaveRequestsArgs<ExtArgs>
+  reviewedLeaves?: boolean | Prisma.User$reviewedLeavesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2690,6 +3116,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     shiftAssignments: Prisma.$ShiftAssignmentPayload<ExtArgs>[]
     attendances: Prisma.$AttendancePayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+    leaveRequests: Prisma.$LeaveRequestPayload<ExtArgs>[]
+    reviewedLeaves: Prisma.$LeaveRequestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3110,6 +3538,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   shiftAssignments<T extends Prisma.User$shiftAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$shiftAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attendances<T extends Prisma.User$attendancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$attendancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  leaveRequests<T extends Prisma.User$leaveRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$leaveRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewedLeaves<T extends Prisma.User$reviewedLeavesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedLeavesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3859,6 +4289,54 @@ export type User$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
+}
+
+/**
+ * User.leaveRequests
+ */
+export type User$leaveRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeaveRequest
+   */
+  select?: Prisma.LeaveRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LeaveRequest
+   */
+  omit?: Prisma.LeaveRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeaveRequestInclude<ExtArgs> | null
+  where?: Prisma.LeaveRequestWhereInput
+  orderBy?: Prisma.LeaveRequestOrderByWithRelationInput | Prisma.LeaveRequestOrderByWithRelationInput[]
+  cursor?: Prisma.LeaveRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeaveRequestScalarFieldEnum | Prisma.LeaveRequestScalarFieldEnum[]
+}
+
+/**
+ * User.reviewedLeaves
+ */
+export type User$reviewedLeavesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeaveRequest
+   */
+  select?: Prisma.LeaveRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LeaveRequest
+   */
+  omit?: Prisma.LeaveRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeaveRequestInclude<ExtArgs> | null
+  where?: Prisma.LeaveRequestWhereInput
+  orderBy?: Prisma.LeaveRequestOrderByWithRelationInput | Prisma.LeaveRequestOrderByWithRelationInput[]
+  cursor?: Prisma.LeaveRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeaveRequestScalarFieldEnum | Prisma.LeaveRequestScalarFieldEnum[]
 }
 
 /**

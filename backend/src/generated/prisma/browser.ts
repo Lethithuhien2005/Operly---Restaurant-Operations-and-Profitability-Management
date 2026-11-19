@@ -148,6 +148,11 @@ export type ShiftAssignment = Prisma.ShiftAssignmentModel
  */
 export type Attendance = Prisma.AttendanceModel
 /**
+ * Model LeaveRequest
+ * 
+ */
+export type LeaveRequest = Prisma.LeaveRequestModel
+/**
  * Model AuditLog
  * 
  */
