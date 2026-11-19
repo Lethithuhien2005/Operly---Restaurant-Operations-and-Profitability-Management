@@ -20,8 +20,22 @@ export type BranchModel = runtime.Types.Result.DefaultSelection<Prisma.$BranchPa
 
 export type AggregateBranch = {
   _count: BranchCountAggregateOutputType | null
+  _avg: BranchAvgAggregateOutputType | null
+  _sum: BranchSumAggregateOutputType | null
   _min: BranchMinAggregateOutputType | null
   _max: BranchMaxAggregateOutputType | null
+}
+
+export type BranchAvgAggregateOutputType = {
+  latitude: number | null
+  longitude: number | null
+  geofenceRadius: number | null
+}
+
+export type BranchSumAggregateOutputType = {
+  latitude: number | null
+  longitude: number | null
+  geofenceRadius: number | null
 }
 
 export type BranchMinAggregateOutputType = {
@@ -31,6 +45,10 @@ export type BranchMinAggregateOutputType = {
   address: string | null
   phone: string | null
   email: string | null
+  latitude: number | null
+  longitude: number | null
+  geofenceRadius: number | null
+  wifiBssid: string | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -43,6 +61,10 @@ export type BranchMaxAggregateOutputType = {
   address: string | null
   phone: string | null
   email: string | null
+  latitude: number | null
+  longitude: number | null
+  geofenceRadius: number | null
+  wifiBssid: string | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -55,12 +77,28 @@ export type BranchCountAggregateOutputType = {
   address: number
   phone: number
   email: number
+  latitude: number
+  longitude: number
+  geofenceRadius: number
+  wifiBssid: number
   isActive: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type BranchAvgAggregateInputType = {
+  latitude?: true
+  longitude?: true
+  geofenceRadius?: true
+}
+
+export type BranchSumAggregateInputType = {
+  latitude?: true
+  longitude?: true
+  geofenceRadius?: true
+}
 
 export type BranchMinAggregateInputType = {
   id?: true
@@ -69,6 +107,10 @@ export type BranchMinAggregateInputType = {
   address?: true
   phone?: true
   email?: true
+  latitude?: true
+  longitude?: true
+  geofenceRadius?: true
+  wifiBssid?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -81,6 +123,10 @@ export type BranchMaxAggregateInputType = {
   address?: true
   phone?: true
   email?: true
+  latitude?: true
+  longitude?: true
+  geofenceRadius?: true
+  wifiBssid?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -93,6 +139,10 @@ export type BranchCountAggregateInputType = {
   address?: true
   phone?: true
   email?: true
+  latitude?: true
+  longitude?: true
+  geofenceRadius?: true
+  wifiBssid?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -137,6 +187,18 @@ export type BranchAggregateArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: BranchAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: BranchSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: BranchMinAggregateInputType
@@ -167,6 +229,8 @@ export type BranchGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   _count?: BranchCountAggregateInputType | true
+  _avg?: BranchAvgAggregateInputType
+  _sum?: BranchSumAggregateInputType
   _min?: BranchMinAggregateInputType
   _max?: BranchMaxAggregateInputType
 }
@@ -178,10 +242,16 @@ export type BranchGroupByOutputType = {
   address: string
   phone: string | null
   email: string | null
+  latitude: number | null
+  longitude: number | null
+  geofenceRadius: number | null
+  wifiBssid: string | null
   isActive: boolean
   createdAt: Date
   updatedAt: Date
   _count: BranchCountAggregateOutputType | null
+  _avg: BranchAvgAggregateOutputType | null
+  _sum: BranchSumAggregateOutputType | null
   _min: BranchMinAggregateOutputType | null
   _max: BranchMaxAggregateOutputType | null
 }
@@ -211,6 +281,10 @@ export type BranchWhereInput = {
   address?: Prisma.StringFilter<"Branch"> | string
   phone?: Prisma.StringNullableFilter<"Branch"> | string | null
   email?: Prisma.StringNullableFilter<"Branch"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Branch"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Branch"> | number | null
+  geofenceRadius?: Prisma.FloatNullableFilter<"Branch"> | number | null
+  wifiBssid?: Prisma.StringNullableFilter<"Branch"> | string | null
   isActive?: Prisma.BoolFilter<"Branch"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
@@ -226,6 +300,10 @@ export type BranchOrderByWithRelationInput = {
   address?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  geofenceRadius?: Prisma.SortOrderInput | Prisma.SortOrder
+  wifiBssid?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -244,6 +322,10 @@ export type BranchWhereUniqueInput = Prisma.AtLeast<{
   address?: Prisma.StringFilter<"Branch"> | string
   phone?: Prisma.StringNullableFilter<"Branch"> | string | null
   email?: Prisma.StringNullableFilter<"Branch"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Branch"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Branch"> | number | null
+  geofenceRadius?: Prisma.FloatNullableFilter<"Branch"> | number | null
+  wifiBssid?: Prisma.StringNullableFilter<"Branch"> | string | null
   isActive?: Prisma.BoolFilter<"Branch"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
@@ -259,12 +341,18 @@ export type BranchOrderByWithAggregationInput = {
   address?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  geofenceRadius?: Prisma.SortOrderInput | Prisma.SortOrder
+  wifiBssid?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BranchCountOrderByAggregateInput
+  _avg?: Prisma.BranchAvgOrderByAggregateInput
   _max?: Prisma.BranchMaxOrderByAggregateInput
   _min?: Prisma.BranchMinOrderByAggregateInput
+  _sum?: Prisma.BranchSumOrderByAggregateInput
 }
 
 export type BranchScalarWhereWithAggregatesInput = {
@@ -277,6 +365,10 @@ export type BranchScalarWhereWithAggregatesInput = {
   address?: Prisma.StringWithAggregatesFilter<"Branch"> | string
   phone?: Prisma.StringNullableWithAggregatesFilter<"Branch"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"Branch"> | string | null
+  latitude?: Prisma.FloatNullableWithAggregatesFilter<"Branch"> | number | null
+  longitude?: Prisma.FloatNullableWithAggregatesFilter<"Branch"> | number | null
+  geofenceRadius?: Prisma.FloatNullableWithAggregatesFilter<"Branch"> | number | null
+  wifiBssid?: Prisma.StringNullableWithAggregatesFilter<"Branch"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Branch"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Branch"> | Date | string
@@ -288,6 +380,10 @@ export type BranchCreateInput = {
   address: string
   phone?: string | null
   email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  geofenceRadius?: number | null
+  wifiBssid?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -303,6 +399,10 @@ export type BranchUncheckedCreateInput = {
   address: string
   phone?: string | null
   email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  geofenceRadius?: number | null
+  wifiBssid?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -316,6 +416,10 @@ export type BranchUpdateInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -331,6 +435,10 @@ export type BranchUncheckedUpdateInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -345,6 +453,10 @@ export type BranchCreateManyInput = {
   address: string
   phone?: string | null
   email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  geofenceRadius?: number | null
+  wifiBssid?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -356,6 +468,10 @@ export type BranchUpdateManyMutationInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -368,6 +484,10 @@ export type BranchUncheckedUpdateManyInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -390,9 +510,19 @@ export type BranchCountOrderByAggregateInput = {
   address?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+  geofenceRadius?: Prisma.SortOrder
+  wifiBssid?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BranchAvgOrderByAggregateInput = {
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+  geofenceRadius?: Prisma.SortOrder
 }
 
 export type BranchMaxOrderByAggregateInput = {
@@ -402,6 +532,10 @@ export type BranchMaxOrderByAggregateInput = {
   address?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+  geofenceRadius?: Prisma.SortOrder
+  wifiBssid?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -414,9 +548,19 @@ export type BranchMinOrderByAggregateInput = {
   address?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+  geofenceRadius?: Prisma.SortOrder
+  wifiBssid?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BranchSumOrderByAggregateInput = {
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+  geofenceRadius?: Prisma.SortOrder
 }
 
 export type BranchNullableScalarRelationFilter = {
@@ -466,6 +610,14 @@ export type BranchUncheckedUpdateManyWithoutRestaurantNestedInput = {
   deleteMany?: Prisma.BranchScalarWhereInput | Prisma.BranchScalarWhereInput[]
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type BranchCreateNestedOneWithoutTablesInput = {
   create?: Prisma.XOR<Prisma.BranchCreateWithoutTablesInput, Prisma.BranchUncheckedCreateWithoutTablesInput>
   connectOrCreate?: Prisma.BranchCreateOrConnectWithoutTablesInput
@@ -504,6 +656,10 @@ export type BranchCreateWithoutRestaurantInput = {
   address: string
   phone?: string | null
   email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  geofenceRadius?: number | null
+  wifiBssid?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -517,6 +673,10 @@ export type BranchUncheckedCreateWithoutRestaurantInput = {
   address: string
   phone?: string | null
   email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  geofenceRadius?: number | null
+  wifiBssid?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -560,6 +720,10 @@ export type BranchScalarWhereInput = {
   address?: Prisma.StringFilter<"Branch"> | string
   phone?: Prisma.StringNullableFilter<"Branch"> | string | null
   email?: Prisma.StringNullableFilter<"Branch"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Branch"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Branch"> | number | null
+  geofenceRadius?: Prisma.FloatNullableFilter<"Branch"> | number | null
+  wifiBssid?: Prisma.StringNullableFilter<"Branch"> | string | null
   isActive?: Prisma.BoolFilter<"Branch"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
@@ -571,6 +735,10 @@ export type BranchCreateWithoutTablesInput = {
   address: string
   phone?: string | null
   email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  geofenceRadius?: number | null
+  wifiBssid?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -585,6 +753,10 @@ export type BranchUncheckedCreateWithoutTablesInput = {
   address: string
   phone?: string | null
   email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  geofenceRadius?: number | null
+  wifiBssid?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -613,6 +785,10 @@ export type BranchUpdateWithoutTablesInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -627,6 +803,10 @@ export type BranchUncheckedUpdateWithoutTablesInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -639,6 +819,10 @@ export type BranchCreateWithoutReservationsInput = {
   address: string
   phone?: string | null
   email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  geofenceRadius?: number | null
+  wifiBssid?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -653,6 +837,10 @@ export type BranchUncheckedCreateWithoutReservationsInput = {
   address: string
   phone?: string | null
   email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  geofenceRadius?: number | null
+  wifiBssid?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -681,6 +869,10 @@ export type BranchUpdateWithoutReservationsInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -695,6 +887,10 @@ export type BranchUncheckedUpdateWithoutReservationsInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -707,6 +903,10 @@ export type BranchCreateManyRestaurantInput = {
   address: string
   phone?: string | null
   email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  geofenceRadius?: number | null
+  wifiBssid?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -718,6 +918,10 @@ export type BranchUpdateWithoutRestaurantInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -731,6 +935,10 @@ export type BranchUncheckedUpdateWithoutRestaurantInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -744,6 +952,10 @@ export type BranchUncheckedUpdateManyWithoutRestaurantInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofenceRadius?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  wifiBssid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -796,6 +1008,10 @@ export type BranchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   address?: boolean
   phone?: boolean
   email?: boolean
+  latitude?: boolean
+  longitude?: boolean
+  geofenceRadius?: boolean
+  wifiBssid?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -812,6 +1028,10 @@ export type BranchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   address?: boolean
   phone?: boolean
   email?: boolean
+  latitude?: boolean
+  longitude?: boolean
+  geofenceRadius?: boolean
+  wifiBssid?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -825,6 +1045,10 @@ export type BranchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   address?: boolean
   phone?: boolean
   email?: boolean
+  latitude?: boolean
+  longitude?: boolean
+  geofenceRadius?: boolean
+  wifiBssid?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -838,12 +1062,16 @@ export type BranchSelectScalar = {
   address?: boolean
   phone?: boolean
   email?: boolean
+  latitude?: boolean
+  longitude?: boolean
+  geofenceRadius?: boolean
+  wifiBssid?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "restaurantId" | "name" | "address" | "phone" | "email" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["branch"]>
+export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "restaurantId" | "name" | "address" | "phone" | "email" | "latitude" | "longitude" | "geofenceRadius" | "wifiBssid" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["branch"]>
 export type BranchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   restaurant?: boolean | Prisma.RestaurantDefaultArgs<ExtArgs>
   tables?: boolean | Prisma.Branch$tablesArgs<ExtArgs>
@@ -871,6 +1099,10 @@ export type $BranchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     address: string
     phone: string | null
     email: string | null
+    latitude: number | null
+    longitude: number | null
+    geofenceRadius: number | null
+    wifiBssid: string | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1306,6 +1538,10 @@ export interface BranchFieldRefs {
   readonly address: Prisma.FieldRef<"Branch", 'String'>
   readonly phone: Prisma.FieldRef<"Branch", 'String'>
   readonly email: Prisma.FieldRef<"Branch", 'String'>
+  readonly latitude: Prisma.FieldRef<"Branch", 'Float'>
+  readonly longitude: Prisma.FieldRef<"Branch", 'Float'>
+  readonly geofenceRadius: Prisma.FieldRef<"Branch", 'Float'>
+  readonly wifiBssid: Prisma.FieldRef<"Branch", 'String'>
   readonly isActive: Prisma.FieldRef<"Branch", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Branch", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Branch", 'DateTime'>

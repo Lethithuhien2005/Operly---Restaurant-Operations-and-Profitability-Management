@@ -147,6 +147,13 @@ enum AnomalyStatus {
   IGNORED
 }
 
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
 // ==========================================
 // 2. MODULE 1: AUTH & RBAC (5 TABLES)
 // ==========================================
@@ -214,6 +221,8 @@ model User {
   shiftAssignments ShiftAssignment[]
   attendances      Attendance[]
   auditLogs        AuditLog[]
+  leaveRequests    LeaveRequest[]    @relation("UserLeaveRequests")
+  reviewedLeaves   LeaveRequest[]    @relation("ReviewedLeaveRequests")
 
   @@map("users")
 }
@@ -260,6 +269,10 @@ model Branch {
   address      String
   phone        String?
   email        String?
+  latitude     Float?
+  longitude    Float?
+  geofenceRadius Float?   @default(50.0) @map("geofence_radius")
+  wifiBssid    String?    @map("wifi_bssid")
   isActive     Boolean  @default(true) @map("is_active")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -485,6 +498,7 @@ model StockMovement {
   createdBy       User?             @relation(fields: [createdById], references: [id])
   orderItem       OrderItem?        @relation(fields: [orderItemId], references: [id])
 
+  @@unique([orderItemId, inventoryItemId, movementType])
   @@map("stock_movements")
 }
 
@@ -597,7 +611,7 @@ model ShiftAssignment {
 model Attendance {
   id                String           @id @default(uuid()) @db.Uuid
   userId            String           @map("user_id") @db.Uuid
-  shiftAssignmentId String           @map("shift_assignment_id") @db.Uuid
+  shiftAssignmentId String           @unique @map("shift_assignment_id") @db.Uuid
   checkInTime       DateTime?        @map("check_in_time")
   checkOutTime      DateTime?        @map("check_out_time")
   gpsLatitude       Float?           @map("gps_latitude")
@@ -608,6 +622,27 @@ model Attendance {
   shiftAssignment   ShiftAssignment  @relation(fields: [shiftAssignmentId], references: [id])
 
   @@map("attendances")
+}
+
+model LeaveRequest {
+  id           String      @id @default(uuid()) @db.Uuid
+  userId       String      @map("user_id") @db.Uuid
+  startDate    DateTime    @map("start_date") @db.Date
+  endDate      DateTime    @map("end_date") @db.Date
+  reason       String      @db.Text
+  status       LeaveStatus @default(PENDING)
+  reviewedById String?     @map("reviewed_by_id") @db.Uuid
+  reviewNote   String?     @map("review_note") @db.Text
+  reviewedAt   DateTime?   @map("reviewed_at")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  user         User        @relation("UserLeaveRequests", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy   User?       @relation("ReviewedLeaveRequests", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+  @@index([startDate, endDate])
+  @@map("leave_requests")
 }
 
 model AuditLog {

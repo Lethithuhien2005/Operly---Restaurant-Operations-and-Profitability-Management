@@ -263,11 +263,11 @@ export type AttendanceOrderByWithRelationInput = {
 
 export type AttendanceWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  shiftAssignmentId?: string
   AND?: Prisma.AttendanceWhereInput | Prisma.AttendanceWhereInput[]
   OR?: Prisma.AttendanceWhereInput[]
   NOT?: Prisma.AttendanceWhereInput | Prisma.AttendanceWhereInput[]
   userId?: Prisma.UuidFilter<"Attendance"> | string
-  shiftAssignmentId?: Prisma.UuidFilter<"Attendance"> | string
   checkInTime?: Prisma.DateTimeNullableFilter<"Attendance"> | Date | string | null
   checkOutTime?: Prisma.DateTimeNullableFilter<"Attendance"> | Date | string | null
   gpsLatitude?: Prisma.FloatNullableFilter<"Attendance"> | number | null
@@ -275,7 +275,7 @@ export type AttendanceWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumAttendanceStatusFilter<"Attendance"> | $Enums.AttendanceStatus
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   shiftAssignment?: Prisma.XOR<Prisma.ShiftAssignmentScalarRelationFilter, Prisma.ShiftAssignmentWhereInput>
-}, "id">
+}, "id" | "shiftAssignmentId">
 
 export type AttendanceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

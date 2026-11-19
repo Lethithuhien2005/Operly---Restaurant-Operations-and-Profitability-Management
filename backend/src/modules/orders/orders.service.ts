@@ -17,10 +17,14 @@ import { OrderQueryDto } from './dto/order-query.dto.js';
 import { UpdateOrderItemStatusDto } from './dto/update-order-item-status.dto.js';
 import { UpdateOrderItemDto } from './dto/update-order-item.dto.js';
 import { UpdateOrderDto } from './dto/update-order.dto.js';
+import { KitchenService } from '../kitchen/kitchen.service.js';
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly kitchenService?: KitchenService,
+  ) {}
 
   async create(dto: CreateOrderDto) {
     if (!dto.sessionId && !dto.tableId) {
@@ -390,6 +394,16 @@ export class OrdersService {
     itemId: string,
     dto: UpdateOrderItemStatusDto,
   ) {
+    if (this.kitchenService) {
+      return this.kitchenService.updateItemStatusWithInventory(
+        itemId,
+        dto.itemStatus,
+        dto.rejectionReason,
+        undefined,
+        orderId,
+      );
+    }
+
     const item = await this.prisma.orderItem.findFirst({
       where: { id: itemId, orderId },
     });
@@ -405,20 +419,6 @@ export class OrdersService {
       },
       include: { menuItem: true },
     });
-
-    // Check if all items in order are served; if so, update order status to SERVED
-    const allItems = await this.prisma.orderItem.findMany({
-      where: { orderId },
-    });
-    const allServed = allItems.every(
-      (it) => it.itemStatus === OrderItemStatus.SERVED || it.itemStatus === OrderItemStatus.REJECTED,
-    );
-    if (allServed && allItems.length > 0) {
-      await this.prisma.order.update({
-        where: { id: orderId },
-        data: { status: OrderStatus.SERVED },
-      });
-    }
 
     return updatedItem;
   }

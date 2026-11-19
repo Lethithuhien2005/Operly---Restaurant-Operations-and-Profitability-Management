@@ -77,6 +77,7 @@ export const ModelName = {
   Shift: 'Shift',
   ShiftAssignment: 'ShiftAssignment',
   Attendance: 'Attendance',
+  LeaveRequest: 'LeaveRequest',
   AuditLog: 'AuditLog',
   DishProfitability: 'DishProfitability',
   AiForecast: 'AiForecast',
@@ -183,6 +184,10 @@ export const BranchScalarFieldEnum = {
   address: 'address',
   phone: 'phone',
   email: 'email',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  geofenceRadius: 'geofenceRadius',
+  wifiBssid: 'wifiBssid',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -458,6 +463,23 @@ export const AttendanceScalarFieldEnum = {
 } as const
 
 export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
+
+
+export const LeaveRequestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  reason: 'reason',
+  status: 'status',
+  reviewedById: 'reviewedById',
+  reviewNote: 'reviewNote',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeaveRequestScalarFieldEnum = (typeof LeaveRequestScalarFieldEnum)[keyof typeof LeaveRequestScalarFieldEnum]
 
 
 export const AuditLogScalarFieldEnum = {
