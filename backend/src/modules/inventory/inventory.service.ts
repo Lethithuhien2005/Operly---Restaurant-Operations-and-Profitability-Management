@@ -3,8 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { StockMovementType } from '../../../generated/prisma/enums.js';
-import { PrismaService } from '../../../prisma/prisma.service.js';
+import { StockMovementType } from '../../generated/prisma/enums.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
 import { CreateInventoryItemDto } from './dto/create-inventory-item.dto.js';
 import { CreateStockAdjustmentDto } from './dto/create-stock-adjustment.dto.js';
 import { CreateStockReceiptDto } from './dto/create-stock-receipt.dto.js';
