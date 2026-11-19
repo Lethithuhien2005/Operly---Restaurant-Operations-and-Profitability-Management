@@ -3,8 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { OrderItemStatus, OrderStatus } from '../../../generated/prisma/enums.js';
-import { PrismaService } from '../../../prisma/prisma.service.js';
+import { OrderItemStatus, OrderStatus } from '../../generated/prisma/enums.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
 import { InventoryService } from '../inventory/inventory.service.js';
 import { KitchenQueryDto } from './dto/kitchen-query.dto.js';
 
