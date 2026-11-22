@@ -13,9 +13,6 @@ describe('ReservationsService', () => {
       user: {
         findUnique: vi.fn(),
       },
-      branch: {
-        findUnique: vi.fn(),
-      },
       table: {
         findUnique: vi.fn(),
         update: vi.fn(),
@@ -39,7 +36,6 @@ describe('ReservationsService', () => {
       id: 'tbl-1',
       tableNumber: 'T-01',
       capacity: 4,
-      branchId: 'br-1',
     });
     prismaMock.reservation.findFirst.mockResolvedValue(null); // No conflict
     prismaMock.reservation.create.mockResolvedValue({

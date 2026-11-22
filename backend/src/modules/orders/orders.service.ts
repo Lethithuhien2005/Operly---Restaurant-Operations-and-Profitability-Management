@@ -39,9 +39,7 @@ export class OrdersService {
         session = await tx.diningSession.findUnique({
           where: { id: dto.sessionId },
           include: {
-            table: {
-              include: { branch: true },
-            },
+            table: true,
           },
         });
         if (!session) {
@@ -53,7 +51,6 @@ export class OrdersService {
       } else if (dto.tableId) {
         const table = await tx.table.findUnique({
           where: { id: dto.tableId },
-          include: { branch: true },
         });
         if (!table) {
           throw new NotFoundException(`Table with ID "${dto.tableId}" was not found`);
@@ -65,7 +62,7 @@ export class OrdersService {
             tableId: dto.tableId,
             status: { in: [SessionStatus.OPEN, SessionStatus.PAYING] },
           },
-          include: { table: { include: { branch: true } } },
+          include: { table: true },
         });
 
         // If none exists, automatically create a new dining session for the table
@@ -78,7 +75,7 @@ export class OrdersService {
               customerCount: 1,
               status: SessionStatus.OPEN,
             },
-            include: { table: { include: { branch: true } } },
+            include: { table: true },
           });
         }
       }
@@ -151,13 +148,7 @@ export class OrdersService {
           },
           session: {
             include: {
-              table: {
-                include: {
-                  branch: {
-                    select: { id: true, name: true, restaurantId: true },
-                  },
-                },
-              },
+              table: true,
             },
           },
         },
@@ -191,9 +182,6 @@ export class OrdersService {
         ...(query?.sessionId ? { sessionId: query.sessionId } : {}),
         ...(query?.status ? { status: query.status } : {}),
         ...(query?.tableId ? { session: { tableId: query.tableId } } : {}),
-        ...(query?.branchId
-          ? { session: { table: { branchId: query.branchId } } }
-          : {}),
         ...(dateFilter ? { createdAt: dateFilter } : {}),
       },
       include: {
@@ -206,13 +194,7 @@ export class OrdersService {
         },
         session: {
           include: {
-            table: {
-              include: {
-                branch: {
-                  select: { id: true, name: true, restaurantId: true },
-                },
-              },
-            },
+            table: true,
           },
         },
         waiter: {
@@ -236,13 +218,7 @@ export class OrdersService {
         },
         session: {
           include: {
-            table: {
-              include: {
-                branch: {
-                  include: { restaurant: true },
-                },
-              },
-            },
+            table: true,
           },
         },
         waiter: {

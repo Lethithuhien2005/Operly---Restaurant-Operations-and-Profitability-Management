@@ -1,14 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsUUID } from 'class-validator';
+import { IsEnum, IsInt, IsOptional } from 'class-validator';
 import { TableStatus } from '../../../generated/prisma/enums.js';
 
 export class TableQueryDto {
-  @ApiPropertyOptional({ description: 'Filter tables by branch UUID' })
-  @IsOptional()
-  @IsUUID('4')
-  branchId?: string;
-
   @ApiPropertyOptional({ description: 'Filter tables by floor number' })
   @IsOptional()
   @Type(() => Number)

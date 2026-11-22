@@ -18,15 +18,7 @@ export class CreateReservationDto {
   })
   @IsUUID(4, { message: 'customerId must be a valid UUID v4' })
   @IsNotEmpty()
-  customerId: string;
-
-  @ApiPropertyOptional({
-    description: 'Target restaurant branch UUID',
-    example: '123e4567-e89b-12d3-a456-426614174099',
-  })
-  @IsOptional()
-  @IsUUID(4, { message: 'branchId must be a valid UUID v4' })
-  branchId?: string;
+  customerId!: string;
 
   @ApiProperty({
     description: 'Name of the guest arriving at the restaurant',

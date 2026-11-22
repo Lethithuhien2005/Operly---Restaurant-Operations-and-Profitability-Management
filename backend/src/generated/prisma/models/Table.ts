@@ -38,7 +38,6 @@ export type TableSumAggregateOutputType = {
 
 export type TableMinAggregateOutputType = {
   id: string | null
-  branchId: string | null
   tableNumber: string | null
   floor: number | null
   capacity: number | null
@@ -50,7 +49,6 @@ export type TableMinAggregateOutputType = {
 
 export type TableMaxAggregateOutputType = {
   id: string | null
-  branchId: string | null
   tableNumber: string | null
   floor: number | null
   capacity: number | null
@@ -62,7 +60,6 @@ export type TableMaxAggregateOutputType = {
 
 export type TableCountAggregateOutputType = {
   id: number
-  branchId: number
   tableNumber: number
   floor: number
   capacity: number
@@ -86,7 +83,6 @@ export type TableSumAggregateInputType = {
 
 export type TableMinAggregateInputType = {
   id?: true
-  branchId?: true
   tableNumber?: true
   floor?: true
   capacity?: true
@@ -98,7 +94,6 @@ export type TableMinAggregateInputType = {
 
 export type TableMaxAggregateInputType = {
   id?: true
-  branchId?: true
   tableNumber?: true
   floor?: true
   capacity?: true
@@ -110,7 +105,6 @@ export type TableMaxAggregateInputType = {
 
 export type TableCountAggregateInputType = {
   id?: true
-  branchId?: true
   tableNumber?: true
   floor?: true
   capacity?: true
@@ -209,7 +203,6 @@ export type TableGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type TableGroupByOutputType = {
   id: string
-  branchId: string | null
   tableNumber: string
   floor: number
   capacity: number
@@ -244,7 +237,6 @@ export type TableWhereInput = {
   OR?: Prisma.TableWhereInput[]
   NOT?: Prisma.TableWhereInput | Prisma.TableWhereInput[]
   id?: Prisma.UuidFilter<"Table"> | string
-  branchId?: Prisma.UuidNullableFilter<"Table"> | string | null
   tableNumber?: Prisma.StringFilter<"Table"> | string
   floor?: Prisma.IntFilter<"Table"> | number
   capacity?: Prisma.IntFilter<"Table"> | number
@@ -252,14 +244,12 @@ export type TableWhereInput = {
   qrCodeToken?: Prisma.StringFilter<"Table"> | string
   createdAt?: Prisma.DateTimeFilter<"Table"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Table"> | Date | string
-  branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
   reservations?: Prisma.ReservationListRelationFilter
   diningSessions?: Prisma.DiningSessionListRelationFilter
 }
 
 export type TableOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  branchId?: Prisma.SortOrderInput | Prisma.SortOrder
   tableNumber?: Prisma.SortOrder
   floor?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
@@ -267,7 +257,6 @@ export type TableOrderByWithRelationInput = {
   qrCodeToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  branch?: Prisma.BranchOrderByWithRelationInput
   reservations?: Prisma.ReservationOrderByRelationAggregateInput
   diningSessions?: Prisma.DiningSessionOrderByRelationAggregateInput
 }
@@ -279,20 +268,17 @@ export type TableWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.TableWhereInput | Prisma.TableWhereInput[]
   OR?: Prisma.TableWhereInput[]
   NOT?: Prisma.TableWhereInput | Prisma.TableWhereInput[]
-  branchId?: Prisma.UuidNullableFilter<"Table"> | string | null
   floor?: Prisma.IntFilter<"Table"> | number
   capacity?: Prisma.IntFilter<"Table"> | number
   status?: Prisma.EnumTableStatusFilter<"Table"> | $Enums.TableStatus
   createdAt?: Prisma.DateTimeFilter<"Table"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Table"> | Date | string
-  branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
   reservations?: Prisma.ReservationListRelationFilter
   diningSessions?: Prisma.DiningSessionListRelationFilter
 }, "id" | "tableNumber" | "qrCodeToken">
 
 export type TableOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  branchId?: Prisma.SortOrderInput | Prisma.SortOrder
   tableNumber?: Prisma.SortOrder
   floor?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
@@ -312,7 +298,6 @@ export type TableScalarWhereWithAggregatesInput = {
   OR?: Prisma.TableScalarWhereWithAggregatesInput[]
   NOT?: Prisma.TableScalarWhereWithAggregatesInput | Prisma.TableScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Table"> | string
-  branchId?: Prisma.UuidNullableWithAggregatesFilter<"Table"> | string | null
   tableNumber?: Prisma.StringWithAggregatesFilter<"Table"> | string
   floor?: Prisma.IntWithAggregatesFilter<"Table"> | number
   capacity?: Prisma.IntWithAggregatesFilter<"Table"> | number
@@ -331,14 +316,12 @@ export type TableCreateInput = {
   qrCodeToken: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  branch?: Prisma.BranchCreateNestedOneWithoutTablesInput
   reservations?: Prisma.ReservationCreateNestedManyWithoutTableInput
   diningSessions?: Prisma.DiningSessionCreateNestedManyWithoutTableInput
 }
 
 export type TableUncheckedCreateInput = {
   id?: string
-  branchId?: string | null
   tableNumber: string
   floor: number
   capacity: number
@@ -359,14 +342,12 @@ export type TableUpdateInput = {
   qrCodeToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  branch?: Prisma.BranchUpdateOneWithoutTablesNestedInput
   reservations?: Prisma.ReservationUpdateManyWithoutTableNestedInput
   diningSessions?: Prisma.DiningSessionUpdateManyWithoutTableNestedInput
 }
 
 export type TableUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tableNumber?: Prisma.StringFieldUpdateOperationsInput | string
   floor?: Prisma.IntFieldUpdateOperationsInput | number
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
@@ -380,7 +361,6 @@ export type TableUncheckedUpdateInput = {
 
 export type TableCreateManyInput = {
   id?: string
-  branchId?: string | null
   tableNumber: string
   floor: number
   capacity: number
@@ -403,7 +383,6 @@ export type TableUpdateManyMutationInput = {
 
 export type TableUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tableNumber?: Prisma.StringFieldUpdateOperationsInput | string
   floor?: Prisma.IntFieldUpdateOperationsInput | number
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
@@ -413,19 +392,8 @@ export type TableUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type TableListRelationFilter = {
-  every?: Prisma.TableWhereInput
-  some?: Prisma.TableWhereInput
-  none?: Prisma.TableWhereInput
-}
-
-export type TableOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type TableCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
   tableNumber?: Prisma.SortOrder
   floor?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
@@ -442,7 +410,6 @@ export type TableAvgOrderByAggregateInput = {
 
 export type TableMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
   tableNumber?: Prisma.SortOrder
   floor?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
@@ -454,7 +421,6 @@ export type TableMaxOrderByAggregateInput = {
 
 export type TableMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
   tableNumber?: Prisma.SortOrder
   floor?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
@@ -477,48 +443,6 @@ export type TableNullableScalarRelationFilter = {
 export type TableScalarRelationFilter = {
   is?: Prisma.TableWhereInput
   isNot?: Prisma.TableWhereInput
-}
-
-export type TableCreateNestedManyWithoutBranchInput = {
-  create?: Prisma.XOR<Prisma.TableCreateWithoutBranchInput, Prisma.TableUncheckedCreateWithoutBranchInput> | Prisma.TableCreateWithoutBranchInput[] | Prisma.TableUncheckedCreateWithoutBranchInput[]
-  connectOrCreate?: Prisma.TableCreateOrConnectWithoutBranchInput | Prisma.TableCreateOrConnectWithoutBranchInput[]
-  createMany?: Prisma.TableCreateManyBranchInputEnvelope
-  connect?: Prisma.TableWhereUniqueInput | Prisma.TableWhereUniqueInput[]
-}
-
-export type TableUncheckedCreateNestedManyWithoutBranchInput = {
-  create?: Prisma.XOR<Prisma.TableCreateWithoutBranchInput, Prisma.TableUncheckedCreateWithoutBranchInput> | Prisma.TableCreateWithoutBranchInput[] | Prisma.TableUncheckedCreateWithoutBranchInput[]
-  connectOrCreate?: Prisma.TableCreateOrConnectWithoutBranchInput | Prisma.TableCreateOrConnectWithoutBranchInput[]
-  createMany?: Prisma.TableCreateManyBranchInputEnvelope
-  connect?: Prisma.TableWhereUniqueInput | Prisma.TableWhereUniqueInput[]
-}
-
-export type TableUpdateManyWithoutBranchNestedInput = {
-  create?: Prisma.XOR<Prisma.TableCreateWithoutBranchInput, Prisma.TableUncheckedCreateWithoutBranchInput> | Prisma.TableCreateWithoutBranchInput[] | Prisma.TableUncheckedCreateWithoutBranchInput[]
-  connectOrCreate?: Prisma.TableCreateOrConnectWithoutBranchInput | Prisma.TableCreateOrConnectWithoutBranchInput[]
-  upsert?: Prisma.TableUpsertWithWhereUniqueWithoutBranchInput | Prisma.TableUpsertWithWhereUniqueWithoutBranchInput[]
-  createMany?: Prisma.TableCreateManyBranchInputEnvelope
-  set?: Prisma.TableWhereUniqueInput | Prisma.TableWhereUniqueInput[]
-  disconnect?: Prisma.TableWhereUniqueInput | Prisma.TableWhereUniqueInput[]
-  delete?: Prisma.TableWhereUniqueInput | Prisma.TableWhereUniqueInput[]
-  connect?: Prisma.TableWhereUniqueInput | Prisma.TableWhereUniqueInput[]
-  update?: Prisma.TableUpdateWithWhereUniqueWithoutBranchInput | Prisma.TableUpdateWithWhereUniqueWithoutBranchInput[]
-  updateMany?: Prisma.TableUpdateManyWithWhereWithoutBranchInput | Prisma.TableUpdateManyWithWhereWithoutBranchInput[]
-  deleteMany?: Prisma.TableScalarWhereInput | Prisma.TableScalarWhereInput[]
-}
-
-export type TableUncheckedUpdateManyWithoutBranchNestedInput = {
-  create?: Prisma.XOR<Prisma.TableCreateWithoutBranchInput, Prisma.TableUncheckedCreateWithoutBranchInput> | Prisma.TableCreateWithoutBranchInput[] | Prisma.TableUncheckedCreateWithoutBranchInput[]
-  connectOrCreate?: Prisma.TableCreateOrConnectWithoutBranchInput | Prisma.TableCreateOrConnectWithoutBranchInput[]
-  upsert?: Prisma.TableUpsertWithWhereUniqueWithoutBranchInput | Prisma.TableUpsertWithWhereUniqueWithoutBranchInput[]
-  createMany?: Prisma.TableCreateManyBranchInputEnvelope
-  set?: Prisma.TableWhereUniqueInput | Prisma.TableWhereUniqueInput[]
-  disconnect?: Prisma.TableWhereUniqueInput | Prisma.TableWhereUniqueInput[]
-  delete?: Prisma.TableWhereUniqueInput | Prisma.TableWhereUniqueInput[]
-  connect?: Prisma.TableWhereUniqueInput | Prisma.TableWhereUniqueInput[]
-  update?: Prisma.TableUpdateWithWhereUniqueWithoutBranchInput | Prisma.TableUpdateWithWhereUniqueWithoutBranchInput[]
-  updateMany?: Prisma.TableUpdateManyWithWhereWithoutBranchInput | Prisma.TableUpdateManyWithWhereWithoutBranchInput[]
-  deleteMany?: Prisma.TableScalarWhereInput | Prisma.TableScalarWhereInput[]
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -563,73 +487,6 @@ export type TableUpdateOneRequiredWithoutDiningSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TableUpdateToOneWithWhereWithoutDiningSessionsInput, Prisma.TableUpdateWithoutDiningSessionsInput>, Prisma.TableUncheckedUpdateWithoutDiningSessionsInput>
 }
 
-export type TableCreateWithoutBranchInput = {
-  id?: string
-  tableNumber: string
-  floor: number
-  capacity: number
-  status?: $Enums.TableStatus
-  qrCodeToken: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  reservations?: Prisma.ReservationCreateNestedManyWithoutTableInput
-  diningSessions?: Prisma.DiningSessionCreateNestedManyWithoutTableInput
-}
-
-export type TableUncheckedCreateWithoutBranchInput = {
-  id?: string
-  tableNumber: string
-  floor: number
-  capacity: number
-  status?: $Enums.TableStatus
-  qrCodeToken: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  reservations?: Prisma.ReservationUncheckedCreateNestedManyWithoutTableInput
-  diningSessions?: Prisma.DiningSessionUncheckedCreateNestedManyWithoutTableInput
-}
-
-export type TableCreateOrConnectWithoutBranchInput = {
-  where: Prisma.TableWhereUniqueInput
-  create: Prisma.XOR<Prisma.TableCreateWithoutBranchInput, Prisma.TableUncheckedCreateWithoutBranchInput>
-}
-
-export type TableCreateManyBranchInputEnvelope = {
-  data: Prisma.TableCreateManyBranchInput | Prisma.TableCreateManyBranchInput[]
-  skipDuplicates?: boolean
-}
-
-export type TableUpsertWithWhereUniqueWithoutBranchInput = {
-  where: Prisma.TableWhereUniqueInput
-  update: Prisma.XOR<Prisma.TableUpdateWithoutBranchInput, Prisma.TableUncheckedUpdateWithoutBranchInput>
-  create: Prisma.XOR<Prisma.TableCreateWithoutBranchInput, Prisma.TableUncheckedCreateWithoutBranchInput>
-}
-
-export type TableUpdateWithWhereUniqueWithoutBranchInput = {
-  where: Prisma.TableWhereUniqueInput
-  data: Prisma.XOR<Prisma.TableUpdateWithoutBranchInput, Prisma.TableUncheckedUpdateWithoutBranchInput>
-}
-
-export type TableUpdateManyWithWhereWithoutBranchInput = {
-  where: Prisma.TableScalarWhereInput
-  data: Prisma.XOR<Prisma.TableUpdateManyMutationInput, Prisma.TableUncheckedUpdateManyWithoutBranchInput>
-}
-
-export type TableScalarWhereInput = {
-  AND?: Prisma.TableScalarWhereInput | Prisma.TableScalarWhereInput[]
-  OR?: Prisma.TableScalarWhereInput[]
-  NOT?: Prisma.TableScalarWhereInput | Prisma.TableScalarWhereInput[]
-  id?: Prisma.UuidFilter<"Table"> | string
-  branchId?: Prisma.UuidNullableFilter<"Table"> | string | null
-  tableNumber?: Prisma.StringFilter<"Table"> | string
-  floor?: Prisma.IntFilter<"Table"> | number
-  capacity?: Prisma.IntFilter<"Table"> | number
-  status?: Prisma.EnumTableStatusFilter<"Table"> | $Enums.TableStatus
-  qrCodeToken?: Prisma.StringFilter<"Table"> | string
-  createdAt?: Prisma.DateTimeFilter<"Table"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Table"> | Date | string
-}
-
 export type TableCreateWithoutReservationsInput = {
   id?: string
   tableNumber: string
@@ -639,13 +496,11 @@ export type TableCreateWithoutReservationsInput = {
   qrCodeToken: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  branch?: Prisma.BranchCreateNestedOneWithoutTablesInput
   diningSessions?: Prisma.DiningSessionCreateNestedManyWithoutTableInput
 }
 
 export type TableUncheckedCreateWithoutReservationsInput = {
   id?: string
-  branchId?: string | null
   tableNumber: string
   floor: number
   capacity: number
@@ -681,13 +536,11 @@ export type TableUpdateWithoutReservationsInput = {
   qrCodeToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  branch?: Prisma.BranchUpdateOneWithoutTablesNestedInput
   diningSessions?: Prisma.DiningSessionUpdateManyWithoutTableNestedInput
 }
 
 export type TableUncheckedUpdateWithoutReservationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tableNumber?: Prisma.StringFieldUpdateOperationsInput | string
   floor?: Prisma.IntFieldUpdateOperationsInput | number
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
@@ -707,13 +560,11 @@ export type TableCreateWithoutDiningSessionsInput = {
   qrCodeToken: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  branch?: Prisma.BranchCreateNestedOneWithoutTablesInput
   reservations?: Prisma.ReservationCreateNestedManyWithoutTableInput
 }
 
 export type TableUncheckedCreateWithoutDiningSessionsInput = {
   id?: string
-  branchId?: string | null
   tableNumber: string
   floor: number
   capacity: number
@@ -749,13 +600,11 @@ export type TableUpdateWithoutDiningSessionsInput = {
   qrCodeToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  branch?: Prisma.BranchUpdateOneWithoutTablesNestedInput
   reservations?: Prisma.ReservationUpdateManyWithoutTableNestedInput
 }
 
 export type TableUncheckedUpdateWithoutDiningSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tableNumber?: Prisma.StringFieldUpdateOperationsInput | string
   floor?: Prisma.IntFieldUpdateOperationsInput | number
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
@@ -764,54 +613,6 @@ export type TableUncheckedUpdateWithoutDiningSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reservations?: Prisma.ReservationUncheckedUpdateManyWithoutTableNestedInput
-}
-
-export type TableCreateManyBranchInput = {
-  id?: string
-  tableNumber: string
-  floor: number
-  capacity: number
-  status?: $Enums.TableStatus
-  qrCodeToken: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type TableUpdateWithoutBranchInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  tableNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  floor?: Prisma.IntFieldUpdateOperationsInput | number
-  capacity?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumTableStatusFieldUpdateOperationsInput | $Enums.TableStatus
-  qrCodeToken?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reservations?: Prisma.ReservationUpdateManyWithoutTableNestedInput
-  diningSessions?: Prisma.DiningSessionUpdateManyWithoutTableNestedInput
-}
-
-export type TableUncheckedUpdateWithoutBranchInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  tableNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  floor?: Prisma.IntFieldUpdateOperationsInput | number
-  capacity?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumTableStatusFieldUpdateOperationsInput | $Enums.TableStatus
-  qrCodeToken?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reservations?: Prisma.ReservationUncheckedUpdateManyWithoutTableNestedInput
-  diningSessions?: Prisma.DiningSessionUncheckedUpdateManyWithoutTableNestedInput
-}
-
-export type TableUncheckedUpdateManyWithoutBranchInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  tableNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  floor?: Prisma.IntFieldUpdateOperationsInput | number
-  capacity?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumTableStatusFieldUpdateOperationsInput | $Enums.TableStatus
-  qrCodeToken?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -856,7 +657,6 @@ export type TableCountOutputTypeCountDiningSessionsArgs<ExtArgs extends runtime.
 
 export type TableSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  branchId?: boolean
   tableNumber?: boolean
   floor?: boolean
   capacity?: boolean
@@ -864,7 +664,6 @@ export type TableSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   qrCodeToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  branch?: boolean | Prisma.Table$branchArgs<ExtArgs>
   reservations?: boolean | Prisma.Table$reservationsArgs<ExtArgs>
   diningSessions?: boolean | Prisma.Table$diningSessionsArgs<ExtArgs>
   _count?: boolean | Prisma.TableCountOutputTypeDefaultArgs<ExtArgs>
@@ -872,7 +671,6 @@ export type TableSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 
 export type TableSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  branchId?: boolean
   tableNumber?: boolean
   floor?: boolean
   capacity?: boolean
@@ -880,12 +678,10 @@ export type TableSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   qrCodeToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  branch?: boolean | Prisma.Table$branchArgs<ExtArgs>
 }, ExtArgs["result"]["table"]>
 
 export type TableSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  branchId?: boolean
   tableNumber?: boolean
   floor?: boolean
   capacity?: boolean
@@ -893,12 +689,10 @@ export type TableSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   qrCodeToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  branch?: boolean | Prisma.Table$branchArgs<ExtArgs>
 }, ExtArgs["result"]["table"]>
 
 export type TableSelectScalar = {
   id?: boolean
-  branchId?: boolean
   tableNumber?: boolean
   floor?: boolean
   capacity?: boolean
@@ -908,30 +702,23 @@ export type TableSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TableOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "branchId" | "tableNumber" | "floor" | "capacity" | "status" | "qrCodeToken" | "createdAt" | "updatedAt", ExtArgs["result"]["table"]>
+export type TableOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tableNumber" | "floor" | "capacity" | "status" | "qrCodeToken" | "createdAt" | "updatedAt", ExtArgs["result"]["table"]>
 export type TableInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  branch?: boolean | Prisma.Table$branchArgs<ExtArgs>
   reservations?: boolean | Prisma.Table$reservationsArgs<ExtArgs>
   diningSessions?: boolean | Prisma.Table$diningSessionsArgs<ExtArgs>
   _count?: boolean | Prisma.TableCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type TableIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  branch?: boolean | Prisma.Table$branchArgs<ExtArgs>
-}
-export type TableIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  branch?: boolean | Prisma.Table$branchArgs<ExtArgs>
-}
+export type TableIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type TableIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $TablePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Table"
   objects: {
-    branch: Prisma.$BranchPayload<ExtArgs> | null
     reservations: Prisma.$ReservationPayload<ExtArgs>[]
     diningSessions: Prisma.$DiningSessionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    branchId: string | null
     tableNumber: string
     floor: number
     capacity: number
@@ -1333,7 +1120,6 @@ readonly fields: TableFieldRefs;
  */
 export interface Prisma__TableClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  branch<T extends Prisma.Table$branchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Table$branchArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   reservations<T extends Prisma.Table$reservationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Table$reservationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   diningSessions<T extends Prisma.Table$diningSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Table$diningSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiningSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1366,7 +1152,6 @@ export interface Prisma__TableClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface TableFieldRefs {
   readonly id: Prisma.FieldRef<"Table", 'String'>
-  readonly branchId: Prisma.FieldRef<"Table", 'String'>
   readonly tableNumber: Prisma.FieldRef<"Table", 'String'>
   readonly floor: Prisma.FieldRef<"Table", 'Int'>
   readonly capacity: Prisma.FieldRef<"Table", 'Int'>
@@ -1628,10 +1413,6 @@ export type TableCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    */
   data: Prisma.TableCreateManyInput | Prisma.TableCreateManyInput[]
   skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TableIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1702,10 +1483,6 @@ export type TableUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many Tables to update.
    */
   limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TableIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1772,25 +1549,6 @@ export type TableDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Tables to delete.
    */
   limit?: number
-}
-
-/**
- * Table.branch
- */
-export type Table$branchArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Branch
-   */
-  select?: Prisma.BranchSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Branch
-   */
-  omit?: Prisma.BranchOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BranchInclude<ExtArgs> | null
-  where?: Prisma.BranchWhereInput
 }
 
 /**

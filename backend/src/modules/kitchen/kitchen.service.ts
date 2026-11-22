@@ -31,17 +31,12 @@ export class KitchenService {
             itemStatus: { in: activeStatuses },
           },
         },
-        session: query.branchId
-          ? {
-              table: { branchId: query.branchId },
-            }
-          : undefined,
       },
       include: {
         session: {
           include: {
             table: {
-              select: { id: true, tableNumber: true, floor: true, branchId: true },
+              select: { id: true, tableNumber: true, floor: true },
             },
           },
         },

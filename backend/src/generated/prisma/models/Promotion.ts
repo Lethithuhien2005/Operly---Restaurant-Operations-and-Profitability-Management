@@ -533,6 +533,14 @@ export type PromotionNullableScalarRelationFilter = {
   isNot?: Prisma.PromotionWhereInput | null
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type PromotionCreateNestedOneWithoutBillsInput = {
   create?: Prisma.XOR<Prisma.PromotionCreateWithoutBillsInput, Prisma.PromotionUncheckedCreateWithoutBillsInput>
   connectOrCreate?: Prisma.PromotionCreateOrConnectWithoutBillsInput

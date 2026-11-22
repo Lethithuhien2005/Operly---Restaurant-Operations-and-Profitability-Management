@@ -13,11 +13,6 @@ export class OrderQueryDto {
   @IsUUID('4')
   tableId?: string;
 
-  @ApiPropertyOptional({ description: 'Filter by restaurant branch UUID' })
-  @IsOptional()
-  @IsUUID('4')
-  branchId?: string;
-
   @ApiPropertyOptional({ enum: OrderStatus, description: 'Filter by order status' })
   @IsOptional()
   @IsEnum(OrderStatus)

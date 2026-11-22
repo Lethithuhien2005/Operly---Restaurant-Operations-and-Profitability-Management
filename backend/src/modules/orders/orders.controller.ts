@@ -50,7 +50,7 @@ export class OrdersController {
 
   @Get()
   @ApiOperation({
-    summary: 'Query orders with optional sessionId, tableId, branchId, status, and date filters',
+    summary: 'Query orders with optional sessionId, tableId, status, and date filters',
   })
   @ApiResponse({ status: 200, description: 'List of matching orders' })
   findAll(@Query() query: OrderQueryDto) {

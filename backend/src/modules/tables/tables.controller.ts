@@ -39,38 +39,28 @@ export class TablesController {
   @Roles(RoleName.ADMIN, RoleName.MANAGER)
   @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new dining table assigned to a branch (Admin / Manager)' })
+  @ApiOperation({ summary: 'Create a new dining table (Admin / Manager)' })
   @ApiResponse({ status: 201, description: 'Table created successfully' })
   @ApiResponse({ status: 400, description: 'Validation failed' })
-  @ApiResponse({ status: 404, description: 'Target branch not found' })
   @ApiResponse({ status: 409, description: 'Table number already exists' })
   create(@Body() dto: CreateTableDto) {
     return this.tablesService.create(dto);
   }
 
   @Get('api/v1/tables')
-  @ApiOperation({ summary: 'List and filter tables by branch, floor, or status' })
+  @ApiOperation({ summary: 'List and filter tables by floor or status' })
   @ApiResponse({ status: 200, description: 'List of matching tables' })
   findAll(@Query() query: TableQueryDto) {
     return this.tablesService.findAll(query);
   }
 
   @Get('api/v1/tables/:id')
-  @ApiOperation({ summary: 'Get table details by ID with branch and active session' })
+  @ApiOperation({ summary: 'Get table details by ID with active session' })
   @ApiParam({ name: 'id', description: 'Table UUID', format: 'uuid' })
   @ApiResponse({ status: 200, description: 'Table details' })
   @ApiResponse({ status: 404, description: 'Table not found' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.tablesService.findOne(id);
-  }
-
-  @Get('api/v1/branches/:branchId/tables')
-  @ApiOperation({ summary: 'Retrieve all tables for a specific restaurant branch' })
-  @ApiParam({ name: 'branchId', description: 'Branch UUID', format: 'uuid' })
-  @ApiResponse({ status: 200, description: 'List of tables for branch' })
-  @ApiResponse({ status: 404, description: 'Branch not found' })
-  findByBranch(@Param('branchId', ParseUUIDPipe) branchId: string) {
-    return this.tablesService.findByBranch(branchId);
   }
 
   @Patch('api/v1/tables/:id')
@@ -110,10 +100,11 @@ export class TablesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleName.ADMIN, RoleName.MANAGER)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Delete table (Protected against active sessions/reservations)' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete table (Cannot delete if table has active sessions or reservations)' })
   @ApiParam({ name: 'id', description: 'Table UUID', format: 'uuid' })
-  @ApiResponse({ status: 200, description: 'Table deleted successfully' })
-  @ApiResponse({ status: 400, description: 'Cannot delete table with active session' })
+  @ApiResponse({ status: 204, description: 'Table deleted successfully' })
+  @ApiResponse({ status: 400, description: 'Table has active sessions or reservations' })
   @ApiResponse({ status: 404, description: 'Table not found' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.tablesService.remove(id);
