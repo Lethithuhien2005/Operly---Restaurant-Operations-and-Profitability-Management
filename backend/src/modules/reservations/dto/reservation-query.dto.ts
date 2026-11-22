@@ -3,11 +3,6 @@ import { IsDateString, IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { ReservationStatus } from '../../../generated/prisma/enums.js';
 
 export class ReservationQueryDto {
-  @ApiPropertyOptional({ description: 'Filter by restaurant branch UUID' })
-  @IsOptional()
-  @IsUUID('4')
-  branchId?: string;
-
   @ApiPropertyOptional({ description: 'Filter by table UUID' })
   @IsOptional()
   @IsUUID('4')

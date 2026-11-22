@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   AttendanceStatus,
   LeaveStatus,
@@ -37,7 +38,10 @@ export function calculateHaversineDistanceMeters(
 
 @Injectable()
 export class AttendanceService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+  ) {}
 
   /**
    * Clock-in for an assigned shift with Geofence GPS verification and Wi-Fi BSSID fallback
@@ -65,43 +69,69 @@ export class AttendanceService {
       );
     }
 
-    // Geofence / location verification
-    const branch = await this.prisma.branch.findFirst({
-      where: { isActive: true },
-    });
+    // Geofence / location verification using ConfigService for single-restaurant architecture
+    const restLatStr = this.configService.get<string>('RESTAURANT_LATITUDE');
+    const restLonStr = this.configService.get<string>('RESTAURANT_LONGITUDE');
+    const restRadiusStr = this.configService.get<string>('RESTAURANT_GEOFENCE_RADIUS');
+    const configuredWifiBssid = this.configService.get<string>('RESTAURANT_WIFI_BSSID');
 
-    if (branch && branch.latitude !== null && branch.longitude !== null) {
-      const maxRadius = branch.geofenceRadius ?? 50.0;
-      let locationVerified = false;
+    const restLat = restLatStr !== undefined && restLatStr !== null ? parseFloat(restLatStr) : NaN;
+    const restLon = restLonStr !== undefined && restLonStr !== null ? parseFloat(restLonStr) : NaN;
+    const maxRadius = restRadiusStr !== undefined && restRadiusStr !== null ? parseFloat(restRadiusStr) : 50.0;
 
-      if (dto.latitude !== undefined && dto.longitude !== undefined) {
-        const distance = calculateHaversineDistanceMeters(
-          dto.latitude,
-          dto.longitude,
-          branch.latitude,
-          branch.longitude,
-        );
+    if (
+      isNaN(restLat) ||
+      isNaN(restLon) ||
+      restLat < -90 ||
+      restLat > 90 ||
+      restLon < -180 ||
+      restLon > 180 ||
+      isNaN(maxRadius) ||
+      maxRadius <= 0
+    ) {
+      throw new BadRequestException(
+        'Restaurant geofence coordinates are not configured or invalid on the server',
+      );
+    }
 
-        if (distance <= maxRadius) {
-          locationVerified = true;
-        }
+    let locationVerified = false;
+
+    if (dto.latitude !== undefined && dto.longitude !== undefined) {
+      if (
+        dto.latitude < -90 ||
+        dto.latitude > 90 ||
+        dto.longitude < -180 ||
+        dto.longitude > 180
+      ) {
+        throw new BadRequestException('Invalid GPS coordinates provided');
       }
 
-      // Wi-Fi BSSID fallback
-      if (
-        !locationVerified &&
-        branch.wifiBssid &&
-        dto.wifiBssid &&
-        branch.wifiBssid.trim().toLowerCase() === dto.wifiBssid.trim().toLowerCase()
-      ) {
+      const distance = calculateHaversineDistanceMeters(
+        dto.latitude,
+        dto.longitude,
+        restLat,
+        restLon,
+      );
+
+      if (distance <= maxRadius) {
         locationVerified = true;
       }
+    }
 
-      if (!locationVerified) {
-        throw new BadRequestException(
-          `Clock-in location is outside the branch geofence boundary (max ${maxRadius}m) and Wi-Fi BSSID did not match`,
-        );
-      }
+    // Wi-Fi BSSID fallback
+    if (
+      !locationVerified &&
+      configuredWifiBssid &&
+      dto.wifiBssid &&
+      configuredWifiBssid.trim().toLowerCase() === dto.wifiBssid.trim().toLowerCase()
+    ) {
+      locationVerified = true;
+    }
+
+    if (!locationVerified) {
+      throw new BadRequestException(
+        `Clock-in location is outside the restaurant geofence boundary (max ${maxRadius}m) and Wi-Fi BSSID did not match`,
+      );
     }
 
     // Evaluate punctuality against scheduled shift start time
@@ -127,6 +157,8 @@ export class AttendanceService {
         userId,
         shiftAssignmentId: assignment.id,
         checkInTime: now,
+        gpsLatitude: dto.latitude !== undefined ? dto.latitude : null,
+        gpsLongitude: dto.longitude !== undefined ? dto.longitude : null,
         status,
       },
       include: {

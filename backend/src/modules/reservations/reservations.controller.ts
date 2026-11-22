@@ -49,7 +49,7 @@ export class ReservationsController {
 
   @Get()
   @ApiOperation({
-    summary: 'Query reservations with optional branchId, tableId, customerId, status, and date filters',
+    summary: 'Query reservations with optional tableId, customerId, status, and date filters',
   })
   @ApiResponse({ status: 200, description: 'List of matching reservations' })
   findAll(@Query() query: ReservationQueryDto) {

@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SessionStatus, TableStatus } from '../../generated/prisma/enums.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
@@ -10,9 +10,6 @@ describe('TablesService', () => {
 
   beforeEach(() => {
     prismaMock = {
-      branch: {
-        findUnique: vi.fn(),
-      },
       table: {
         create: vi.fn(),
         findFirst: vi.fn(),
@@ -26,8 +23,7 @@ describe('TablesService', () => {
     service = new TablesService(prismaMock as unknown as PrismaService);
   });
 
-  it('should create a table and assign it to a branch', async () => {
-    prismaMock.branch.findUnique.mockResolvedValue({ id: 'branch-1', name: 'Main Branch' });
+  it('should create a table in the restaurant', async () => {
     prismaMock.table.findUnique.mockResolvedValue(null);
     prismaMock.table.create.mockResolvedValue({
       id: 'tbl-1',
@@ -36,31 +32,25 @@ describe('TablesService', () => {
       capacity: 4,
       status: TableStatus.AVAILABLE,
       qrCodeToken: 'QR-T-01-XYZ',
-      branchId: 'branch-1',
     });
 
     const result = await service.create({
-      branchId: 'branch-1',
       tableNumber: 'T-01',
       floor: 1,
       capacity: 4,
     });
 
     expect(result.tableNumber).toBe('T-01');
-    expect(prismaMock.table.create).toHaveBeenCalled();
-  });
-
-  it('should throw NotFoundException if assigned branch does not exist', async () => {
-    prismaMock.branch.findUnique.mockResolvedValue(null);
-
-    await expect(
-      service.create({
-        branchId: 'invalid-branch-id',
-        tableNumber: 'T-02',
-        floor: 1,
-        capacity: 2,
+    expect(prismaMock.table.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          tableNumber: 'T-01',
+          floor: 1,
+          capacity: 4,
+          status: TableStatus.AVAILABLE,
+        }),
       }),
-    ).rejects.toThrow(NotFoundException);
+    );
   });
 
   it('should throw ConflictException on duplicate table number', async () => {
@@ -73,6 +63,20 @@ describe('TablesService', () => {
         capacity: 4,
       }),
     ).rejects.toThrow(ConflictException);
+  });
+
+  it('should list tables filtered by floor and status', async () => {
+    prismaMock.table.findMany.mockResolvedValue([
+      { id: 'tbl-1', tableNumber: 'T-01', floor: 1, status: TableStatus.AVAILABLE },
+    ]);
+
+    const result = await service.findAll({ floor: 1, status: TableStatus.AVAILABLE });
+    expect(result).toHaveLength(1);
+    expect(prismaMock.table.findMany).toHaveBeenCalledWith({
+      where: { floor: 1, status: TableStatus.AVAILABLE },
+      include: expect.any(Object),
+      orderBy: expect.any(Array),
+    });
   });
 
   it('should update table operational status', async () => {
@@ -95,19 +99,5 @@ describe('TablesService', () => {
     });
 
     await expect(service.remove('tbl-1')).rejects.toThrow(BadRequestException);
-  });
-
-  it('should retrieve all tables belonging to a branch', async () => {
-    prismaMock.branch.findUnique.mockResolvedValue({ id: 'branch-1', name: 'Hai Chau' });
-    prismaMock.table.findMany.mockResolvedValue([
-      { id: 'tbl-1', tableNumber: 'T-01', branchId: 'branch-1' },
-      { id: 'tbl-2', tableNumber: 'T-02', branchId: 'branch-1' },
-    ]);
-
-    const tables = await service.findByBranch('branch-1');
-    expect(tables).toHaveLength(2);
-    expect(prismaMock.table.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { branchId: 'branch-1' } }),
-    );
   });
 });

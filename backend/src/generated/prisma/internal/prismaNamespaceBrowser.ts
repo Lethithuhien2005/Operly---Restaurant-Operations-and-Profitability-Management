@@ -56,8 +56,6 @@ export const ModelName = {
   RolePermission: 'RolePermission',
   User: 'User',
   RefreshToken: 'RefreshToken',
-  Restaurant: 'Restaurant',
-  Branch: 'Branch',
   Table: 'Table',
   Category: 'Category',
   MenuItem: 'MenuItem',
@@ -162,43 +160,8 @@ export const RefreshTokenScalarFieldEnum = {
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
-export const RestaurantScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  phone: 'phone',
-  email: 'email',
-  address: 'address',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type RestaurantScalarFieldEnum = (typeof RestaurantScalarFieldEnum)[keyof typeof RestaurantScalarFieldEnum]
-
-
-export const BranchScalarFieldEnum = {
-  id: 'id',
-  restaurantId: 'restaurantId',
-  name: 'name',
-  address: 'address',
-  phone: 'phone',
-  email: 'email',
-  latitude: 'latitude',
-  longitude: 'longitude',
-  geofenceRadius: 'geofenceRadius',
-  wifiBssid: 'wifiBssid',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type BranchScalarFieldEnum = (typeof BranchScalarFieldEnum)[keyof typeof BranchScalarFieldEnum]
-
-
 export const TableScalarFieldEnum = {
   id: 'id',
-  branchId: 'branchId',
   tableNumber: 'tableNumber',
   floor: 'floor',
   capacity: 'capacity',
@@ -243,7 +206,6 @@ export type MenuItemScalarFieldEnum = (typeof MenuItemScalarFieldEnum)[keyof typ
 export const ReservationScalarFieldEnum = {
   id: 'id',
   customerId: 'customerId',
-  branchId: 'branchId',
   guestName: 'guestName',
   guestPhone: 'guestPhone',
   specialRequest: 'specialRequest',

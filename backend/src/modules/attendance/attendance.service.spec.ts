@@ -6,14 +6,12 @@ import { AttendanceService, calculateHaversineDistanceMeters } from './attendanc
 describe('AttendanceService', () => {
   let service: AttendanceService;
   let prismaMock: any;
+  let configServiceMock: any;
 
   beforeEach(() => {
     prismaMock = {
       shiftAssignment: {
         findUnique: vi.fn(),
-      },
-      branch: {
-        findFirst: vi.fn(),
       },
       attendance: {
         findUnique: vi.fn(),
@@ -32,7 +30,17 @@ describe('AttendanceService', () => {
       },
     };
 
-    service = new AttendanceService(prismaMock);
+    configServiceMock = {
+      get: vi.fn((key: string) => {
+        if (key === 'RESTAURANT_LATITUDE') return '10.7769';
+        if (key === 'RESTAURANT_LONGITUDE') return '106.7009';
+        if (key === 'RESTAURANT_GEOFENCE_RADIUS') return '50.0';
+        if (key === 'RESTAURANT_WIFI_BSSID') return '00:14:22:01:23:45';
+        return undefined;
+      }),
+    };
+
+    service = new AttendanceService(prismaMock, configServiceMock as any);
   });
 
   it('should be defined', () => {
@@ -62,7 +70,8 @@ describe('AttendanceService', () => {
       ).rejects.toThrow(ConflictException);
     });
 
-    it('should reject clock-in if device is outside geofence and Wi-Fi does not match', async () => {
+    it('should reject clock-in if restaurant geofence configuration is missing', async () => {
+      configServiceMock.get.mockReturnValue(undefined);
       prismaMock.shiftAssignment.findUnique.mockResolvedValue({
         id: 'sa-1',
         userId: 'user-1',
@@ -71,11 +80,22 @@ describe('AttendanceService', () => {
         assignedDate: new Date('2026-11-20'),
       });
 
-      prismaMock.branch.findFirst.mockResolvedValue({
-        latitude: 10.7769,
-        longitude: 106.7009,
-        geofenceRadius: 50.0,
-        wifiBssid: '00:14:22:01:23:45',
+      await expect(
+        service.clockIn('user-1', {
+          shiftAssignmentId: 'sa-1',
+          latitude: 10.7769,
+          longitude: 106.7009,
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should reject clock-in if device is outside geofence and Wi-Fi does not match', async () => {
+      prismaMock.shiftAssignment.findUnique.mockResolvedValue({
+        id: 'sa-1',
+        userId: 'user-1',
+        attendances: [],
+        shift: { startTime: '08:00' },
+        assignedDate: new Date('2026-11-20'),
       });
 
       // 5km away
@@ -89,7 +109,7 @@ describe('AttendanceService', () => {
       ).rejects.toThrow(BadRequestException);
     });
 
-    it('should accept clock-in if outside geofence but Wi-Fi BSSID matches fallback', async () => {
+    it('should accept clock-in if outside geofence but Wi-Fi BSSID matches fallback and persist coordinates', async () => {
       prismaMock.shiftAssignment.findUnique.mockResolvedValue({
         id: 'sa-1',
         userId: 'user-1',
@@ -98,16 +118,11 @@ describe('AttendanceService', () => {
         assignedDate: new Date('2026-11-20'),
       });
 
-      prismaMock.branch.findFirst.mockResolvedValue({
-        latitude: 10.7769,
-        longitude: 106.7009,
-        geofenceRadius: 50.0,
-        wifiBssid: '00:14:22:01:23:45',
-      });
-
       prismaMock.attendance.create.mockResolvedValue({
         id: 'att-1',
         userId: 'user-1',
+        gpsLatitude: 10.8200,
+        gpsLongitude: 106.7500,
         status: AttendanceStatus.ON_TIME,
       });
 
@@ -119,10 +134,19 @@ describe('AttendanceService', () => {
       });
 
       expect(result.id).toBe('att-1');
-      expect(prismaMock.attendance.create).toHaveBeenCalled();
+      expect(prismaMock.attendance.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            userId: 'user-1',
+            shiftAssignmentId: 'sa-1',
+            gpsLatitude: 10.8200,
+            gpsLongitude: 106.7500,
+          }),
+        }),
+      );
     });
 
-    it('should clock-in successfully when within geofence', async () => {
+    it('should clock-in successfully when within geofence and persist GPS coordinates', async () => {
       prismaMock.shiftAssignment.findUnique.mockResolvedValue({
         id: 'sa-1',
         userId: 'user-1',
@@ -131,15 +155,11 @@ describe('AttendanceService', () => {
         assignedDate: new Date('2026-11-20'),
       });
 
-      prismaMock.branch.findFirst.mockResolvedValue({
-        latitude: 10.7769,
-        longitude: 106.7009,
-        geofenceRadius: 50.0,
-      });
-
       prismaMock.attendance.create.mockResolvedValue({
         id: 'att-1',
         userId: 'user-1',
+        gpsLatitude: 10.77691,
+        gpsLongitude: 106.70091,
         status: AttendanceStatus.ON_TIME,
       });
 
@@ -150,6 +170,14 @@ describe('AttendanceService', () => {
       });
 
       expect(result.id).toBe('att-1');
+      expect(prismaMock.attendance.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            gpsLatitude: 10.77691,
+            gpsLongitude: 106.70091,
+          }),
+        }),
+      );
     });
   });
 

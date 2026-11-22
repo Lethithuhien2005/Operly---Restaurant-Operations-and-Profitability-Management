@@ -20,17 +20,6 @@ export class TablesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateTableDto) {
-    if (dto.branchId) {
-      const branch = await this.prisma.branch.findUnique({
-        where: { id: dto.branchId },
-      });
-      if (!branch) {
-        throw new NotFoundException(
-          `Branch with ID "${dto.branchId}" was not found`,
-        );
-      }
-    }
-
     const existingTable = await this.prisma.table.findUnique({
       where: { tableNumber: dto.tableNumber },
     });
@@ -46,17 +35,11 @@ export class TablesService {
 
     return this.prisma.table.create({
       data: {
-        branchId: dto.branchId || null,
         tableNumber: dto.tableNumber,
         floor: dto.floor,
         capacity: dto.capacity,
         status: dto.status ?? TableStatus.AVAILABLE,
         qrCodeToken: qrToken,
-      },
-      include: {
-        branch: {
-          select: { id: true, name: true, restaurantId: true },
-        },
       },
     });
   }
@@ -64,18 +47,10 @@ export class TablesService {
   async findAll(query?: TableQueryDto) {
     return this.prisma.table.findMany({
       where: {
-        ...(query?.branchId ? { branchId: query.branchId } : {}),
         ...(query?.floor ? { floor: query.floor } : {}),
         ...(query?.status ? { status: query.status } : {}),
       },
       include: {
-        branch: {
-          select: {
-            id: true,
-            name: true,
-            restaurant: { select: { id: true, name: true } },
-          },
-        },
         _count: {
           select: {
             diningSessions: true,
@@ -87,35 +62,10 @@ export class TablesService {
     });
   }
 
-  async findByBranch(branchId: string) {
-    const branch = await this.prisma.branch.findUnique({
-      where: { id: branchId },
-    });
-    if (!branch) {
-      throw new NotFoundException(`Branch with ID "${branchId}" was not found`);
-    }
-
-    return this.prisma.table.findMany({
-      where: { branchId },
-      include: {
-        diningSessions: {
-          where: { status: { in: [SessionStatus.OPEN, SessionStatus.PAYING] } },
-          take: 1,
-        },
-      },
-      orderBy: [{ floor: 'asc' }, { tableNumber: 'asc' }],
-    });
-  }
-
   async findOne(id: string) {
     const table = await this.prisma.table.findUnique({
       where: { id },
       include: {
-        branch: {
-          include: {
-            restaurant: true,
-          },
-        },
         diningSessions: {
           where: {
             status: { in: [SessionStatus.OPEN, SessionStatus.PAYING] },
@@ -151,17 +101,6 @@ export class TablesService {
   async update(id: string, dto: UpdateTableDto) {
     await this.findOne(id);
 
-    if (dto.branchId) {
-      const branch = await this.prisma.branch.findUnique({
-        where: { id: dto.branchId },
-      });
-      if (!branch) {
-        throw new NotFoundException(
-          `Target branch with ID "${dto.branchId}" was not found`,
-        );
-      }
-    }
-
     if (dto.tableNumber) {
       const existing = await this.prisma.table.findFirst({
         where: {
@@ -179,12 +118,11 @@ export class TablesService {
     return this.prisma.table.update({
       where: { id },
       data: {
-        ...dto,
-      },
-      include: {
-        branch: {
-          select: { id: true, name: true },
-        },
+        ...(dto.tableNumber !== undefined ? { tableNumber: dto.tableNumber } : {}),
+        ...(dto.floor !== undefined ? { floor: dto.floor } : {}),
+        ...(dto.capacity !== undefined ? { capacity: dto.capacity } : {}),
+        ...(dto.status !== undefined ? { status: dto.status } : {}),
+        ...(dto.qrCodeToken !== undefined ? { qrCodeToken: dto.qrCodeToken } : {}),
       },
     });
   }
@@ -195,11 +133,6 @@ export class TablesService {
     return this.prisma.table.update({
       where: { id },
       data: { status },
-      include: {
-        branch: {
-          select: { id: true, name: true },
-        },
-      },
     });
   }
 

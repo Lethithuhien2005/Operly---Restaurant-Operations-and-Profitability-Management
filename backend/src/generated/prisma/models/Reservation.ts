@@ -39,7 +39,6 @@ export type ReservationSumAggregateOutputType = {
 export type ReservationMinAggregateOutputType = {
   id: string | null
   customerId: string | null
-  branchId: string | null
   guestName: string | null
   guestPhone: string | null
   specialRequest: string | null
@@ -56,7 +55,6 @@ export type ReservationMinAggregateOutputType = {
 export type ReservationMaxAggregateOutputType = {
   id: string | null
   customerId: string | null
-  branchId: string | null
   guestName: string | null
   guestPhone: string | null
   specialRequest: string | null
@@ -73,7 +71,6 @@ export type ReservationMaxAggregateOutputType = {
 export type ReservationCountAggregateOutputType = {
   id: number
   customerId: number
-  branchId: number
   guestName: number
   guestPhone: number
   specialRequest: number
@@ -102,7 +99,6 @@ export type ReservationSumAggregateInputType = {
 export type ReservationMinAggregateInputType = {
   id?: true
   customerId?: true
-  branchId?: true
   guestName?: true
   guestPhone?: true
   specialRequest?: true
@@ -119,7 +115,6 @@ export type ReservationMinAggregateInputType = {
 export type ReservationMaxAggregateInputType = {
   id?: true
   customerId?: true
-  branchId?: true
   guestName?: true
   guestPhone?: true
   specialRequest?: true
@@ -136,7 +131,6 @@ export type ReservationMaxAggregateInputType = {
 export type ReservationCountAggregateInputType = {
   id?: true
   customerId?: true
-  branchId?: true
   guestName?: true
   guestPhone?: true
   specialRequest?: true
@@ -240,7 +234,6 @@ export type ReservationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 export type ReservationGroupByOutputType = {
   id: string
   customerId: string
-  branchId: string | null
   guestName: string
   guestPhone: string
   specialRequest: string | null
@@ -280,7 +273,6 @@ export type ReservationWhereInput = {
   NOT?: Prisma.ReservationWhereInput | Prisma.ReservationWhereInput[]
   id?: Prisma.UuidFilter<"Reservation"> | string
   customerId?: Prisma.UuidFilter<"Reservation"> | string
-  branchId?: Prisma.UuidNullableFilter<"Reservation"> | string | null
   guestName?: Prisma.StringFilter<"Reservation"> | string
   guestPhone?: Prisma.StringFilter<"Reservation"> | string
   specialRequest?: Prisma.StringNullableFilter<"Reservation"> | string | null
@@ -293,7 +285,6 @@ export type ReservationWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
   customer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
   table?: Prisma.XOR<Prisma.TableNullableScalarRelationFilter, Prisma.TableWhereInput> | null
   diningSession?: Prisma.XOR<Prisma.DiningSessionNullableScalarRelationFilter, Prisma.DiningSessionWhereInput> | null
 }
@@ -301,7 +292,6 @@ export type ReservationWhereInput = {
 export type ReservationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrderInput | Prisma.SortOrder
   guestName?: Prisma.SortOrder
   guestPhone?: Prisma.SortOrder
   specialRequest?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -314,7 +304,6 @@ export type ReservationOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   customer?: Prisma.UserOrderByWithRelationInput
-  branch?: Prisma.BranchOrderByWithRelationInput
   table?: Prisma.TableOrderByWithRelationInput
   diningSession?: Prisma.DiningSessionOrderByWithRelationInput
 }
@@ -325,7 +314,6 @@ export type ReservationWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ReservationWhereInput[]
   NOT?: Prisma.ReservationWhereInput | Prisma.ReservationWhereInput[]
   customerId?: Prisma.UuidFilter<"Reservation"> | string
-  branchId?: Prisma.UuidNullableFilter<"Reservation"> | string | null
   guestName?: Prisma.StringFilter<"Reservation"> | string
   guestPhone?: Prisma.StringFilter<"Reservation"> | string
   specialRequest?: Prisma.StringNullableFilter<"Reservation"> | string | null
@@ -338,7 +326,6 @@ export type ReservationWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
   customer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
   table?: Prisma.XOR<Prisma.TableNullableScalarRelationFilter, Prisma.TableWhereInput> | null
   diningSession?: Prisma.XOR<Prisma.DiningSessionNullableScalarRelationFilter, Prisma.DiningSessionWhereInput> | null
 }, "id">
@@ -346,7 +333,6 @@ export type ReservationWhereUniqueInput = Prisma.AtLeast<{
 export type ReservationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrderInput | Prisma.SortOrder
   guestName?: Prisma.SortOrder
   guestPhone?: Prisma.SortOrder
   specialRequest?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -371,7 +357,6 @@ export type ReservationScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ReservationScalarWhereWithAggregatesInput | Prisma.ReservationScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Reservation"> | string
   customerId?: Prisma.UuidWithAggregatesFilter<"Reservation"> | string
-  branchId?: Prisma.UuidNullableWithAggregatesFilter<"Reservation"> | string | null
   guestName?: Prisma.StringWithAggregatesFilter<"Reservation"> | string
   guestPhone?: Prisma.StringWithAggregatesFilter<"Reservation"> | string
   specialRequest?: Prisma.StringNullableWithAggregatesFilter<"Reservation"> | string | null
@@ -398,7 +383,6 @@ export type ReservationCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.UserCreateNestedOneWithoutReservationsInput
-  branch?: Prisma.BranchCreateNestedOneWithoutReservationsInput
   table?: Prisma.TableCreateNestedOneWithoutReservationsInput
   diningSession?: Prisma.DiningSessionCreateNestedOneWithoutReservationInput
 }
@@ -406,7 +390,6 @@ export type ReservationCreateInput = {
 export type ReservationUncheckedCreateInput = {
   id?: string
   customerId: string
-  branchId?: string | null
   guestName: string
   guestPhone: string
   specialRequest?: string | null
@@ -434,7 +417,6 @@ export type ReservationUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.UserUpdateOneRequiredWithoutReservationsNestedInput
-  branch?: Prisma.BranchUpdateOneWithoutReservationsNestedInput
   table?: Prisma.TableUpdateOneWithoutReservationsNestedInput
   diningSession?: Prisma.DiningSessionUpdateOneWithoutReservationNestedInput
 }
@@ -442,7 +424,6 @@ export type ReservationUpdateInput = {
 export type ReservationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   guestName?: Prisma.StringFieldUpdateOperationsInput | string
   guestPhone?: Prisma.StringFieldUpdateOperationsInput | string
   specialRequest?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -460,7 +441,6 @@ export type ReservationUncheckedUpdateInput = {
 export type ReservationCreateManyInput = {
   id?: string
   customerId: string
-  branchId?: string | null
   guestName: string
   guestPhone: string
   specialRequest?: string | null
@@ -491,7 +471,6 @@ export type ReservationUpdateManyMutationInput = {
 export type ReservationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   guestName?: Prisma.StringFieldUpdateOperationsInput | string
   guestPhone?: Prisma.StringFieldUpdateOperationsInput | string
   specialRequest?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -518,7 +497,6 @@ export type ReservationOrderByRelationAggregateInput = {
 export type ReservationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
   guestName?: Prisma.SortOrder
   guestPhone?: Prisma.SortOrder
   specialRequest?: Prisma.SortOrder
@@ -540,7 +518,6 @@ export type ReservationAvgOrderByAggregateInput = {
 export type ReservationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
   guestName?: Prisma.SortOrder
   guestPhone?: Prisma.SortOrder
   specialRequest?: Prisma.SortOrder
@@ -557,7 +534,6 @@ export type ReservationMaxOrderByAggregateInput = {
 export type ReservationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
   guestName?: Prisma.SortOrder
   guestPhone?: Prisma.SortOrder
   specialRequest?: Prisma.SortOrder
@@ -620,48 +596,6 @@ export type ReservationUncheckedUpdateManyWithoutCustomerNestedInput = {
   connect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
   update?: Prisma.ReservationUpdateWithWhereUniqueWithoutCustomerInput | Prisma.ReservationUpdateWithWhereUniqueWithoutCustomerInput[]
   updateMany?: Prisma.ReservationUpdateManyWithWhereWithoutCustomerInput | Prisma.ReservationUpdateManyWithWhereWithoutCustomerInput[]
-  deleteMany?: Prisma.ReservationScalarWhereInput | Prisma.ReservationScalarWhereInput[]
-}
-
-export type ReservationCreateNestedManyWithoutBranchInput = {
-  create?: Prisma.XOR<Prisma.ReservationCreateWithoutBranchInput, Prisma.ReservationUncheckedCreateWithoutBranchInput> | Prisma.ReservationCreateWithoutBranchInput[] | Prisma.ReservationUncheckedCreateWithoutBranchInput[]
-  connectOrCreate?: Prisma.ReservationCreateOrConnectWithoutBranchInput | Prisma.ReservationCreateOrConnectWithoutBranchInput[]
-  createMany?: Prisma.ReservationCreateManyBranchInputEnvelope
-  connect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-}
-
-export type ReservationUncheckedCreateNestedManyWithoutBranchInput = {
-  create?: Prisma.XOR<Prisma.ReservationCreateWithoutBranchInput, Prisma.ReservationUncheckedCreateWithoutBranchInput> | Prisma.ReservationCreateWithoutBranchInput[] | Prisma.ReservationUncheckedCreateWithoutBranchInput[]
-  connectOrCreate?: Prisma.ReservationCreateOrConnectWithoutBranchInput | Prisma.ReservationCreateOrConnectWithoutBranchInput[]
-  createMany?: Prisma.ReservationCreateManyBranchInputEnvelope
-  connect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-}
-
-export type ReservationUpdateManyWithoutBranchNestedInput = {
-  create?: Prisma.XOR<Prisma.ReservationCreateWithoutBranchInput, Prisma.ReservationUncheckedCreateWithoutBranchInput> | Prisma.ReservationCreateWithoutBranchInput[] | Prisma.ReservationUncheckedCreateWithoutBranchInput[]
-  connectOrCreate?: Prisma.ReservationCreateOrConnectWithoutBranchInput | Prisma.ReservationCreateOrConnectWithoutBranchInput[]
-  upsert?: Prisma.ReservationUpsertWithWhereUniqueWithoutBranchInput | Prisma.ReservationUpsertWithWhereUniqueWithoutBranchInput[]
-  createMany?: Prisma.ReservationCreateManyBranchInputEnvelope
-  set?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  disconnect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  delete?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  connect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  update?: Prisma.ReservationUpdateWithWhereUniqueWithoutBranchInput | Prisma.ReservationUpdateWithWhereUniqueWithoutBranchInput[]
-  updateMany?: Prisma.ReservationUpdateManyWithWhereWithoutBranchInput | Prisma.ReservationUpdateManyWithWhereWithoutBranchInput[]
-  deleteMany?: Prisma.ReservationScalarWhereInput | Prisma.ReservationScalarWhereInput[]
-}
-
-export type ReservationUncheckedUpdateManyWithoutBranchNestedInput = {
-  create?: Prisma.XOR<Prisma.ReservationCreateWithoutBranchInput, Prisma.ReservationUncheckedCreateWithoutBranchInput> | Prisma.ReservationCreateWithoutBranchInput[] | Prisma.ReservationUncheckedCreateWithoutBranchInput[]
-  connectOrCreate?: Prisma.ReservationCreateOrConnectWithoutBranchInput | Prisma.ReservationCreateOrConnectWithoutBranchInput[]
-  upsert?: Prisma.ReservationUpsertWithWhereUniqueWithoutBranchInput | Prisma.ReservationUpsertWithWhereUniqueWithoutBranchInput[]
-  createMany?: Prisma.ReservationCreateManyBranchInputEnvelope
-  set?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  disconnect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  delete?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  connect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  update?: Prisma.ReservationUpdateWithWhereUniqueWithoutBranchInput | Prisma.ReservationUpdateWithWhereUniqueWithoutBranchInput[]
-  updateMany?: Prisma.ReservationUpdateManyWithWhereWithoutBranchInput | Prisma.ReservationUpdateManyWithWhereWithoutBranchInput[]
   deleteMany?: Prisma.ReservationScalarWhereInput | Prisma.ReservationScalarWhereInput[]
 }
 
@@ -743,14 +677,12 @@ export type ReservationCreateWithoutCustomerInput = {
   status?: $Enums.ReservationStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  branch?: Prisma.BranchCreateNestedOneWithoutReservationsInput
   table?: Prisma.TableCreateNestedOneWithoutReservationsInput
   diningSession?: Prisma.DiningSessionCreateNestedOneWithoutReservationInput
 }
 
 export type ReservationUncheckedCreateWithoutCustomerInput = {
   id?: string
-  branchId?: string | null
   guestName: string
   guestPhone: string
   specialRequest?: string | null
@@ -797,7 +729,6 @@ export type ReservationScalarWhereInput = {
   NOT?: Prisma.ReservationScalarWhereInput | Prisma.ReservationScalarWhereInput[]
   id?: Prisma.UuidFilter<"Reservation"> | string
   customerId?: Prisma.UuidFilter<"Reservation"> | string
-  branchId?: Prisma.UuidNullableFilter<"Reservation"> | string | null
   guestName?: Prisma.StringFilter<"Reservation"> | string
   guestPhone?: Prisma.StringFilter<"Reservation"> | string
   specialRequest?: Prisma.StringNullableFilter<"Reservation"> | string | null
@@ -809,66 +740,6 @@ export type ReservationScalarWhereInput = {
   status?: Prisma.EnumReservationStatusFilter<"Reservation"> | $Enums.ReservationStatus
   createdAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
-}
-
-export type ReservationCreateWithoutBranchInput = {
-  id?: string
-  guestName: string
-  guestPhone: string
-  specialRequest?: string | null
-  partySize: number
-  reservationTime: Date | string
-  depositAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  depositStatus?: $Enums.DepositStatus
-  status?: $Enums.ReservationStatus
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  customer: Prisma.UserCreateNestedOneWithoutReservationsInput
-  table?: Prisma.TableCreateNestedOneWithoutReservationsInput
-  diningSession?: Prisma.DiningSessionCreateNestedOneWithoutReservationInput
-}
-
-export type ReservationUncheckedCreateWithoutBranchInput = {
-  id?: string
-  customerId: string
-  guestName: string
-  guestPhone: string
-  specialRequest?: string | null
-  tableId?: string | null
-  partySize: number
-  reservationTime: Date | string
-  depositAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  depositStatus?: $Enums.DepositStatus
-  status?: $Enums.ReservationStatus
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  diningSession?: Prisma.DiningSessionUncheckedCreateNestedOneWithoutReservationInput
-}
-
-export type ReservationCreateOrConnectWithoutBranchInput = {
-  where: Prisma.ReservationWhereUniqueInput
-  create: Prisma.XOR<Prisma.ReservationCreateWithoutBranchInput, Prisma.ReservationUncheckedCreateWithoutBranchInput>
-}
-
-export type ReservationCreateManyBranchInputEnvelope = {
-  data: Prisma.ReservationCreateManyBranchInput | Prisma.ReservationCreateManyBranchInput[]
-  skipDuplicates?: boolean
-}
-
-export type ReservationUpsertWithWhereUniqueWithoutBranchInput = {
-  where: Prisma.ReservationWhereUniqueInput
-  update: Prisma.XOR<Prisma.ReservationUpdateWithoutBranchInput, Prisma.ReservationUncheckedUpdateWithoutBranchInput>
-  create: Prisma.XOR<Prisma.ReservationCreateWithoutBranchInput, Prisma.ReservationUncheckedCreateWithoutBranchInput>
-}
-
-export type ReservationUpdateWithWhereUniqueWithoutBranchInput = {
-  where: Prisma.ReservationWhereUniqueInput
-  data: Prisma.XOR<Prisma.ReservationUpdateWithoutBranchInput, Prisma.ReservationUncheckedUpdateWithoutBranchInput>
-}
-
-export type ReservationUpdateManyWithWhereWithoutBranchInput = {
-  where: Prisma.ReservationScalarWhereInput
-  data: Prisma.XOR<Prisma.ReservationUpdateManyMutationInput, Prisma.ReservationUncheckedUpdateManyWithoutBranchInput>
 }
 
 export type ReservationCreateWithoutTableInput = {
@@ -884,14 +755,12 @@ export type ReservationCreateWithoutTableInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.UserCreateNestedOneWithoutReservationsInput
-  branch?: Prisma.BranchCreateNestedOneWithoutReservationsInput
   diningSession?: Prisma.DiningSessionCreateNestedOneWithoutReservationInput
 }
 
 export type ReservationUncheckedCreateWithoutTableInput = {
   id?: string
   customerId: string
-  branchId?: string | null
   guestName: string
   guestPhone: string
   specialRequest?: string | null
@@ -944,14 +813,12 @@ export type ReservationCreateWithoutDiningSessionInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.UserCreateNestedOneWithoutReservationsInput
-  branch?: Prisma.BranchCreateNestedOneWithoutReservationsInput
   table?: Prisma.TableCreateNestedOneWithoutReservationsInput
 }
 
 export type ReservationUncheckedCreateWithoutDiningSessionInput = {
   id?: string
   customerId: string
-  branchId?: string | null
   guestName: string
   guestPhone: string
   specialRequest?: string | null
@@ -994,14 +861,12 @@ export type ReservationUpdateWithoutDiningSessionInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.UserUpdateOneRequiredWithoutReservationsNestedInput
-  branch?: Prisma.BranchUpdateOneWithoutReservationsNestedInput
   table?: Prisma.TableUpdateOneWithoutReservationsNestedInput
 }
 
 export type ReservationUncheckedUpdateWithoutDiningSessionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   guestName?: Prisma.StringFieldUpdateOperationsInput | string
   guestPhone?: Prisma.StringFieldUpdateOperationsInput | string
   specialRequest?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1017,7 +882,6 @@ export type ReservationUncheckedUpdateWithoutDiningSessionInput = {
 
 export type ReservationCreateManyCustomerInput = {
   id?: string
-  branchId?: string | null
   guestName: string
   guestPhone: string
   specialRequest?: string | null
@@ -1043,14 +907,12 @@ export type ReservationUpdateWithoutCustomerInput = {
   status?: Prisma.EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  branch?: Prisma.BranchUpdateOneWithoutReservationsNestedInput
   table?: Prisma.TableUpdateOneWithoutReservationsNestedInput
   diningSession?: Prisma.DiningSessionUpdateOneWithoutReservationNestedInput
 }
 
 export type ReservationUncheckedUpdateWithoutCustomerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   guestName?: Prisma.StringFieldUpdateOperationsInput | string
   guestPhone?: Prisma.StringFieldUpdateOperationsInput | string
   specialRequest?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1067,73 +929,6 @@ export type ReservationUncheckedUpdateWithoutCustomerInput = {
 
 export type ReservationUncheckedUpdateManyWithoutCustomerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  guestName?: Prisma.StringFieldUpdateOperationsInput | string
-  guestPhone?: Prisma.StringFieldUpdateOperationsInput | string
-  specialRequest?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tableId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  partySize?: Prisma.IntFieldUpdateOperationsInput | number
-  reservationTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  depositAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  depositStatus?: Prisma.EnumDepositStatusFieldUpdateOperationsInput | $Enums.DepositStatus
-  status?: Prisma.EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type ReservationCreateManyBranchInput = {
-  id?: string
-  customerId: string
-  guestName: string
-  guestPhone: string
-  specialRequest?: string | null
-  tableId?: string | null
-  partySize: number
-  reservationTime: Date | string
-  depositAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  depositStatus?: $Enums.DepositStatus
-  status?: $Enums.ReservationStatus
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type ReservationUpdateWithoutBranchInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  guestName?: Prisma.StringFieldUpdateOperationsInput | string
-  guestPhone?: Prisma.StringFieldUpdateOperationsInput | string
-  specialRequest?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  partySize?: Prisma.IntFieldUpdateOperationsInput | number
-  reservationTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  depositAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  depositStatus?: Prisma.EnumDepositStatusFieldUpdateOperationsInput | $Enums.DepositStatus
-  status?: Prisma.EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customer?: Prisma.UserUpdateOneRequiredWithoutReservationsNestedInput
-  table?: Prisma.TableUpdateOneWithoutReservationsNestedInput
-  diningSession?: Prisma.DiningSessionUpdateOneWithoutReservationNestedInput
-}
-
-export type ReservationUncheckedUpdateWithoutBranchInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  customerId?: Prisma.StringFieldUpdateOperationsInput | string
-  guestName?: Prisma.StringFieldUpdateOperationsInput | string
-  guestPhone?: Prisma.StringFieldUpdateOperationsInput | string
-  specialRequest?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tableId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  partySize?: Prisma.IntFieldUpdateOperationsInput | number
-  reservationTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  depositAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  depositStatus?: Prisma.EnumDepositStatusFieldUpdateOperationsInput | $Enums.DepositStatus
-  status?: Prisma.EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  diningSession?: Prisma.DiningSessionUncheckedUpdateOneWithoutReservationNestedInput
-}
-
-export type ReservationUncheckedUpdateManyWithoutBranchInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  customerId?: Prisma.StringFieldUpdateOperationsInput | string
   guestName?: Prisma.StringFieldUpdateOperationsInput | string
   guestPhone?: Prisma.StringFieldUpdateOperationsInput | string
   specialRequest?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1150,7 +945,6 @@ export type ReservationUncheckedUpdateManyWithoutBranchInput = {
 export type ReservationCreateManyTableInput = {
   id?: string
   customerId: string
-  branchId?: string | null
   guestName: string
   guestPhone: string
   specialRequest?: string | null
@@ -1176,14 +970,12 @@ export type ReservationUpdateWithoutTableInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.UserUpdateOneRequiredWithoutReservationsNestedInput
-  branch?: Prisma.BranchUpdateOneWithoutReservationsNestedInput
   diningSession?: Prisma.DiningSessionUpdateOneWithoutReservationNestedInput
 }
 
 export type ReservationUncheckedUpdateWithoutTableInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   guestName?: Prisma.StringFieldUpdateOperationsInput | string
   guestPhone?: Prisma.StringFieldUpdateOperationsInput | string
   specialRequest?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1200,7 +992,6 @@ export type ReservationUncheckedUpdateWithoutTableInput = {
 export type ReservationUncheckedUpdateManyWithoutTableInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   guestName?: Prisma.StringFieldUpdateOperationsInput | string
   guestPhone?: Prisma.StringFieldUpdateOperationsInput | string
   specialRequest?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1218,7 +1009,6 @@ export type ReservationUncheckedUpdateManyWithoutTableInput = {
 export type ReservationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   customerId?: boolean
-  branchId?: boolean
   guestName?: boolean
   guestPhone?: boolean
   specialRequest?: boolean
@@ -1231,7 +1021,6 @@ export type ReservationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   createdAt?: boolean
   updatedAt?: boolean
   customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Reservation$branchArgs<ExtArgs>
   table?: boolean | Prisma.Reservation$tableArgs<ExtArgs>
   diningSession?: boolean | Prisma.Reservation$diningSessionArgs<ExtArgs>
 }, ExtArgs["result"]["reservation"]>
@@ -1239,7 +1028,6 @@ export type ReservationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 export type ReservationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   customerId?: boolean
-  branchId?: boolean
   guestName?: boolean
   guestPhone?: boolean
   specialRequest?: boolean
@@ -1252,14 +1040,12 @@ export type ReservationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   createdAt?: boolean
   updatedAt?: boolean
   customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Reservation$branchArgs<ExtArgs>
   table?: boolean | Prisma.Reservation$tableArgs<ExtArgs>
 }, ExtArgs["result"]["reservation"]>
 
 export type ReservationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   customerId?: boolean
-  branchId?: boolean
   guestName?: boolean
   guestPhone?: boolean
   specialRequest?: boolean
@@ -1272,14 +1058,12 @@ export type ReservationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   createdAt?: boolean
   updatedAt?: boolean
   customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Reservation$branchArgs<ExtArgs>
   table?: boolean | Prisma.Reservation$tableArgs<ExtArgs>
 }, ExtArgs["result"]["reservation"]>
 
 export type ReservationSelectScalar = {
   id?: boolean
   customerId?: boolean
-  branchId?: boolean
   guestName?: boolean
   guestPhone?: boolean
   specialRequest?: boolean
@@ -1293,21 +1077,18 @@ export type ReservationSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ReservationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "branchId" | "guestName" | "guestPhone" | "specialRequest" | "tableId" | "partySize" | "reservationTime" | "depositAmount" | "depositStatus" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["reservation"]>
+export type ReservationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "guestName" | "guestPhone" | "specialRequest" | "tableId" | "partySize" | "reservationTime" | "depositAmount" | "depositStatus" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["reservation"]>
 export type ReservationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Reservation$branchArgs<ExtArgs>
   table?: boolean | Prisma.Reservation$tableArgs<ExtArgs>
   diningSession?: boolean | Prisma.Reservation$diningSessionArgs<ExtArgs>
 }
 export type ReservationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Reservation$branchArgs<ExtArgs>
   table?: boolean | Prisma.Reservation$tableArgs<ExtArgs>
 }
 export type ReservationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Reservation$branchArgs<ExtArgs>
   table?: boolean | Prisma.Reservation$tableArgs<ExtArgs>
 }
 
@@ -1315,14 +1096,12 @@ export type $ReservationPayload<ExtArgs extends runtime.Types.Extensions.Interna
   name: "Reservation"
   objects: {
     customer: Prisma.$UserPayload<ExtArgs>
-    branch: Prisma.$BranchPayload<ExtArgs> | null
     table: Prisma.$TablePayload<ExtArgs> | null
     diningSession: Prisma.$DiningSessionPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     customerId: string
-    branchId: string | null
     guestName: string
     guestPhone: string
     specialRequest: string | null
@@ -1729,7 +1508,6 @@ readonly fields: ReservationFieldRefs;
 export interface Prisma__ReservationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   customer<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  branch<T extends Prisma.Reservation$branchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reservation$branchArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   table<T extends Prisma.Reservation$tableArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reservation$tableArgs<ExtArgs>>): Prisma.Prisma__TableClient<runtime.Types.Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   diningSession<T extends Prisma.Reservation$diningSessionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reservation$diningSessionArgs<ExtArgs>>): Prisma.Prisma__DiningSessionClient<runtime.Types.Result.GetResult<Prisma.$DiningSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -1763,7 +1541,6 @@ export interface Prisma__ReservationClient<T, Null = never, ExtArgs extends runt
 export interface ReservationFieldRefs {
   readonly id: Prisma.FieldRef<"Reservation", 'String'>
   readonly customerId: Prisma.FieldRef<"Reservation", 'String'>
-  readonly branchId: Prisma.FieldRef<"Reservation", 'String'>
   readonly guestName: Prisma.FieldRef<"Reservation", 'String'>
   readonly guestPhone: Prisma.FieldRef<"Reservation", 'String'>
   readonly specialRequest: Prisma.FieldRef<"Reservation", 'String'>
@@ -2173,25 +1950,6 @@ export type ReservationDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many Reservations to delete.
    */
   limit?: number
-}
-
-/**
- * Reservation.branch
- */
-export type Reservation$branchArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Branch
-   */
-  select?: Prisma.BranchSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Branch
-   */
-  omit?: Prisma.BranchOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BranchInclude<ExtArgs> | null
-  where?: Prisma.BranchWhereInput
 }
 
 /**

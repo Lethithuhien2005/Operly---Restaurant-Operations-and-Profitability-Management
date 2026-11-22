@@ -27,39 +27,18 @@ export class ReservationsService {
       throw new NotFoundException(`Customer with ID "${dto.customerId}" was not found`);
     }
 
-    // 2. Verify branch exists if provided
-    if (dto.branchId) {
-      const branch = await this.prisma.branch.findUnique({
-        where: { id: dto.branchId },
-      });
-      if (!branch) {
-        throw new NotFoundException(`Branch with ID "${dto.branchId}" was not found`);
-      }
-    }
-
     const requestedTime = new Date(dto.reservationTime);
     if (isNaN(requestedTime.getTime())) {
       throw new BadRequestException('Invalid reservation time format');
     }
 
-    let finalBranchId = dto.branchId || null;
-
-    // 3. If table is assigned, validate table, capacity, and 90-minute conflict buffer
+    // 2. If table is assigned, validate table, capacity, and 90-minute conflict buffer
     if (dto.tableId) {
       const table = await this.prisma.table.findUnique({
         where: { id: dto.tableId },
       });
       if (!table) {
         throw new NotFoundException(`Table with ID "${dto.tableId}" was not found`);
-      }
-
-      if (dto.branchId && table.branchId && table.branchId !== dto.branchId) {
-        throw new BadRequestException(
-          `Table "${table.tableNumber}" belongs to branch "${table.branchId}", not the requested branch "${dto.branchId}"`,
-        );
-      }
-      if (!finalBranchId && table.branchId) {
-        finalBranchId = table.branchId;
       }
 
       if (table.capacity < dto.partySize) {
@@ -74,7 +53,6 @@ export class ReservationsService {
     return this.prisma.reservation.create({
       data: {
         customerId: dto.customerId,
-        branchId: finalBranchId,
         guestName: dto.guestName,
         guestPhone: dto.guestPhone,
         specialRequest: dto.specialRequest,
@@ -93,9 +71,6 @@ export class ReservationsService {
           select: { id: true, fullName: true, phone: true, email: true },
         },
         table: true,
-        branch: {
-          select: { id: true, name: true },
-        },
       },
     });
   }
@@ -113,7 +88,6 @@ export class ReservationsService {
 
     return this.prisma.reservation.findMany({
       where: {
-        ...(query?.branchId ? { branchId: query.branchId } : {}),
         ...(query?.tableId ? { tableId: query.tableId } : {}),
         ...(query?.customerId ? { customerId: query.customerId } : {}),
         ...(query?.status ? { status: query.status } : {}),
@@ -125,9 +99,6 @@ export class ReservationsService {
         },
         table: {
           select: { id: true, tableNumber: true, floor: true, capacity: true },
-        },
-        branch: {
-          select: { id: true, name: true, restaurantId: true },
         },
       },
       orderBy: { reservationTime: 'asc' },
@@ -142,9 +113,6 @@ export class ReservationsService {
           select: { id: true, fullName: true, phone: true, email: true },
         },
         table: true,
-        branch: {
-          include: { restaurant: true },
-        },
         diningSession: true,
       },
     });
@@ -201,11 +169,9 @@ export class ReservationsService {
         reservationTime: dto.reservationTime ? new Date(dto.reservationTime) : undefined,
         depositAmount: dto.depositAmount,
         tableId: dto.tableId,
-        branchId: dto.branchId,
       },
       include: {
         table: true,
-        branch: true,
       },
     });
   }
