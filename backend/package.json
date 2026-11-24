@@ -11,6 +11,7 @@
     "deploy": "nest deploy",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
+    "seed": "node --env-file=.env dist/prisma/seed.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -64,5 +65,8 @@
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
     "vitest": "^4.1.2"
+  },
+  "prisma": {
+    "seed": "node --env-file=.env dist/prisma/seed.js"
   }
 }
