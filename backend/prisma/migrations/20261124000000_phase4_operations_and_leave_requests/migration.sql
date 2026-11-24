@@ -1,16 +1,10 @@
 -- CreateEnum
 CREATE TYPE "LeaveStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED');
 
--- AlterTable
-ALTER TABLE "branches" ADD COLUMN "latitude" DOUBLE PRECISION,
-ADD COLUMN "longitude" DOUBLE PRECISION,
-ADD COLUMN "geofence_radius" DOUBLE PRECISION DEFAULT 50.0,
-ADD COLUMN "wifi_bssid" TEXT;
-
--- AlterTable (Unique constraint on Attendance.shift_assignment_id)
+-- CreateIndex
 CREATE UNIQUE INDEX "attendances_shift_assignment_id_key" ON "attendances"("shift_assignment_id");
 
--- CreateIndex (Unique constraint on StockMovement)
+-- CreateIndex
 CREATE UNIQUE INDEX "stock_movements_order_item_id_inventory_item_id_movement_type_key" ON "stock_movements"("order_item_id", "inventory_item_id", "movement_type");
 
 -- CreateTable
