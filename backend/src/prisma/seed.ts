@@ -209,7 +209,6 @@ async function seed() {
         email: u.email,
         fullName: u.fullName,
         roleId,
-        passwordHash,
         isActive: true,
       },
       create: {
@@ -256,7 +255,6 @@ async function seed() {
       update: {
         floor: t.floor,
         capacity: t.capacity,
-        status: t.status,
         qrCodeToken: t.qrCodeToken,
       },
       create: t,
@@ -491,7 +489,6 @@ async function seed() {
         where: { id: item.id },
         data: {
           unit: inv.unit,
-          currentStock: new Prisma.Decimal(inv.currentStock),
           minAlertThreshold: new Prisma.Decimal(inv.minAlertThreshold),
         },
       });
@@ -537,6 +534,27 @@ async function seed() {
     // Vietnamese Caramel Flan
     { menuItemName: 'Vietnamese Caramel Flan (Banh Flan)', inventoryItemName: 'Fresh Chicken Eggs', quantityRequired: 2.0 },
     { menuItemName: 'Vietnamese Caramel Flan (Banh Flan)', inventoryItemName: 'Condensed Milk (Can 380g)', quantityRequired: 0.15 },
+    // --- 5 Additional Dishes (Simulated Academic BOM Recipes for Complete Dish Profitability) ---
+    // Crispy Vietnamese Spring Rolls (Nem Ran)
+    { menuItemName: 'Crispy Vietnamese Spring Rolls (Nem Ran)', inventoryItemName: 'Pork Belly', quantityRequired: 0.10 },
+    { menuItemName: 'Crispy Vietnamese Spring Rolls (Nem Ran)', inventoryItemName: 'Tiger Prawns', quantityRequired: 0.05 },
+    { menuItemName: 'Crispy Vietnamese Spring Rolls (Nem Ran)', inventoryItemName: 'Cooking Oil', quantityRequired: 0.03 },
+    { menuItemName: 'Crispy Vietnamese Spring Rolls (Nem Ran)', inventoryItemName: 'Garlic & Shallots', quantityRequired: 0.01 },
+    // Fresh Green Papaya Salad with Prawns (Goi Du Du Tom)
+    { menuItemName: 'Fresh Green Papaya Salad with Prawns (Goi Du Du Tom)', inventoryItemName: 'Tiger Prawns', quantityRequired: 0.12 },
+    { menuItemName: 'Fresh Green Papaya Salad with Prawns (Goi Du Du Tom)', inventoryItemName: 'Pork Belly', quantityRequired: 0.05 },
+    { menuItemName: 'Fresh Green Papaya Salad with Prawns (Goi Du Du Tom)', inventoryItemName: 'Dalat Limes & Herbs', quantityRequired: 0.05 },
+    { menuItemName: 'Fresh Green Papaya Salad with Prawns (Goi Du Du Tom)', inventoryItemName: 'Fish Sauce 40°N', quantityRequired: 0.02 },
+    // Caramelized Pork Belly in Claypot (Thit Kho To)
+    { menuItemName: 'Caramelized Pork Belly in Claypot (Thit Kho To)', inventoryItemName: 'Pork Belly', quantityRequired: 0.25 },
+    { menuItemName: 'Caramelized Pork Belly in Claypot (Thit Kho To)', inventoryItemName: 'Fresh Chicken Eggs', quantityRequired: 1.0 },
+    { menuItemName: 'Caramelized Pork Belly in Claypot (Thit Kho To)', inventoryItemName: 'Fish Sauce 40°N', quantityRequired: 0.03 },
+    { menuItemName: 'Caramelized Pork Belly in Claypot (Thit Kho To)', inventoryItemName: 'Garlic & Shallots', quantityRequired: 0.02 },
+    { menuItemName: 'Caramelized Pork Belly in Claypot (Thit Kho To)', inventoryItemName: 'Cooking Oil', quantityRequired: 0.01 },
+    // Steamed Fragrant Jasmine Rice (Com Trang)
+    { menuItemName: 'Steamed Fragrant Jasmine Rice (Com Trang)', inventoryItemName: 'Jasmine Rice ST25', quantityRequired: 0.15 },
+    // Fresh Lime Juice with Mint (Nuoc Chanh Tuoi)
+    { menuItemName: 'Fresh Lime Juice with Mint (Nuoc Chanh Tuoi)', inventoryItemName: 'Dalat Limes & Herbs', quantityRequired: 0.10 },
   ];
 
   let recipeCount = 0;
@@ -609,6 +627,122 @@ async function seed() {
     console.log(`   ✓ Stock Receipt ${receiptCode} created with IN_RECEIPT movement`);
   } else {
     console.log(`   ✓ Stock Receipt ${receiptCode} already verified`);
+  }
+
+  // 4.4 Simulated Academic Stock Receipt for Complete BOM Costing (Latest Purchase Price Benchmark)
+  // Preserves existing REC-202611-001 prices (Beef Brisket: 210,000, Jasmine Rice: 20,000, Cooking Oil: 42,000)
+  // and establishes benchmark purchase prices for the remaining 11 inventory items.
+  const benchmarkReceiptCode = 'REC-202611-002';
+  const expectedTotalCost = 12580000;
+  const benchmarkItems: Array<{
+    itemName: string;
+    quantity: number;
+    unitPrice: number;
+  }> = [
+    { itemName: 'Pho Rice Noodles', quantity: 30.0, unitPrice: 25000 },
+    { itemName: 'Pork Belly', quantity: 20.0, unitPrice: 130000 },
+    { itemName: 'Tiger Prawns', quantity: 10.0, unitPrice: 260000 },
+    { itemName: 'Morning Glory Greens', quantity: 15.0, unitPrice: 20000 },
+    { itemName: 'Robusta Coffee Beans', quantity: 10.0, unitPrice: 180000 },
+    { itemName: 'Condensed Milk (Can 380g)', quantity: 30.0, unitPrice: 24000 },
+    { itemName: 'Fresh Chicken Eggs', quantity: 100.0, unitPrice: 3500 },
+    { itemName: 'Garlic & Shallots', quantity: 10.0, unitPrice: 60000 },
+    { itemName: 'Fish Sauce 40°N', quantity: 20.0, unitPrice: 90000 },
+    { itemName: 'Dalat Limes & Herbs', quantity: 8.0, unitPrice: 45000 },
+    { itemName: 'Truffle Finishing Oil', quantity: 2.0, unitPrice: 350000 },
+  ];
+
+  const existingBenchmarkReceipt = await prisma.stockReceipt.findUnique({
+    where: { receiptCode: benchmarkReceiptCode },
+    include: { details: true },
+  });
+
+  if (!existingBenchmarkReceipt) {
+    await prisma.stockReceipt.create({
+      data: {
+        receiptCode: benchmarkReceiptCode,
+        supplierName: 'Metro Cash & Carry Vietnam - Dry Goods & Fresh Wholesale',
+        managerId: managerUserId,
+        totalCost: new Prisma.Decimal(expectedTotalCost),
+        createdAt: new Date('2026-11-24T11:00:00.000Z'),
+        details: {
+          create: benchmarkItems.map((b) => ({
+            inventoryItemId: inventoryMap.get(b.itemName)!,
+            quantity: new Prisma.Decimal(b.quantity),
+            unitPrice: new Prisma.Decimal(b.unitPrice),
+          })),
+        },
+      },
+    });
+    console.log(`   ✓ Benchmark Stock Receipt ${benchmarkReceiptCode} created for 11 inventory items (LPP Benchmark)`);
+  } else {
+    // Hardened idempotency verification: strictly validate existing receipt consistency using Decimal-safe comparisons
+    const expectedTotalCostDecimal = new Prisma.Decimal(expectedTotalCost);
+    if (!existingBenchmarkReceipt.totalCost.equals(expectedTotalCostDecimal)) {
+      throw new Error(
+        `Benchmark Stock Receipt "${benchmarkReceiptCode}" already exists but totalCost mismatch: ` +
+        `expected ${expectedTotalCost} VND, found ${existingBenchmarkReceipt.totalCost} VND. ` +
+        `Refusing to proceed to prevent inconsistent BOM costing.`
+      );
+    }
+
+    if (existingBenchmarkReceipt.details.length !== benchmarkItems.length) {
+      throw new Error(
+        `Benchmark Stock Receipt "${benchmarkReceiptCode}" already exists but details count mismatch: ` +
+        `expected ${benchmarkItems.length} items, found ${existingBenchmarkReceipt.details.length} items. ` +
+        `Refusing to proceed to prevent incomplete BOM costing.`
+      );
+    }
+
+    // Duplicate inventory detail validation
+    const uniqueItemIds = new Set(existingBenchmarkReceipt.details.map((d) => d.inventoryItemId));
+    if (uniqueItemIds.size !== existingBenchmarkReceipt.details.length) {
+      throw new Error(
+        `Benchmark Stock Receipt "${benchmarkReceiptCode}" already exists but contains duplicate inventory item details. ` +
+        `Refusing to proceed to prevent inconsistent BOM costing.`
+      );
+    }
+
+    const detailMap = new Map(
+      existingBenchmarkReceipt.details.map((d) => [d.inventoryItemId, d])
+    );
+
+    for (const expectedItem of benchmarkItems) {
+      const inventoryItemId = inventoryMap.get(expectedItem.itemName);
+      if (!inventoryItemId) {
+        throw new Error(
+          `Inventory item "${expectedItem.itemName}" not found in inventoryMap during benchmark verification.`
+        );
+      }
+
+      const existingDetail = detailMap.get(inventoryItemId);
+      if (!existingDetail) {
+        throw new Error(
+          `Benchmark Stock Receipt "${benchmarkReceiptCode}" missing required item detail for "${expectedItem.itemName}". ` +
+          `Refusing to proceed to prevent inconsistent BOM costing.`
+        );
+      }
+
+      const expectedQuantityDecimal = new Prisma.Decimal(expectedItem.quantity);
+      if (!existingDetail.quantity.equals(expectedQuantityDecimal)) {
+        throw new Error(
+          `Benchmark Stock Receipt "${benchmarkReceiptCode}" quantity mismatch for "${expectedItem.itemName}": ` +
+          `expected ${expectedItem.quantity}, found ${existingDetail.quantity}.`
+        );
+      }
+
+      const expectedUnitPriceDecimal = new Prisma.Decimal(expectedItem.unitPrice);
+      if (!existingDetail.unitPrice.equals(expectedUnitPriceDecimal)) {
+        throw new Error(
+          `Benchmark Stock Receipt "${benchmarkReceiptCode}" unitPrice mismatch for "${expectedItem.itemName}": ` +
+          `expected ${expectedItem.unitPrice} VND, found ${existingDetail.unitPrice} VND.`
+        );
+      }
+    }
+
+    console.log(
+      `   ✓ Benchmark Stock Receipt ${benchmarkReceiptCode} verified: all 11 items, quantities, and unit prices match via Decimal equality (${expectedTotalCost.toLocaleString()} VND)`
+    );
   }
 
   // ============================================================================
