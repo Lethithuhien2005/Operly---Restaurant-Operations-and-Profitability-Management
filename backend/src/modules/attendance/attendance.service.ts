@@ -341,7 +341,7 @@ export class AttendanceService {
           user: {
             select: { id: true, fullName: true, phone: true },
           },
-          reviewer: {
+          reviewedBy: {
             select: { id: true, fullName: true },
           },
         },

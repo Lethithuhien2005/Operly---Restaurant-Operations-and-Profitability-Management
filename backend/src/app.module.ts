@@ -13,6 +13,8 @@ import { OrdersModule } from './modules/orders/orders.module.js';
 import { ReservationsModule } from './modules/reservations/reservations.module.js';
 import { StaffModule } from './modules/staff/staff.module.js';
 import { TablesModule } from './modules/tables/tables.module.js';
+import { AnalyticsModule } from './modules/analytics/analytics.module.js';
+import { AdminModule } from './modules/admin/admin.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { RolesModule } from './roles/roles.module.js';
 import { UsersModule } from './users/users.module.js';
@@ -35,6 +37,8 @@ import { UsersModule } from './users/users.module.js';
     BillingModule,
     StaffModule,
     AttendanceModule,
+    AnalyticsModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

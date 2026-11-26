@@ -1,591 +1,488 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { adminApi } from '../api/client';
 import { useMockStore } from '../store/mockStore';
 
-// Financial Intelligence Components
-import { FinancialIntelligenceDashboard } from '../components/admin/financial/FinancialIntelligenceDashboard';
-import { RevenueAnalyticsView } from '../components/admin/financial/RevenueAnalyticsView';
-import { RevenueForecastingView } from '../components/admin/financial/RevenueForecastingView';
-import { MenuDemandForecastingView } from '../components/admin/financial/MenuDemandForecastingView';
-import { MenuProfitabilityView } from '../components/admin/financial/MenuProfitabilityView';
-import { IngredientDemandForecastingView } from '../components/admin/financial/IngredientDemandForecastingView';
-import { InventoryOptimizationView } from '../components/admin/financial/InventoryOptimizationView';
-import { LossAnomalyDetectionView } from '../components/admin/financial/LossAnomalyDetectionView';
-import { RecommendationEngineView } from '../components/admin/financial/RecommendationEngineView';
+const THEME = {
+  green: '#263d1c',
+  cream: '#f8f4e8',
+  gold: '#ead196',
+  card: '#ffffff',
+  border: '#dfd6be',
+  muted: '#5a6b52',
+};
+
+const ROLES = ['ADMIN', 'MANAGER', 'CASHIER', 'CHEF', 'WAITER', 'CUSTOMER'];
 
 export const AdminConsoleScreen = () => {
-  const {
-    adminTab = 'fi-dashboard',
-    setAdminTab,
-    staffAccounts,
-    auditLogs,
-    toggleStaffStatus,
-    showToast
-  } = useMockStore();
+  const { currentUser, adminTab = 'users', setAdminTab, showToast } = useMockStore();
 
-  const [categoryFilter, setCategoryFilter] = useState('All');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [staffToSuspend, setStaffToSuspend] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [permissions, setPermissions] = useState([]);
+  const [selectedRoleId, setSelectedRoleId] = useState('');
+  const [rolePermIds, setRolePermIds] = useState([]);
+  const [config, setConfig] = useState(null);
+  const [auditLogs, setAuditLogs] = useState([]);
+  const [auditSearch, setAuditSearch] = useState('');
+  const [auditAction, setAuditAction] = useState('All');
 
-  const filteredLogs = auditLogs.filter((log) => {
-    const matchesCategory = categoryFilter === 'All' || log.actionCategory === categoryFilter;
-    const matchesSearch =
-      log.actorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.clientIp.includes(searchTerm) ||
-      log.details.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
+  const [newUser, setNewUser] = useState({
+    fullName: '',
+    phone: '',
+    email: '',
+    password: '',
+    roleName: 'WAITER',
   });
 
-  const handleActionClick = (staff) => {
-    if (staff.status === 'Active') {
-      // Require explicit confirmation before suspension (SPEC-AUTH-001)
-      setStaffToSuspend(staff);
-    } else {
-      toggleStaffStatus(staff.id);
+  const loadUsers = useCallback(async () => {
+    try {
+      const data = await adminApi.getUsers();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      showToast(`Failed to load users: ${err.message}`);
+    }
+  }, [showToast]);
+
+  const loadRbac = useCallback(async () => {
+    try {
+      const [rList, pList] = await Promise.all([adminApi.getRoles(), adminApi.getPermissions()]);
+      setRoles(rList || []);
+      setPermissions(pList || []);
+      if (rList?.length > 0 && !selectedRoleId) {
+        setSelectedRoleId(rList[0].id);
+        setRolePermIds((rList[0].permissions || []).map((p) => p.id));
+      }
+    } catch (err) {
+      showToast(`Failed to load RBAC: ${err.message}`);
+    }
+  }, [showToast, selectedRoleId]);
+
+  const loadConfig = useCallback(async () => {
+    try {
+      const cfg = await adminApi.getConfig();
+      setConfig(cfg);
+    } catch (err) {
+      showToast(`Failed to load config: ${err.message}`);
+    }
+  }, [showToast]);
+
+  const loadAudits = useCallback(async () => {
+    try {
+      const logs = await adminApi.getAuditLogs({
+        action: auditAction !== 'All' ? auditAction : undefined,
+        search: auditSearch || undefined,
+      });
+      setAuditLogs(Array.isArray(logs) ? logs : []);
+    } catch (err) {
+      showToast(`Failed to load audit logs: ${err.message}`);
+    }
+  }, [auditAction, auditSearch, showToast]);
+
+  useEffect(() => {
+    if (adminTab === 'users') loadUsers();
+    else if (adminTab === 'rbac') loadRbac();
+    else if (adminTab === 'config') loadConfig();
+    else if (adminTab === 'audit') loadAudits();
+  }, [adminTab, loadUsers, loadRbac, loadConfig, loadAudits]);
+
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    try {
+      await adminApi.createUser(newUser);
+      showToast(`User "${newUser.fullName}" created with role ${newUser.roleName}`);
+      setNewUser({ fullName: '', phone: '', email: '', password: '', roleName: 'WAITER' });
+      loadUsers();
+    } catch (err) {
+      showToast(`Create user failed: ${err.message}`);
     }
   };
 
-  const confirmSuspend = () => {
-    if (staffToSuspend) {
-      toggleStaffStatus(staffToSuspend.id);
-      setStaffToSuspend(null);
+  const handleToggleUser = async (u) => {
+    try {
+      await adminApi.toggleUserStatus(u.id, !u.isActive);
+      showToast(`${u.fullName} is now ${!u.isActive ? 'Active' : 'Suspended'}`);
+      loadUsers();
+    } catch (err) {
+      showToast(`Status update failed: ${err.message}`);
     }
   };
 
-  const navItemsFinancial = [
-    { id: 'fi-dashboard', label: 'Executive Dashboard', icon: '💼' },
-    { id: 'fi-revenue-analytics', label: 'Revenue Analytics', icon: '📊' },
-    { id: 'fi-revenue-forecasting', label: 'Revenue Forecasting', icon: '🔮' },
-    { id: 'fi-menu-demand', label: 'Menu Demand Forecast', icon: '🍽️' },
-    { id: 'fi-menu-profitability', label: 'Menu Profitability', icon: '💰' },
-    { id: 'fi-ingredient-demand', label: 'Ingredient Demand', icon: '🥕' },
-    { id: 'fi-inventory-opt', label: 'Inventory Optimization', icon: '📦' },
-    { id: 'fi-anomalies', label: 'Loss & Anomaly Alerts', icon: '⚠️', badge: '4' },
-    { id: 'fi-recommendations', label: 'Recommendation Engine', icon: '💡', badge: '5' }
+  const handleChangeRole = async (userId, roleName) => {
+    try {
+      await adminApi.updateUser(userId, { roleName });
+      showToast(`Updated user role to ${roleName}`);
+      loadUsers();
+    } catch (err) {
+      showToast(`Role update failed: ${err.message}`);
+    }
+  };
+
+  const handleSelectRole = (role) => {
+    setSelectedRoleId(role.id);
+    setRolePermIds((role.permissions || []).map((p) => p.id));
+  };
+
+  const handleTogglePerm = (permId) => {
+    setRolePermIds((prev) =>
+      prev.includes(permId) ? prev.filter((id) => id !== permId) : [...prev, permId]
+    );
+  };
+
+  const handleSaveRolePerms = async () => {
+    if (!selectedRoleId) return;
+    try {
+      await adminApi.updateRolePermissions(selectedRoleId, rolePermIds);
+      showToast('Role permissions updated and logged to Audit Trail.');
+      loadRbac();
+    } catch (err) {
+      showToast(`Failed to update permissions: ${err.message}`);
+    }
+  };
+
+  const handleSaveConfig = async (e) => {
+    e.preventDefault();
+    try {
+      const updated = await adminApi.updateConfig(config);
+      setConfig(updated);
+      showToast('System configuration saved & audited.');
+    } catch (err) {
+      showToast(`Config save failed: ${err.message}`);
+    }
+  };
+
+  const navItems = [
+    { id: 'users', label: 'User Accounts', icon: '👥' },
+    { id: 'rbac', label: 'Roles & Permissions (RBAC)', icon: '🔐' },
+    { id: 'config', label: 'System Configuration', icon: '⚙️' },
+    { id: 'audit', label: 'Audit Logs', icon: '📜' },
   ];
 
-  const navItemsGovernance = [
-    { id: 'rbac', label: 'User Provisioning (SCR-ADM-01)', icon: '👥' },
-    { id: 'audit', label: 'Immutable Audit Trail (SCR-ADM-02)', icon: '📜' }
-  ];
+  const validTab = navItems.some((n) => n.id === adminTab) ? adminTab : 'users';
 
   return (
-    <div className="device-desktop" style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#0f172a' }}>
-      {/* Top Header matching SCR-ADM-01 & Enterprise Brand */}
-      <div
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 54px)', backgroundColor: THEME.cream }}>
+      <header
         style={{
-          backgroundColor: '#1e293b',
-          color: '#fff',
+          backgroundColor: THEME.green,
+          color: THEME.cream,
           padding: '12px 24px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          borderBottom: '2px solid #334155',
-          flexShrink: 0
+          borderBottom: `2px solid ${THEME.gold}`,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '18px', fontWeight: 900, color: '#38bdf8', letterSpacing: '-0.02em' }}>
-              OPERLY ADMIN CONSOLE
-            </span>
-          </div>
-          <span style={{ backgroundColor: '#0f172a', border: '1px solid #475569', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', color: '#94a3b8' }}>
-            Financial Intelligence & Governance
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 18, fontWeight: 900, color: THEME.gold }}>
+            OPERLY SYSTEM ADMIN CONSOLE
           </span>
-          <span style={{ fontSize: '12px', color: '#cbd5e1' }}>
-            Admin: <strong>Dinh Khoa Vu</strong>
+          <span style={{ fontSize: 12, opacity: 0.9 }}>
+            Users • RBAC • System Config • Audit Trail
           </span>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '11px', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>
-          <span style={{ backgroundColor: '#0f766e', color: '#ffffff', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
-            Branch: Da Nang Central
-          </span>
-          <span>Security Level: High • RBAC Enforced</span>
+        <div style={{ fontSize: 12, color: THEME.gold, fontWeight: 700 }}>
+          Admin: {currentUser?.fullName || 'System Administrator'}
         </div>
-      </div>
+      </header>
 
-      {/* Main Workspace Layout (Sidebar Navigation + Dynamic Work Area) */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Left Admin Navigation Sidebar */}
+      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
         <aside
           style={{
-            width: '260px',
-            backgroundColor: '#0f172a',
-            borderRight: '1px solid #1e293b',
+            width: 240,
+            backgroundColor: THEME.green,
+            color: THEME.cream,
+            padding: '16px 10px',
             display: 'flex',
             flexDirection: 'column',
-            padding: '16px 10px',
-            overflowY: 'auto',
+            gap: 4,
             flexShrink: 0,
-            gap: '20px'
+            borderRight: '1px solid rgba(234,209,150,0.25)',
           }}
         >
-          {/* Section 1: Financial Intelligence */}
-          <div>
-            <div
-              style={{
-                fontSize: '10px',
-                fontWeight: 800,
-                color: '#64748b',
-                padding: '0 8px 8px 8px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em'
-              }}
-            >
-              Financial Intelligence
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              {navItemsFinancial.map((item) => {
-                const isActive = adminTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setAdminTab(item.id)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      width: '100%',
-                      padding: '8px 10px',
-                      borderRadius: '6px',
-                      fontSize: '12px',
-                      fontWeight: isActive ? 800 : 600,
-                      backgroundColor: isActive ? '#0284c7' : 'transparent',
-                      color: isActive ? '#ffffff' : '#94a3b8',
-                      textAlign: 'left',
-                      transition: 'background-color 0.15s ease'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '14px' }}>{item.icon}</span>
-                      <span>{item.label}</span>
-                    </div>
-                    {item.badge && (
-                      <span
-                        style={{
-                          backgroundColor: isActive ? '#ffffff' : '#dc2626',
-                          color: isActive ? '#0284c7' : '#ffffff',
-                          padding: '1px 5px',
-                          borderRadius: '10px',
-                          fontSize: '10px',
-                          fontWeight: 800
-                        }}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+          <div style={{ fontSize: 10, fontWeight: 800, color: THEME.gold, padding: '0 8px 6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            System Governance
           </div>
-
-          {/* Section 2: Security & Governance (Original RBAC & Audit) */}
-          <div>
-            <div
-              style={{
-                fontSize: '10px',
-                fontWeight: 800,
-                color: '#64748b',
-                padding: '0 8px 8px 8px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em'
-              }}
-            >
-              Security & Governance
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              {navItemsGovernance.map((item) => {
-                const isActive = adminTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setAdminTab(item.id)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      width: '100%',
-                      padding: '8px 10px',
-                      borderRadius: '6px',
-                      fontSize: '12px',
-                      fontWeight: isActive ? 800 : 600,
-                      backgroundColor: isActive ? '#0284c7' : 'transparent',
-                      color: isActive ? '#ffffff' : '#94a3b8',
-                      textAlign: 'left',
-                      transition: 'background-color 0.15s ease'
-                    }}
-                  >
-                    <span style={{ fontSize: '14px' }}>{item.icon}</span>
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          {navItems.map((item) => {
+            const active = validTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setAdminTab(item.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '9px 12px',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  fontWeight: active ? 800 : 600,
+                  backgroundColor: active ? THEME.gold : 'transparent',
+                  color: active ? THEME.green : THEME.cream,
+                  textAlign: 'left',
+                }}
+              >
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
         </aside>
 
-        {/* Dynamic Main View Area */}
-        <main style={{ flex: 1, padding: '24px', overflowY: 'auto', backgroundColor: '#f8fafc' }}>
-          {/* ======================================================== */}
-          {/* Financial Intelligence Sub-Views                          */}
-          {/* ======================================================== */}
-          {adminTab === 'fi-dashboard' && (
-            <FinancialIntelligenceDashboard onNavigate={(tab) => setAdminTab(tab)} />
-          )}
-
-          {adminTab === 'fi-revenue-analytics' && <RevenueAnalyticsView />}
-
-          {adminTab === 'fi-revenue-forecasting' && <RevenueForecastingView />}
-
-          {adminTab === 'fi-menu-demand' && <MenuDemandForecastingView />}
-
-          {adminTab === 'fi-menu-profitability' && <MenuProfitabilityView />}
-
-          {adminTab === 'fi-ingredient-demand' && <IngredientDemandForecastingView />}
-
-          {adminTab === 'fi-inventory-opt' && <InventoryOptimizationView />}
-
-          {adminTab === 'fi-anomalies' && <LossAnomalyDetectionView />}
-
-          {adminTab === 'fi-recommendations' && <RecommendationEngineView />}
-
-          {/* ======================================================== */}
-          {/* SCR-ADM-01: User Provisioning & Session Invalidation     */}
-          {/* ======================================================== */}
-          {adminTab === 'rbac' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>
-                  STAFF ACCOUNTS DIRECTORY:
-                </div>
-
-                <button
-                  onClick={() => showToast('User onboarding dialog opened.')}
-                  style={{
-                    backgroundColor: '#0f766e',
-                    color: '#fff',
-                    padding: '6px 14px',
-                    borderRadius: '6px',
-                    fontSize: '12px',
-                    fontWeight: 700
-                  }}
-                >
-                  + Create New User
+        <main style={{ flex: 1, padding: 20, overflowY: 'auto' }}>
+          {/* 1. User Accounts */}
+          {validTab === 'users' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <form
+                onSubmit={handleCreateUser}
+                style={{
+                  backgroundColor: THEME.card,
+                  border: `1px solid ${THEME.border}`,
+                  borderRadius: 12,
+                  padding: 16,
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                  gap: 10,
+                  alignItems: 'end',
+                }}
+              >
+                <input required placeholder="Full Name" value={newUser.fullName} onChange={(e) => setNewUser({ ...newUser, fullName: e.target.value })} style={{ padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}` }} />
+                <input required placeholder="Phone (09...)" value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} style={{ padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}` }} />
+                <input type="email" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} style={{ padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}` }} />
+                <input required type="password" placeholder="Password (min 6)" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} style={{ padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}` }} />
+                <select value={newUser.roleName} onChange={(e) => setNewUser({ ...newUser, roleName: e.target.value })} style={{ padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}` }}>
+                  {ROLES.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+                <button type="submit" style={{ backgroundColor: THEME.green, color: THEME.cream, padding: '9px 14px', borderRadius: 8, fontWeight: 800, fontSize: 13 }}>
+                  + Create Account
                 </button>
-              </div>
+              </form>
 
-              {/* Staff Accounts Table matching SCR-ADM-01 */}
-              <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', backgroundColor: '#ffffff', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
-                  <thead style={{ backgroundColor: '#f1f5f9', borderBottom: '1px solid #e2e8f0' }}>
-                    <tr>
-                      <th style={{ padding: '12px 14px' }}>Name</th>
-                      <th style={{ padding: '12px 14px' }}>Role</th>
-                      <th style={{ padding: '12px 14px' }}>Phone / Email</th>
-                      <th style={{ padding: '12px 14px' }}>Status</th>
-                      <th style={{ padding: '12px 14px' }}>Token Ver</th>
-                      <th style={{ padding: '12px 14px', textAlign: 'right' }}>Actions</th>
+              <div style={{ backgroundColor: THEME.card, border: `1px solid ${THEME.border}`, borderRadius: 12, padding: 16, overflowX: 'auto' }}>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: THEME.green, marginBottom: 12 }}>System User Accounts ({users.length})</h3>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ borderBottom: `2px solid ${THEME.border}`, textAlign: 'left', color: THEME.muted }}>
+                      <th style={{ padding: 8 }}>Full Name</th>
+                      <th style={{ padding: 8 }}>Email</th>
+                      <th style={{ padding: 8 }}>Phone</th>
+                      <th style={{ padding: 8 }}>Role</th>
+                      <th style={{ padding: 8 }}>Status</th>
+                      <th style={{ padding: 8 }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {staffAccounts.map((staff) => {
-                      const isSuspended = staff.status === 'SUSPENDED';
-
-                      return (
-                        <tr key={staff.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                          <td style={{ padding: '12px 14px', fontWeight: 700, color: '#0f172a' }}>
-                            {staff.name}
-                          </td>
-                          <td style={{ padding: '12px 14px' }}>
-                            <span style={{ backgroundColor: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>
-                              {staff.role}
-                            </span>
-                          </td>
-                          <td style={{ padding: '12px 14px', color: '#64748b' }}>{staff.contact}</td>
-                          <td style={{ padding: '12px 14px' }}>
-                            <span
-                              style={{
-                                backgroundColor: isSuspended ? '#fee2e2' : '#dcfce7',
-                                color: isSuspended ? '#991b1b' : '#166534',
-                                padding: '2px 8px',
-                                borderRadius: '4px',
-                                fontSize: '11px',
-                                fontWeight: 700
-                              }}
-                            >
-                              {staff.status}
-                            </span>
-                          </td>
-                          <td style={{ padding: '12px 14px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#475569' }}>
-                            {staff.tokenVersion}
-                          </td>
-                          <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                            <div style={{ display: 'inline-flex', gap: '6px' }}>
-                              <button
-                                onClick={() => showToast(`Editing profile for ${staff.name}`)}
-                                style={{
-                                  padding: '4px 10px',
-                                  borderRadius: '4px',
-                                  backgroundColor: '#f1f5f9',
-                                  border: '1px solid #cbd5e1',
-                                  fontSize: '11px',
-                                  fontWeight: 600,
-                                  color: '#475569'
-                                }}
-                              >
-                                Edit
-                              </button>
-
-                              <button
-                                onClick={() => handleActionClick(staff)}
-                                style={{
-                                  padding: '4px 12px',
-                                  borderRadius: '4px',
-                                  backgroundColor: isSuspended ? '#16a34a' : '#dc2626',
-                                  color: '#ffffff',
-                                  fontSize: '11px',
-                                  fontWeight: 700
-                                }}
-                              >
-                                {isSuspended ? 'ACTIVATE' : 'SUSPEND'}
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {users.map((u) => (
+                      <tr key={u.id} style={{ borderBottom: `1px solid ${THEME.cream}` }}>
+                        <td style={{ padding: 8, fontWeight: 700, color: THEME.green }}>{u.fullName}</td>
+                        <td style={{ padding: 8 }}>{u.email || '—'}</td>
+                        <td style={{ padding: 8 }}>{u.phone}</td>
+                        <td style={{ padding: 8 }}>
+                          <select
+                            value={u.role}
+                            onChange={(e) => handleChangeRole(u.id, e.target.value)}
+                            style={{ padding: '4px 8px', borderRadius: 6, border: `1px solid ${THEME.border}`, fontWeight: 700, color: THEME.green }}
+                          >
+                            {ROLES.map((r) => (
+                              <option key={r} value={r}>{r}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td style={{ padding: 8 }}>
+                          <span style={{ padding: '2px 8px', borderRadius: 9999, fontSize: 11, fontWeight: 700, backgroundColor: u.isActive ? '#dcfce7' : '#fee2e2', color: u.isActive ? '#166534' : '#991b1b' }}>
+                            {u.isActive ? 'Active' : 'Suspended'}
+                          </span>
+                        </td>
+                        <td style={{ padding: 8 }}>
+                          <button
+                            onClick={() => handleToggleUser(u)}
+                            style={{
+                              backgroundColor: u.isActive ? '#fee2e2' : THEME.green,
+                              color: u.isActive ? '#991b1b' : THEME.cream,
+                              padding: '5px 10px',
+                              borderRadius: 6,
+                              fontSize: 11,
+                              fontWeight: 700,
+                            }}
+                          >
+                            {u.isActive ? 'Suspend' : 'Activate'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
 
-              {/* Architecture Explanation Box matching Wireframe Callout */}
-              <div
-                style={{
-                  backgroundColor: '#fef2f2',
-                  border: '1px solid #fca5a5',
-                  borderRadius: '8px',
-                  padding: '12px 16px',
-                  color: '#991b1b',
-                  fontSize: '12px',
-                  lineHeight: '1.5'
-                }}
-              >
-                <strong>[!] Instant Session Revocation Mechanism (SPEC-AUTH-001):</strong>
-                <div style={{ marginTop: '2px' }}>
-                  When 'SUSPEND' is clicked, the user's database <code>token_version</code> increments. On the user's next API request, the auth middleware detects the token version mismatch and immediately rejects with <strong>401 Unauthorized</strong> across all active mobile and desktop terminals.
+          {/* 2. Roles & Permissions */}
+          {validTab === 'rbac' && (
+            <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 16 }}>
+              <div style={{ backgroundColor: THEME.card, border: `1px solid ${THEME.border}`, borderRadius: 12, padding: 14 }}>
+                <h4 style={{ fontSize: 14, fontWeight: 800, color: THEME.green, marginBottom: 10 }}>Roles</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {roles.map((r) => {
+                    const active = r.id === selectedRoleId;
+                    return (
+                      <button
+                        key={r.id}
+                        onClick={() => handleSelectRole(r)}
+                        style={{
+                          textAlign: 'left',
+                          padding: '10px 12px',
+                          borderRadius: 8,
+                          backgroundColor: active ? THEME.green : THEME.cream,
+                          color: active ? THEME.cream : THEME.green,
+                          fontWeight: 700,
+                          fontSize: 13,
+                        }}
+                      >
+                        <div>{r.name}</div>
+                        <div style={{ fontSize: 11, opacity: 0.8 }}>{r.userCount} users • {r.permissions?.length || 0} perms</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div style={{ backgroundColor: THEME.card, border: `1px solid ${THEME.border}`, borderRadius: 12, padding: 16 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 15, fontWeight: 800, color: THEME.green }}>
+                    Permission Matrix ({rolePermIds.length} / {permissions.length} granted)
+                  </h3>
+                  <button
+                    onClick={handleSaveRolePerms}
+                    style={{ backgroundColor: THEME.green, color: THEME.cream, padding: '8px 16px', borderRadius: 8, fontSize: 12, fontWeight: 800 }}
+                  >
+                    Save Permissions
+                  </button>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
+                  {permissions.map((p) => {
+                    const checked = rolePermIds.includes(p.id);
+                    return (
+                      <label
+                        key={p.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          padding: '8px 10px',
+                          borderRadius: 8,
+                          border: `1px solid ${checked ? THEME.green : THEME.border}`,
+                          backgroundColor: checked ? THEME.cream : '#fff',
+                          cursor: 'pointer',
+                          fontSize: 12,
+                        }}
+                      >
+                        <input type="checkbox" checked={checked} onChange={() => handleTogglePerm(p.id)} />
+                        <div>
+                          <div style={{ fontWeight: 700, color: THEME.green }}>{p.code}</div>
+                          <div style={{ fontSize: 11, color: THEME.muted }}>{p.name}</div>
+                        </div>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
             </div>
           )}
 
-          {/* ======================================================== */}
-          {/* SCR-ADM-02: Immutable Audit Log Explorer                 */}
-          {/* ======================================================== */}
-          {adminTab === 'audit' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>
-                SYSTEM AUDIT TRAIL (READ-ONLY APPEND-ONLY LOGS)
-              </div>
-
-              {/* Filter Bar matching Wireframe SCR-ADM-02 */}
-              <div
-                style={{
-                  backgroundColor: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  display: 'flex',
-                  gap: '12px',
-                  alignItems: 'center',
-                  flexWrap: 'wrap'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b' }}>Event:</span>
-                  <select
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                    style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-                  >
-                    <option value="All">All Categories</option>
-                    <option value="BILL_SETTLED">BILL_SETTLED</option>
-                    <option value="BILL_VOID">BILL_VOID</option>
-                    <option value="MENU_86_TOGGLE">MENU_86_TOGGLE</option>
-                    <option value="USER_SUSPENDED">USER_SUSPENDED</option>
-                  </select>
+          {/* 3. System Configuration */}
+          {validTab === 'config' && config && (
+            <form onSubmit={handleSaveConfig} style={{ backgroundColor: THEME.card, border: `1px solid ${THEME.border}`, borderRadius: 12, padding: 20, maxWidth: 720 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, color: THEME.green, marginBottom: 16 }}>Global System Configuration</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: THEME.muted }}>Restaurant Name</label>
+                  <input value={config.restaurantName} onChange={(e) => setConfig({ ...config, restaurantName: e.target.value })} style={{ width: '100%', padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}`, marginTop: 4 }} />
                 </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b' }}>Date:</span>
-                  <select style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px' }}>
-                    <option>Last 24 Hours</option>
-                    <option>Last 7 Days</option>
-                  </select>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: THEME.muted }}>Branch Name</label>
+                  <input value={config.branchName} onChange={(e) => setConfig({ ...config, branchName: e.target.value })} style={{ width: '100%', padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}`, marginTop: 4 }} />
                 </div>
-
-                <div style={{ flex: 1 }}>
-                  <input
-                    type="text"
-                    placeholder="Search IP, Actor ID, or details..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-                  />
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: THEME.muted }}>VAT (%)</label>
+                  <input type="number" value={config.vatPercent} onChange={(e) => setConfig({ ...config, vatPercent: Number(e.target.value) })} style={{ width: '100%', padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}`, marginTop: 4 }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: THEME.muted }}>Service Charge (%)</label>
+                  <input type="number" value={config.serviceChargePercent} onChange={(e) => setConfig({ ...config, serviceChargePercent: Number(e.target.value) })} style={{ width: '100%', padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}`, marginTop: 4 }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: THEME.muted }}>Session Timeout (mins)</label>
+                  <input type="number" value={config.sessionTimeoutMinutes} onChange={(e) => setConfig({ ...config, sessionTimeoutMinutes: Number(e.target.value) })} style={{ width: '100%', padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}`, marginTop: 4 }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: THEME.muted }}>Audit Retention (days)</label>
+                  <input type="number" value={config.auditRetentionDays} onChange={(e) => setConfig({ ...config, auditRetentionDays: Number(e.target.value) })} style={{ width: '100%', padding: 8, borderRadius: 6, border: `1px solid ${THEME.border}`, marginTop: 4 }} />
                 </div>
               </div>
+              <button type="submit" style={{ marginTop: 18, backgroundColor: THEME.green, color: THEME.cream, padding: '10px 18px', borderRadius: 8, fontWeight: 800, fontSize: 13 }}>
+                Save System Configuration
+              </button>
+            </form>
+          )}
 
-              {/* Audit Log Table matching SCR-ADM-02 with Empty State */}
-              <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', backgroundColor: '#ffffff', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
-                  <thead style={{ backgroundColor: '#f1f5f9', borderBottom: '1px solid #e2e8f0' }}>
-                    <tr>
-                      <th style={{ padding: '10px 12px' }}>Timestamp (UTC)</th>
-                      <th style={{ padding: '10px 12px' }}>Actor ID</th>
-                      <th style={{ padding: '10px 12px' }}>Action Category</th>
-                      <th style={{ padding: '10px 12px' }}>Client IP</th>
-                      <th style={{ padding: '10px 12px' }}>Details Snapshot</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredLogs.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>
-                          No audit log entries match the selected filter criteria.
-                        </td>
+          {/* 4. Audit Logs */}
+          {validTab === 'audit' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <input
+                  placeholder="Search action, entity, ID..."
+                  value={auditSearch}
+                  onChange={(e) => setAuditSearch(e.target.value)}
+                  style={{ flex: 1, padding: '8px 12px', borderRadius: 8, border: `1px solid ${THEME.border}` }}
+                />
+                <select value={auditAction} onChange={(e) => setAuditAction(e.target.value)} style={{ padding: '8px 12px', borderRadius: 8, border: `1px solid ${THEME.border}` }}>
+                  <option value="All">All Actions</option>
+                  <option value="USER_CREATED">USER_CREATED</option>
+                  <option value="USER_UPDATED">USER_UPDATED</option>
+                  <option value="USER_SUSPENDED">USER_SUSPENDED</option>
+                  <option value="USER_ACTIVATED">USER_ACTIVATED</option>
+                  <option value="ROLE_PERMISSIONS_UPDATED">ROLE_PERMISSIONS_UPDATED</option>
+                  <option value="SYSTEM_CONFIG_UPDATED">SYSTEM_CONFIG_UPDATED</option>
+                </select>
+                <button onClick={loadAudits} style={{ backgroundColor: THEME.green, color: THEME.cream, padding: '8px 14px', borderRadius: 8, fontWeight: 700, fontSize: 12 }}>
+                  Refresh
+                </button>
+              </div>
+
+              <div style={{ backgroundColor: THEME.card, border: `1px solid ${THEME.border}`, borderRadius: 12, padding: 16, overflowX: 'auto' }}>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: THEME.green, marginBottom: 10 }}>Immutable System Audit Trail ({auditLogs.length})</h3>
+                {auditLogs.length === 0 ? (
+                  <div style={{ fontSize: 13, color: THEME.muted }}>No audit events recorded yet. Admin actions (user updates, RBAC changes, config updates) will appear here automatically.</div>
+                ) : (
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                    <thead>
+                      <tr style={{ borderBottom: `2px solid ${THEME.border}`, textAlign: 'left', color: THEME.muted }}>
+                        <th style={{ padding: 8 }}>Timestamp</th>
+                        <th style={{ padding: 8 }}>Actor</th>
+                        <th style={{ padding: 8 }}>Action</th>
+                        <th style={{ padding: 8 }}>Entity</th>
+                        <th style={{ padding: 8 }}>Details</th>
                       </tr>
-                    ) : (
-                      filteredLogs.map((log) => (
-                        <tr key={log.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                          <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', color: '#64748b' }}>
-                            {log.timestamp}
-                          </td>
-                          <td style={{ padding: '10px 12px', fontWeight: 700, color: '#0f172a' }}>
-                            {log.actorId}
-                          </td>
-                          <td style={{ padding: '10px 12px' }}>
-                            <span
-                              style={{
-                                backgroundColor:
-                                  log.actionCategory === 'BILL_VOID'
-                                    ? '#fee2e2'
-                                    : log.actionCategory === 'USER_SUSPENDED'
-                                    ? '#ffedd5'
-                                    : log.actionCategory === 'BILL_SETTLED'
-                                    ? '#dcfce7'
-                                    : '#e0f2fe',
-                                color:
-                                  log.actionCategory === 'BILL_VOID'
-                                    ? '#991b1b'
-                                    : log.actionCategory === 'USER_SUSPENDED'
-                                    ? '#9a3412'
-                                    : log.actionCategory === 'BILL_SETTLED'
-                                    ? '#166534'
-                                    : '#0369a1',
-                                padding: '2px 6px',
-                                borderRadius: '4px',
-                                fontSize: '10px',
-                                fontWeight: 700,
-                                fontFamily: 'var(--font-mono)'
-                              }}
-                            >
-                              {log.actionCategory}
-                            </span>
-                          </td>
-                          <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', color: '#475569' }}>
-                            {log.clientIp}
-                          </td>
-                          <td style={{ padding: '10px 12px', color: '#0f172a' }}>{log.details}</td>
+                    </thead>
+                    <tbody>
+                      {auditLogs.map((log) => (
+                        <tr key={log.id} style={{ borderBottom: `1px solid ${THEME.cream}` }}>
+                          <td style={{ padding: 8, fontSize: 12 }}>{new Date(log.createdAt).toLocaleString()}</td>
+                          <td style={{ padding: 8, fontWeight: 700, color: THEME.green }}>{log.user?.fullName || 'System'}</td>
+                          <td style={{ padding: 8 }}><span style={{ backgroundColor: THEME.gold, color: THEME.green, padding: '2px 8px', borderRadius: 9999, fontSize: 11, fontWeight: 800 }}>{log.action}</span></td>
+                          <td style={{ padding: 8 }}>{log.entityName}</td>
+                          <td style={{ padding: 8, fontSize: 12, color: THEME.muted }}>{JSON.stringify(log.newValues || {})}</td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Bottom Actions matching Wireframe SCR-ADM-02 */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button
-                  onClick={() => showToast('Audit trail exported as audit_report_20260920.csv')}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #cbd5e1',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    color: '#334155'
-                  }}
-                >
-                  📥 EXPORT AUDIT REPORT (CSV)
-                </button>
-
-                <button
-                  onClick={() => showToast('Cryptographic audit log checksum verified: SHA-256 HMAC VALID (Zero tampering).')}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    backgroundColor: '#16a34a',
-                    color: '#ffffff',
-                    fontSize: '12px',
-                    fontWeight: 700
-                  }}
-                >
-                  🔒 VERIFY LOG CHECKSUM
-                </button>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           )}
         </main>
       </div>
-
-      {/* Confirmation Modal before Account Suspension (SCR-ADM-01) */}
-      {staffToSuspend && (
-        <div className="modal-overlay">
-          <div className="modal-card" style={{ padding: '20px' }}>
-            <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#991b1b', marginBottom: '8px' }}>
-              Confirm Staff Account Suspension
-            </h3>
-            <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.5', marginBottom: '16px' }}>
-              Are you sure you want to suspend <strong>{staffToSuspend.name}</strong> ({staffToSuspend.role})?
-              <br />
-              This will increment their database token version and <strong>immediately revoke all active sessions</strong> across mobile and desktop terminals (HTTP 401).
-            </p>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-              <button
-                onClick={() => setStaffToSuspend(null)}
-                style={{
-                  padding: '8px 14px',
-                  borderRadius: '6px',
-                  backgroundColor: '#f1f5f9',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: '#475569'
-                }}
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={confirmSuspend}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '6px',
-                  backgroundColor: '#dc2626',
-                  color: '#ffffff',
-                  fontSize: '12px',
-                  fontWeight: 700
-                }}
-              >
-                Confirm Suspension
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -16,7 +16,7 @@ export const CustomerNavHeader = ({ activeTab, onSelectTab, cartItemCount, onOpe
   };
 
   return (
-    <div style={{ backgroundColor: '#0f766e', color: '#ffffff' }}>
+    <div style={{ backgroundColor: '#263d1c', color: '#f8f4e8' }}>
       {/* Top Bar: Table Context, Member Badge, Cart Pill */}
       <div
         style={{

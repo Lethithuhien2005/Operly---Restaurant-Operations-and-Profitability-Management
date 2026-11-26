@@ -3,6 +3,7 @@ import { useMockStore } from '../store/mockStore';
 
 export const WaiterFloorScreen = () => {
   const {
+    currentUser,
     tables,
     readyDishesList,
     markItemServed,
@@ -36,11 +37,11 @@ export const WaiterFloorScreen = () => {
   return (
     <div className="device-mobile" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Top Header matching SCR-WAIT-01 */}
-      <div style={{ backgroundColor: '#0f766e', color: '#fff', padding: '14px 16px' }}>
+      <div style={{ backgroundColor: '#263d1c', color: '#f8f4e8', padding: '14px 16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontWeight: 800, fontSize: '16px' }}>OPERLY WAITER | Floor 1</div>
-            <div style={{ fontSize: '11px', opacity: 0.85 }}>Server: Minh Tuan Tran • Active Shift</div>
+            <div style={{ fontWeight: 800, fontSize: '16px', color: '#ead196' }}>OPERLY WAITER | Floor 1</div>
+            <div style={{ fontSize: '11px', opacity: 0.9 }}>Server: {currentUser?.fullName || 'Waiter Staff'} • Active Shift</div>
           </div>
 
           <button

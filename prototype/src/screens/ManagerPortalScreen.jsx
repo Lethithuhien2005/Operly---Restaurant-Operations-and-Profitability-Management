@@ -1,304 +1,161 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useMockStore } from '../store/mockStore';
-import { MOCK_MANAGER_METRICS } from '../mock/data';
-import { ManagerKPICards } from '../components/manager/ManagerKPICards';
-import { ManagerApprovalsQueue } from '../components/manager/ManagerApprovalsQueue';
-import { ManagerDetailDrawer } from '../components/manager/ManagerDetailDrawer';
-import { ManagerTeamTable } from '../components/manager/ManagerTeamTable';
-import { ManagerForecastChart } from '../components/manager/ManagerForecastChart';
-import { ManagerBOMEditor } from '../components/manager/ManagerBOMEditor';
+import {
+  ManagerDashboardView,
+  ManagerMenuPricingView,
+  ManagerInventoryView,
+  ManagerStaffShiftsView,
+  ManagerPromotionsView,
+  ManagerReservationsView,
+  ManagerOrdersView,
+} from '../components/manager/ManagerOperationsViews';
+import { ManagerAIIntelligenceViews } from '../components/manager/ManagerAIIntelligenceViews';
+
+const OPS_TABS = [
+  { id: 'dashboard', label: 'Dashboard & Reports', icon: '📊' },
+  { id: 'menu', label: 'Menu & Pricing', icon: '🍽️' },
+  { id: 'inventory', label: 'Inventory & BOM', icon: '📦' },
+  { id: 'staff', label: 'Staff & Shifts', icon: '👥' },
+  { id: 'promotions', label: 'Promotions', icon: '🏷️' },
+  { id: 'reservations', label: 'Reservations', icon: '📅' },
+  { id: 'orders', label: 'Orders', icon: '🧾' },
+];
+
+const AI_TABS = [
+  { id: 'fi-dashboard', label: 'Financial Intelligence Hub', icon: '🧠' },
+  { id: 'fi-revenue-analytics', label: '01. Revenue Analytics', icon: '📈' },
+  { id: 'fi-revenue-forecasting', label: '02. Revenue Forecasting', icon: '🔮' },
+  { id: 'fi-menu-demand', label: '03. Demand Forecasting', icon: '🍲' },
+  { id: 'fi-menu-profitability', label: '04. Profitability Analysis', icon: '💰' },
+  { id: 'fi-inventory-opt', label: '05. Inventory Intelligence', icon: '🥕' },
+  { id: 'fi-anomalies', label: '06. Anomaly Detection', icon: '⚠️' },
+  { id: 'fi-recommendations', label: 'Recommendation Engine', icon: '💡' },
+];
 
 export const ManagerPortalScreen = () => {
-  const {
-    managerTab,
-    setManagerTab,
-    managerApprovals,
-    resetAllPrototypeData
-  } = useMockStore();
+  const { currentUser, managerTab = 'dashboard', setManagerTab } = useMockStore();
 
-  const metrics = MOCK_MANAGER_METRICS;
-  const pendingCount = managerApprovals.filter((a) => a.status === 'Pending').length;
-
-  // Sub-tab switcher for BI & Reports (Forecast vs BOM)
-  const [reportsSubTab, setReportsSubTab] = useState(
-    managerTab === 'bom' ? 'bom' : 'forecast'
-  );
-
-  // Sync sub-tab if external managerTab changes to 'bom' or 'forecast'
-  useEffect(() => {
-    if (managerTab === 'bom') {
-      setReportsSubTab('bom');
-    } else if (managerTab === 'forecast') {
-      setReportsSubTab('forecast');
-    }
-  }, [managerTab]);
-
-  // Normalize active tab: 'overview' | 'team' | 'reports'
-  const activeMainTab =
-    managerTab === 'team'
-      ? 'team'
-      : managerTab === 'reports' || managerTab === 'forecast' || managerTab === 'bom'
-      ? 'reports'
-      : 'overview';
-
-  const handleTabChange = (tabKey) => {
-    setManagerTab(tabKey);
-  };
+  const isAITab = managerTab.startsWith('fi-');
 
   return (
-    <div
-      className="device-desktop"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        backgroundColor: '#f8fafc',
-        position: 'relative'
-      }}
-    >
-      {/* Top Manager Header matching Brand Identity & SCR-MGR-01 */}
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 54px)', backgroundColor: '#f8f4e8' }}>
+      {/* Manager Header */}
       <header
         style={{
-          backgroundColor: '#0f766e',
-          color: '#ffffff',
-          padding: '12px 20px',
+          backgroundColor: '#263d1c',
+          color: '#f8f4e8',
+          padding: '12px 24px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '12px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          borderBottom: '2px solid #ead196',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '20px' }}>📊</span>
-            <span style={{ fontSize: '17px', fontWeight: 900, letterSpacing: '-0.02em' }}>
-              OPERLY MANAGER PORTAL
-            </span>
-          </div>
-          <span
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              fontSize: '11px',
-              fontWeight: 700
-            }}
-          >
-            Branch: {metrics.branch}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 18, fontWeight: 900, color: '#ead196' }}>
+            OPERLY MANAGER PORTAL
           </span>
-          <span style={{ fontSize: '12px', opacity: 0.9 }}>
-            Duty Manager: <strong>{metrics.managerName}</strong>
+          <span style={{ fontSize: 12, opacity: 0.9 }}>
+            Operations & AI Financial Intelligence
           </span>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '12px' }}>
-          <span style={{ opacity: 0.9 }}>
-            Today: <strong>{metrics.date}</strong> • Evening Shift (17:00 - 23:00)
-          </span>
-
-          <button
-            onClick={resetAllPrototypeData}
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.15)',
-              color: '#ffffff',
-              border: '1px solid rgba(255,255,255,0.3)',
-              padding: '4px 10px',
-              borderRadius: '4px',
-              fontSize: '11px',
-              fontWeight: 700,
-              cursor: 'pointer'
-            }}
-            title="Reset prototype state back to mock baseline"
-          >
-            ↺ Reset State
-          </button>
+        <div style={{ fontSize: 12, color: '#ead196', fontWeight: 700 }}>
+          Manager: {currentUser?.fullName || 'Restaurant Manager'}
         </div>
       </header>
 
-      {/* Main Navigation Sub-Bar with 3 Primary Pillars */}
-      <nav
-        style={{
-          backgroundColor: '#ffffff',
-          borderBottom: '1px solid #e2e8f0',
-          padding: '8px 20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '8px'
-        }}
-      >
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {/* Tab 1: Overview & Approvals */}
-          <button
-            onClick={() => handleTabChange('overview')}
-            style={{
-              padding: '8px 18px',
-              borderRadius: '8px',
-              fontSize: '12px',
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: activeMainTab === 'overview' ? '#0f766e' : '#f8fafc',
-              color: activeMainTab === 'overview' ? '#ffffff' : '#475569',
-              border: '1px solid',
-              borderColor: activeMainTab === 'overview' ? '#0f766e' : '#cbd5e1',
-              boxShadow: activeMainTab === 'overview' ? '0 1px 3px rgba(15,118,110,0.3)' : 'none'
-            }}
-          >
-            <span>📊 Overview & Approvals</span>
-            {pendingCount > 0 && (
-              <span
-                style={{
-                  backgroundColor: activeMainTab === 'overview' ? '#ef4444' : '#fee2e2',
-                  color: activeMainTab === 'overview' ? '#ffffff' : '#991b1b',
-                  fontSize: '10px',
-                  fontWeight: 900,
-                  padding: '1px 6px',
-                  borderRadius: '10px'
-                }}
-              >
-                {pendingCount} PENDING
-              </span>
-            )}
-          </button>
-
-          {/* Tab 2: Operations & Team Management */}
-          <button
-            onClick={() => handleTabChange('team')}
-            style={{
-              padding: '8px 18px',
-              borderRadius: '8px',
-              fontSize: '12px',
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: activeMainTab === 'team' ? '#0f766e' : '#f8fafc',
-              color: activeMainTab === 'team' ? '#ffffff' : '#475569',
-              border: '1px solid',
-              borderColor: activeMainTab === 'team' ? '#0f766e' : '#cbd5e1',
-              boxShadow: activeMainTab === 'team' ? '0 1px 3px rgba(15,118,110,0.3)' : 'none'
-            }}
-          >
-            <span>👥 Operations & Team Management</span>
-          </button>
-
-          {/* Tab 3: BI & Performance Reports */}
-          <button
-            onClick={() => handleTabChange('reports')}
-            style={{
-              padding: '8px 18px',
-              borderRadius: '8px',
-              fontSize: '12px',
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: activeMainTab === 'reports' ? '#0f766e' : '#f8fafc',
-              color: activeMainTab === 'reports' ? '#ffffff' : '#475569',
-              border: '1px solid',
-              borderColor: activeMainTab === 'reports' ? '#0f766e' : '#cbd5e1',
-              boxShadow: activeMainTab === 'reports' ? '0 1px 3px rgba(15,118,110,0.3)' : 'none'
-            }}
-          >
-            <span>📈 BI & Performance Reports</span>
-          </button>
-        </div>
-
-        {/* Quick Health Indicator */}
-        <div style={{ fontSize: '11px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981' }} />
-          <span>System Healthy • 10s Sync Interval</span>
-        </div>
-      </nav>
-
-      {/* Main Viewport Container */}
-      <main style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
-        {/* ========================================================= */}
-        {/* TAB 1: OVERVIEW & APPROVALS (KPI Ribbon + Urgent Queue)  */}
-        {/* ========================================================= */}
-        {activeMainTab === 'overview' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {/* Real-time KPI Ribbon */}
-            <ManagerKPICards />
-
-            {/* Urgent Pending Approvals & Processed History */}
-            <ManagerApprovalsQueue />
-          </div>
-        )}
-
-        {/* ========================================================= */}
-        {/* TAB 2: TEAM OPERATIONS & LIVE ROSTER                     */}
-        {/* ========================================================= */}
-        {activeMainTab === 'team' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <ManagerTeamTable />
-          </div>
-        )}
-
-        {/* ========================================================= */}
-        {/* TAB 3: BI ANALYTICS & RECIPE BOM (SCR-MGR-01 & 02)        */}
-        {/* ========================================================= */}
-        {activeMainTab === 'reports' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* Sub-tab Switcher for Reports */}
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                backgroundColor: '#f1f5f9',
-                padding: '4px',
-                borderRadius: '8px',
-                width: 'fit-content'
-              }}
-            >
-              <button
-                onClick={() => setReportsSubTab('forecast')}
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: '6px',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  backgroundColor: reportsSubTab === 'forecast' ? '#ffffff' : 'transparent',
-                  color: reportsSubTab === 'forecast' ? '#0f766e' : '#64748b',
-                  boxShadow: reportsSubTab === 'forecast' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                }}
-              >
-                📊 7-Day AI Revenue Forecast (SCR-MGR-01)
-              </button>
-
-              <button
-                onClick={() => setReportsSubTab('bom')}
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: '6px',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  backgroundColor: reportsSubTab === 'bom' ? '#ffffff' : 'transparent',
-                  color: reportsSubTab === 'bom' ? '#0f766e' : '#64748b',
-                  boxShadow: reportsSubTab === 'bom' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                }}
-              >
-                🥩 Recipe BOM Configurator (SCR-MGR-02)
-              </button>
+      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+        {/* Sidebar */}
+        <aside
+          style={{
+            width: 250,
+            backgroundColor: '#263d1c',
+            color: '#f8f4e8',
+            padding: '16px 10px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 18,
+            flexShrink: 0,
+            borderRight: '1px solid rgba(234,209,150,0.25)',
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 800, color: '#ead196', padding: '0 8px 6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              Restaurant Operations
             </div>
-
-            {/* Sub-tab view */}
-            {reportsSubTab === 'forecast' ? (
-              <ManagerForecastChart />
-            ) : (
-              <ManagerBOMEditor />
-            )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {OPS_TABS.map((t) => {
+                const active = managerTab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setManagerTab(t.id)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '8px 10px',
+                      borderRadius: 8,
+                      fontSize: 12,
+                      fontWeight: active ? 800 : 600,
+                      backgroundColor: active ? '#ead196' : 'transparent',
+                      color: active ? '#263d1c' : '#f8f4e8',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <span>{t.icon}</span>
+                    <span>{t.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        )}
-      </main>
 
-      {/* Slide-over Inspection Drawer for Deep Request Details */}
-      <ManagerDetailDrawer />
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 800, color: '#ead196', padding: '0 8px 6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              AI & Financial Intelligence
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {AI_TABS.map((t) => {
+                const active = managerTab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setManagerTab(t.id)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '8px 10px',
+                      borderRadius: 8,
+                      fontSize: 12,
+                      fontWeight: active ? 800 : 600,
+                      backgroundColor: active ? '#ead196' : 'transparent',
+                      color: active ? '#263d1c' : '#f8f4e8',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <span>{t.icon}</span>
+                    <span>{t.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main style={{ flex: 1, padding: 20, overflowY: 'auto' }}>
+          {managerTab === 'dashboard' && <ManagerDashboardView onNavigateTab={setManagerTab} />}
+          {managerTab === 'menu' && <ManagerMenuPricingView />}
+          {managerTab === 'inventory' && <ManagerInventoryView />}
+          {managerTab === 'staff' && <ManagerStaffShiftsView />}
+          {managerTab === 'promotions' && <ManagerPromotionsView />}
+          {managerTab === 'reservations' && <ManagerReservationsView />}
+          {managerTab === 'orders' && <ManagerOrdersView />}
+          {isAITab && <ManagerAIIntelligenceViews activeTab={managerTab} onNavigateTab={setManagerTab} />}
+        </main>
+      </div>
     </div>
   );
 };

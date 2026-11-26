@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -126,5 +127,12 @@ export class BillingController {
   @ApiOperation({ summary: 'List currently active promotions' })
   findActivePromotions() {
     return this.billingService.findActivePromotions();
+  }
+
+  @Patch('promotions/:id/toggle')
+  @Roles(RoleName.MANAGER, RoleName.ADMIN)
+  @ApiOperation({ summary: 'Toggle promotion active status' })
+  togglePromotion(@Param('id', ParseUUIDPipe) id: string) {
+    return this.billingService.togglePromotion(id);
   }
 }

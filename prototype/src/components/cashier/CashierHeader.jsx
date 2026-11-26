@@ -6,7 +6,8 @@ import React from 'react';
  * live clock, shift info, shift sales counter, and quick action shortcuts.
  */
 export const CashierHeader = ({
-  shiftTotal = 18450000,
+  cashierName = 'Cashier',
+  shiftTotal = 0,
   pendingCount = 0,
   onOpenHistory,
   onReset
@@ -17,8 +18,8 @@ export const CashierHeader = ({
   return (
     <header
       style={{
-        backgroundColor: '#0f766e',
-        color: '#ffffff',
+        backgroundColor: '#263d1c',
+        color: '#f8f4e8',
         padding: '10px 20px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -26,6 +27,7 @@ export const CashierHeader = ({
         flexShrink: 0,
         gap: '12px',
         flexWrap: 'wrap',
+        borderBottom: '2px solid #ead196',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}
     >
@@ -61,7 +63,7 @@ export const CashierHeader = ({
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px' }}>
           <span style={{ opacity: 0.9 }}>
-            👤 Cashier: <strong>Mai Le</strong>
+            👤 Cashier: <strong>{cashierName}</strong>
           </span>
           <span
             style={{

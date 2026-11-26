@@ -28,7 +28,9 @@ export interface SignUpFormErrors {
 }
 
 export const SignUpScreen: React.FC = () => {
-  const { navigate, showToast } = useMockStore() as MockStoreHook;
+  const { navigate, registerUser } = useMockStore() as MockStoreHook & {
+    registerUser: (payload: any) => Promise<any>;
+  };
 
   const [formValues, setFormValues] = useState<SignUpFormState>({
     fullName: '',
@@ -188,10 +190,9 @@ export const SignUpScreen: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Mark all fields as touched
     setTouched({
       fullName: true,
       email: true,
@@ -214,16 +215,23 @@ export const SignUpScreen: React.FC = () => {
     setErrors({});
     setIsSubmitting(true);
 
-    // Explicit technical constraint:
-    // Do not connect to backend yet.
-    // Do not hardcode fake authentication success.
-    setTimeout(() => {
+    try {
+      const data = await registerUser({
+        fullName: formValues.fullName.trim(),
+        email: formValues.email.trim(),
+        phoneNumber: formValues.phoneNumber.trim(),
+        password: formValues.password,
+        confirmPassword: formValues.confirmPassword,
+      });
+      setSubmissionFeedback(`Welcome ${data.user.fullName}! Account created and signed in.`);
+    } catch (err: any) {
+      setErrors({
+        form: err?.message || 'Unable to register account. Please check your details.'
+      });
+      setSubmissionFeedback(null);
+    } finally {
       setIsSubmitting(false);
-      setSubmissionFeedback(
-        `Registration input validated for ${formValues.fullName} (${formValues.email}). Ready for backend registration pipeline (POST /api/v1/auth/register).`
-      );
-      showToast?.('Registration form validated successfully (pre-backend stage).');
-    }, 450);
+    }
   };
 
   return (

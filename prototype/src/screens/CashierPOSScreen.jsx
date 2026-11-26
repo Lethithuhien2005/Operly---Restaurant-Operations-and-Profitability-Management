@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { useMockStore } from '../store/mockStore';
-import { MOCK_MEMBERS, MOCK_COUPONS } from '../mock/data';
 
 // Modular Cashier Components
 import { CashierHeader } from '../components/cashier/CashierHeader';
@@ -21,9 +20,11 @@ import { CashierHistoryDrawer } from '../components/cashier/CashierHistoryDrawer
  */
 export const CashierPOSScreen = () => {
   const {
+    currentUser,
     tables,
     kdsTickets,
     menuItems,
+    activePromotions,
     cashierSettledHistory,
     cashierShiftSales,
     settleCashierInvoice,
@@ -36,8 +37,17 @@ export const CashierPOSScreen = () => {
   const [selectedTableId, setSelectedTableId] = useState('T08');
 
   // Customer Loyalty & Coupon state
-  const [memberProfile, setMemberProfile] = useState(MOCK_MEMBERS['0912345678']);
-  const [appliedCoupon, setAppliedCoupon] = useState(MOCK_COUPONS['HAPPYHOUR']);
+  const [memberProfile, setMemberProfile] = useState(null);
+  const [appliedCoupon, setAppliedCoupon] = useState(() =>
+    activePromotions?.[0]
+      ? {
+          code: activePromotions[0].code,
+          discountPct: activePromotions[0].discountPercent || 0,
+          discountAmount: Number(activePromotions[0].discountAmount || 0),
+          minOrder: Number(activePromotions[0].minOrderAmount || 0),
+        }
+      : null
+  );
 
   // Modals and Drawers visibility
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -238,6 +248,7 @@ export const CashierPOSScreen = () => {
     <div className="pos-screen-layout device-desktop">
       {/* 1. Header Bar */}
       <CashierHeader
+        cashierName={currentUser?.fullName || 'Cashier'}
         shiftTotal={cashierShiftSales}
         pendingCount={settlementTables.length}
         onOpenHistory={() => setIsHistoryDrawerOpen(true)}
