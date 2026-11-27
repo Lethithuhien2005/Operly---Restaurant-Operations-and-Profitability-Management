@@ -13,6 +13,7 @@
     "prisma:migrate": "prisma migrate deploy",
     "seed": "node --env-file=.env dist/prisma/seed.js",
     "seed:admin": "npx tsc prisma/seed-admin.ts --ignoreConfig --outDir dist/prisma --module nodenext --moduleResolution nodenext --target ES2023 --esModuleInterop --skipLibCheck --strict && node --env-file=.env dist/prisma/seed-admin.js",
+    "seed:analytics": "node --env-file=.env dist/prisma/analytics-seed.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
