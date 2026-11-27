@@ -488,4 +488,15 @@ export class BillingService {
       orderBy: { endDate: 'asc' },
     });
   }
+
+  async togglePromotion(id: string) {
+    const promo = await this.prisma.promotion.findUnique({ where: { id } });
+    if (!promo) {
+      throw new NotFoundException(`Promotion with ID "${id}" was not found`);
+    }
+    return this.prisma.promotion.update({
+      where: { id },
+      data: { isActive: !promo.isActive },
+    });
+  }
 }

@@ -11,6 +11,7 @@ import { CustomerEmptyState } from '../components/customer/CustomerEmptyState';
 export const CustomerQRMenuScreen = () => {
   const {
     menuItems,
+    categories: storeCategories,
     cartItems,
     addToCart,
     submitCustomerOrder,
@@ -25,27 +26,37 @@ export const CustomerQRMenuScreen = () => {
   // Customization modal state
   const [customizingDish, setCustomizingDish] = useState(null);
 
-  const categories = ['All', 'Hotpot', 'BBQ / Grill', 'Appetizers', 'Drinks'];
+  const categories = useMemo(() => {
+    if (storeCategories && storeCategories.length > 0) {
+      return ['All', ...storeCategories.map((c) => c.name)];
+    }
+    const unique = Array.from(new Set(menuItems.map((m) => m.category).filter(Boolean)));
+    return ['All', ...unique];
+  }, [storeCategories, menuItems]);
 
   // Filtered & sorted dishes
   const filteredDishes = useMemo(() => {
     return menuItems
       .filter((dish) => {
         // Category filter
-        if (selectedCategory !== 'All' && dish.category !== selectedCategory) {
+        if (
+          selectedCategory !== 'All' &&
+          dish.category !== selectedCategory &&
+          dish.categoryId !== selectedCategory
+        ) {
           return false;
         }
 
         // Search query
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase().trim();
-          const matchName = dish.name.toLowerCase().includes(q);
-          const matchDesc = dish.description.toLowerCase().includes(q);
+          const matchName = (dish.name || '').toLowerCase().includes(q);
+          const matchDesc = (dish.description || '').toLowerCase().includes(q);
           if (!matchName && !matchDesc) return false;
         }
 
         // Hide 86 out-of-stock items if toggled
-        if (hide86 && dish.is86) {
+        if (hide86 && (dish.is86 || dish.isAvailable === false)) {
           return false;
         }
 

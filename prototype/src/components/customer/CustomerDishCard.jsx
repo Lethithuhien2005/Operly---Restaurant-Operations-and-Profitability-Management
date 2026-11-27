@@ -21,22 +21,31 @@ export const CustomerDishCard = ({ dish, onQuickAdd, onCustomize, hasPairing }) 
       }}
     >
       <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-        {/* Dish Visual Icon / Emoji Box */}
+        {/* Dish Visual Icon / Image Box */}
         <div
           style={{
             width: '68px',
             height: '68px',
-            backgroundColor: is86 ? '#e2e8f0' : '#f0fdfa',
-            border: `1px solid ${is86 ? '#cbd5e1' : '#ccfbf1'}`,
+            backgroundColor: is86 ? '#e2e8f0' : '#f8f4e8',
+            border: `1px solid ${is86 ? '#cbd5e1' : '#ead196'}`,
             borderRadius: '12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '34px',
+            overflow: 'hidden',
             flexShrink: 0
           }}
         >
-          {dish.image}
+          {dish.imageUrl && (dish.imageUrl.startsWith('http') || dish.imageUrl.startsWith('/')) ? (
+            <img
+              src={dish.imageUrl}
+              alt={dish.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          ) : (
+            <span>{dish.image || '🍽️'}</span>
+          )}
         </div>
 
         {/* Dish Title, Description, and Badges */}

@@ -3,16 +3,18 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   
-  --color-primary: #0f766e;
-  --color-primary-hover: #115e59;
-  --color-primary-light: #ccfbf1;
-  --color-primary-dark: #134e4a;
+  --color-primary: #263d1c;
+  --color-primary-hover: #1b2d14;
+  --color-primary-light: #ead196;
+  --color-primary-dark: #192912;
+  --color-accent: #ead196;
+  --color-cream: #f8f4e8;
   
-  --color-bg: #f8fafc;
+  --color-bg: #f8f4e8;
   --color-card: #ffffff;
-  --color-border: #e2e8f0;
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
+  --color-border: #dfd6be;
+  --color-text: #263d1c;
+  --color-text-muted: #5a6b52;
   
   /* Status Colors */
   --status-avail-bg: #dcfce7;
@@ -45,7 +47,7 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: #0b1120;
+  background-color: #f8f4e8;
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
@@ -69,13 +71,13 @@ input, select, textarea {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #0f172a;
+  background-color: #f8f4e8;
 }
 
 .proto-eval-harness {
-  background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
-  border-bottom: 2px solid #334155;
-  padding: 8px 16px;
+  background: linear-gradient(90deg, #263d1c 0%, #1d3015 100%);
+  border-bottom: 2px solid #ead196;
+  padding: 10px 20px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -84,25 +86,26 @@ input, select, textarea {
   position: sticky;
   top: 0;
   z-index: 1000;
-  color: #f8fafc;
+  color: #f8f4e8;
 }
 
 .proto-brand-tag {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 15px;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 16px;
   letter-spacing: -0.02em;
+  color: #f8f4e8;
 }
 
 .proto-badge {
-  background-color: #0284c7;
-  color: #ffffff;
+  background-color: #ead196;
+  color: #263d1c;
   font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 800;
   text-transform: uppercase;
 }
 
@@ -612,8 +615,8 @@ input, select, textarea {
 
 /* Left Brand Panel */
 .auth-branding-panel {
-  background: linear-gradient(155deg, #0f766e 0%, #134e4a 55%, #042f2e 100%);
-  color: #ffffff;
+  background: linear-gradient(155deg, #263d1c 0%, #1d3015 55%, #12200d 100%);
+  color: #f8f4e8;
   padding: 40px 36px;
   display: flex;
   flex-direction: column;
@@ -629,7 +632,7 @@ input, select, textarea {
   right: -80px;
   width: 240px;
   height: 240px;
-  background: radial-gradient(circle, rgba(204, 251, 241, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(234, 209, 150, 0.2) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -1034,8 +1037,8 @@ input, select, textarea {
 .auth-btn-primary {
   width: 100%;
   min-height: 44px;
-  background-color: #0f766e;
-  color: #ffffff;
+  background-color: #263d1c;
+  color: #f8f4e8;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 700;
@@ -1044,16 +1047,16 @@ input, select, textarea {
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+  box-shadow: 0 4px 12px rgba(38, 61, 28, 0.25);
   transition: all 0.15s ease;
   user-select: none;
   padding: 10px 16px;
 }
 
 .auth-btn-primary:hover:not(:disabled) {
-  background-color: #115e59;
+  background-color: #1b2d14;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.3);
+  box-shadow: 0 6px 16px rgba(38, 61, 28, 0.3);
 }
 
 .auth-btn-primary:active:not(:disabled) {

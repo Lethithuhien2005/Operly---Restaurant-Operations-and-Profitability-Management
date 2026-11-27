@@ -20,7 +20,9 @@ export interface LoginFormErrors {
 }
 
 export const LoginScreen: React.FC = () => {
-  const { navigate, showToast } = useMockStore() as MockStoreHook;
+  const { navigate, showToast, loginUser } = useMockStore() as MockStoreHook & {
+    loginUser: (identifier: string, password: string) => Promise<any>;
+  };
 
   const [formValues, setFormValues] = useState<LoginFormState>({
     email: '',
@@ -39,11 +41,7 @@ export const LoginScreen: React.FC = () => {
     if (name === 'email') {
       const emailVal = (value as string).trim();
       if (!emailVal) {
-        return 'Email address is required.';
-      }
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!emailRegex.test(emailVal)) {
-        return 'Please enter a valid email address (e.g. name@example.com).';
+        return 'Email address or phone number is required.';
       }
       return undefined;
     }
@@ -112,10 +110,9 @@ export const LoginScreen: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Mark all fields as touched
     setTouched({
       email: true,
       password: true
@@ -134,16 +131,17 @@ export const LoginScreen: React.FC = () => {
     setErrors({});
     setIsSubmitting(true);
 
-    // Explicit technical constraint:
-    // Do not connect to backend yet.
-    // Do not hardcode fake authentication success.
-    setTimeout(() => {
+    try {
+      const data = await loginUser(formValues.email.trim(), formValues.password);
+      setSubmissionFeedback(`Signed in as ${data.user.fullName} (${data.user.role}).`);
+    } catch (err: any) {
+      setErrors({
+        form: err?.message || 'Invalid credentials or unable to connect to server.'
+      });
+      setSubmissionFeedback(null);
+    } finally {
       setIsSubmitting(false);
-      setSubmissionFeedback(
-        `Form validation passed for ${formValues.email}. Backend authentication (POST /api/v1/auth/login) is ready for integration.`
-      );
-      showToast?.('Login credentials validated successfully (pre-backend stage).');
-    }, 450);
+    }
   };
 
   return (

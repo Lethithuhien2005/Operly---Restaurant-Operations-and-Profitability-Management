@@ -14,7 +14,8 @@ import { LoginScreen } from './screens/LoginScreen';
 import { SignUpScreen } from './screens/SignUpScreen';
 
 export const MainApp = () => {
-  const { currentRoute, activeRole, customerScreen, toastMessage } = useMockStore();
+  const { currentRoute, activeRole, currentUser, customerScreen, toastMessage } = useMockStore();
+  const effectiveRole = currentUser ? activeRole : 'customer';
 
   return (
     <div className="proto-app-container">
@@ -27,7 +28,7 @@ export const MainApp = () => {
         {currentRoute === 'signup' && <SignUpScreen />}
         {currentRoute === 'prototype' && (
           <>
-            {activeRole === 'customer' && (
+            {effectiveRole === 'customer' && (
               customerScreen === 'menu' ? (
                 <CustomerQRMenuScreen />
               ) : customerScreen === 'progress' ? (
@@ -39,15 +40,15 @@ export const MainApp = () => {
               )
             )}
 
-            {activeRole === 'kitchen' && <KitchenKDSScreen />}
+            {effectiveRole === 'kitchen' && <KitchenKDSScreen />}
 
-            {activeRole === 'waiter' && <WaiterFloorScreen />}
+            {effectiveRole === 'waiter' && <WaiterFloorScreen />}
 
-            {activeRole === 'cashier' && <CashierPOSScreen />}
+            {effectiveRole === 'cashier' && <CashierPOSScreen />}
 
-            {activeRole === 'manager' && <ManagerPortalScreen />}
+            {effectiveRole === 'manager' && <ManagerPortalScreen />}
 
-            {activeRole === 'admin' && <AdminConsoleScreen />}
+            {effectiveRole === 'admin' && <AdminConsoleScreen />}
           </>
         )}
       </main>

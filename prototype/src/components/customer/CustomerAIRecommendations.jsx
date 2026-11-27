@@ -3,35 +3,22 @@ import { Sparkles, Plus } from 'lucide-react';
 import { useMockStore } from '../../store/mockStore';
 
 export const CustomerAIRecommendations = ({ onQuickAddDish, activeDishIds = [] }) => {
-  const { menuItems, MOCK_AI_PAIRINGS_DATA } = useMockStore();
+  const { menuItems } = useMockStore();
 
-  // Curated Apriori recommendations based on current cart or popular pairings
-  const recommendations = [
-    {
-      dishId: 'DISH-104',
-      name: 'US Beef Slices',
-      price: 80000,
-      confidence: 88,
-      reason: 'Frequently dipped in Hotpot',
-      image: '🥓'
-    },
-    {
-      dishId: 'DISH-105',
-      name: 'Iced Herbal Tea',
-      price: 25000,
-      confidence: 76,
-      reason: 'Cooling balance for spicy soup',
-      image: '🍵'
-    },
-    {
-      dishId: 'DISH-106',
-      name: 'Spring Rolls Platter',
-      price: 150000,
-      confidence: 64,
-      reason: 'Popular starter pairing',
-      image: '🥟'
-    }
-  ];
+  // Derive recommended pairings from live backend menu items (isRecommendable & available)
+  const recommendations = menuItems
+    .filter((m) => m.isRecommendable && !m.is86 && !activeDishIds.includes(m.id))
+    .slice(0, 4)
+    .map((m, idx) => ({
+      dishId: m.id,
+      name: m.name,
+      price: m.price,
+      confidence: 88 - idx * 6,
+      reason: m.category ? `Popular ${m.category} pairing` : 'Chef recommended pairing',
+      image: '🍽️'
+    }));
+
+  if (recommendations.length === 0) return null;
 
   return (
     <div
